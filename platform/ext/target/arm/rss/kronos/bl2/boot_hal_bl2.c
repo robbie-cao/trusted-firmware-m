@@ -1012,18 +1012,6 @@ static int boot_platform_post_load_ap_bl2(void)
      */
     memset((void *)HOST_AP_BL2_IMG_BASE_S, 0, BL2_HEADER_SIZE);
 
-    /*
-     * Send doorbell to SCP to indicate that the RSS initialization is
-     * complete and that the SCP can release the LCPs and turn on the
-     * primary AP core.
-     */
-    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, 1, 0x1);
-
-    if (mhu_error != MHU_V_3_X_ERR_NONE) {
-        return mhu_error;
-    }
-    BOOT_LOG_INF("BL2: RSS-->SCP doorbell set!");
-
     /* Close RSS ATU region configured to access RSS header region for AP BL2 */
     atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_AP_BL2_IMG_HDR_ATU_ID);
     if (atu_err != ATU_ERR_NONE) {
@@ -1086,17 +1074,6 @@ static int boot_platform_post_load_si_cl0(void)
      * the region may be incidentally overlapping.
      */
     memset((void *)HOST_SI_CL0_IMG_BASE_S, 0, BL2_HEADER_SIZE);
-    /*
-     * Send doorbell to SCP to indicate that the RSS initialization is
-     * complete and that the SCP can release safety island cluster0
-     */
-    BOOT_LOG_INF("Telling SCP to reset SI CL0");
-    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, 2, 0x1);
-
-    if (mhu_error != MHU_V_3_X_ERR_NONE) {
-        return mhu_error;
-    }
-    BOOT_LOG_INF("BL2: RSS-->SCP doorbell set!");
 
     /* Close RSS ATU region configured to access RSS header region for SI CL0 */
     atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SI_CL0_IMG_HDR_ATU_ID);
@@ -1161,17 +1138,6 @@ static int boot_platform_post_load_si_cl1(void)
      * the region may be incidentally overlapping.
      */
     memset((void *)HOST_SI_CL1_IMG_BASE_S, 0, BL2_HEADER_SIZE);
-    /*
-     * Send doorbell to SCP to indicate that the RSS initialization is
-     * complete and that the SCP can release safety island cluster1
-     */
-    BOOT_LOG_INF("Telling SCP to reset SI CL1");
-    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, 3, 0x1);
-
-    if (mhu_error != MHU_V_3_X_ERR_NONE) {
-        return mhu_error;
-    }
-    BOOT_LOG_INF("BL2: RSS-->SCP doorbell set!");
 
     /* Close RSS ATU region configured to access RSS header region for SI CL1 */
     atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SI_CL1_IMG_HDR_ATU_ID);
@@ -1237,17 +1203,6 @@ static int boot_platform_post_load_si_cl2(void)
      * the region may be incidentally overlapping.
      */
     memset((void *)HOST_SI_CL2_IMG_BASE_S, 0, BL2_HEADER_SIZE);
-    /*
-     * Send doorbell to SCP to indicate that the RSS initialization is
-     * complete and that the SCP can release safety island cluster2
-     */
-	BOOT_LOG_INF("Telling SCP to reset SI CL2");
-    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, 4, 0x1);
-
-    if (mhu_error != MHU_V_3_X_ERR_NONE) {
-        return mhu_error;
-    }
-    BOOT_LOG_INF("BL2: RSS-->SCP doorbell set!");
 
     /* Close RSS ATU region configured to access RSS header region for SI CL2 */
     atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SI_CL2_IMG_HDR_ATU_ID);

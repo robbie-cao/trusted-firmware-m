@@ -13,6 +13,7 @@
 #include "device_definition.h"
 #include "tfm_spm_log.h"
 #include "tfm_pools.h"
+#include "tfm_hal_interrupt.h"
 #include "rss_comms_protocol.h"
 #include <string.h>
 
@@ -30,6 +31,12 @@ static enum tfm_plat_err_t initialize_mhu(void)
     enum mhu_error_t err;
 
     err = mhu_init_sender(&MHU_RSS_TO_AP_DEV);
+    if (err != MHU_ERR_NONE) {
+        SPMLOG_ERRMSGVAL("[COMMS] RSS to AP MHU driver init failed: ", err);
+        return TFM_PLAT_ERR_SYSTEM_ERR;
+    }
+
+    err = mhu_init_sender(&MHU_V3_RSS_TO_SCP_DEV);
     if (err != MHU_ERR_NONE) {
         SPMLOG_ERRMSGVAL("[COMMS] RSS to AP MHU driver init failed: ", err);
         return TFM_PLAT_ERR_SYSTEM_ERR;
@@ -198,6 +205,8 @@ out:
 enum tfm_plat_err_t tfm_multi_core_hal_init(void)
 {
     int32_t spm_err;
+    enum mhu_v3_x_error_t mhu_error;
+    enum tfm_plat_err_t tfm_err;
 
     spm_err = tfm_pool_init(req_pool, POOL_BUFFER_SIZE(req_pool),
                             sizeof(struct client_request_t),
@@ -206,5 +215,57 @@ enum tfm_plat_err_t tfm_multi_core_hal_init(void)
         return TFM_PLAT_ERR_SYSTEM_ERR;
     }
 
-    return initialize_mhu();
+    tfm_err = initialize_mhu();
+    if (tfm_err != TFM_PLAT_ERR_SUCCESS) {
+        return tfm_err;
+    }
+
+#ifdef MHU_V3_RSS_TO_SCP
+    SPMLOG_DBGMSG("Telling SCP to reset SI CL0\r\n");
+    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, MHU_SCP_RSS_SI_CL0_CHANNEL_ID, 0x1);
+
+    if (mhu_error != MHU_V_3_X_ERR_NONE) {
+        return mhu_error;
+    }
+    SPMLOG_DBGMSG("BL2: RSS-->SCP doorbell set!\r\n");
+
+    /*
+     * Send doorbell to SCP to indicate that the RSS initialization is
+     * complete and that the SCP can release safety island cluster1
+     */
+    SPMLOG_DBGMSG("Telling SCP to reset SI CL1\r\n");
+    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, MHU_SCP_RSS_SI_CL1_CHANNEL_ID, 0x1);
+
+    if (mhu_error != MHU_V_3_X_ERR_NONE) {
+        return mhu_error;
+    }
+    SPMLOG_DBGMSG("BL2: RSS-->SCP doorbell set!\r\n");
+
+    /*
+     * Send doorbell to SCP to indicate that the RSS initialization is
+     * complete and that the SCP can release safety island cluster2
+     */
+    SPMLOG_DBGMSG("Telling SCP to reset SI CL2\r\n");
+    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, MHU_SCP_RSS_SI_CL2_CHANNEL_ID, 0x1);
+
+    if (mhu_error != MHU_V_3_X_ERR_NONE) {
+        return mhu_error;
+    }
+    SPMLOG_DBGMSG("BL2: RSS-->SCP doorbell set!\r\n");
+
+    /*
+     * Send doorbell to SCP to indicate that the RSS initialization is
+     * complete and that the SCP can release the LCPs and turn on the
+     * primary AP core.
+     */
+    SPMLOG_DBGMSG("Telling SCP to turn on the Primary Compute\r\n");
+    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, MHU_SCP_RSS_SYSTOP_ON_CHANNEL_ID, 0x1);
+
+    if (mhu_error != MHU_V_3_X_ERR_NONE) {
+        return TFM_PLAT_ERR_SYSTEM_ERR;
+    }
+    SPMLOG_DBGMSG("BL2: RSS-->SCP doorbell set!\r\n");
+#endif
+
+    return TFM_PLAT_ERR_SUCCESS;
 }
