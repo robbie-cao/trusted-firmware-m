@@ -68,6 +68,9 @@ __PACKED_STRUCT plat_user_area_layout_t {
             __PACKED_STRUCT {
                 uint32_t bl1_nv_counter[16];
                 uint32_t bl2_nv_counter[MCUBOOT_IMAGE_NUMBER][16];
+#ifdef PLATFORM_HAS_PS_NV_OTP_COUNTERS
+                uint32_t ps_nv_counter[3][16];
+#endif /* PLATFORM_HAS_PS_NV_OTP_COUNTERS */
                 uint32_t host_nv_counter[3][16];
                 uint32_t reprovisioning_bits;
             } unlocked_area;
@@ -119,6 +122,12 @@ static const uint16_t otp_offsets[PLAT_OTP_ID_MAX] = {
     USER_AREA_OFFSET(unlocked_area.bl2_nv_counter[6]),
     USER_AREA_OFFSET(unlocked_area.bl2_nv_counter[7]),
     USER_AREA_OFFSET(unlocked_area.bl2_nv_counter[8]),
+
+#ifdef PLATFORM_HAS_PS_NV_OTP_COUNTERS
+    USER_AREA_OFFSET(unlocked_area.ps_nv_counter[0]),
+    USER_AREA_OFFSET(unlocked_area.ps_nv_counter[1]),
+    USER_AREA_OFFSET(unlocked_area.ps_nv_counter[2]),
+#endif /* PLATFORM_HAS_PS_NV_OTP_COUNTERS */
 
     USER_AREA_OFFSET(unlocked_area.host_nv_counter[0]),
     USER_AREA_OFFSET(unlocked_area.host_nv_counter[1]),
@@ -178,6 +187,12 @@ static const uint16_t otp_sizes[PLAT_OTP_ID_MAX] = {
     USER_AREA_SIZE(unlocked_area.bl2_nv_counter[6]),
     USER_AREA_SIZE(unlocked_area.bl2_nv_counter[7]),
     USER_AREA_SIZE(unlocked_area.bl2_nv_counter[8]),
+
+#ifdef PLATFORM_HAS_PS_NV_OTP_COUNTERS
+    USER_AREA_SIZE(unlocked_area.ps_nv_counter[0]),
+    USER_AREA_SIZE(unlocked_area.ps_nv_counter[1]),
+    USER_AREA_SIZE(unlocked_area.ps_nv_counter[2]),
+#endif /* PLATFORM_HAS_PS_NV_OTP_COUNTERS */
 
     USER_AREA_SIZE(unlocked_area.host_nv_counter[0]),
     USER_AREA_SIZE(unlocked_area.host_nv_counter[1]),
