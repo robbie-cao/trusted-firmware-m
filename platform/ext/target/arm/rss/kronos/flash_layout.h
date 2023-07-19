@@ -20,6 +20,7 @@
 #include "firmware_image_id.h"
 #include "platform_base_address.h"
 #include "size_defs.h"
+#include "host_base_address.h"
 
 /* Flash layout on RSS with BL2 (multiple image boot):
  *
@@ -63,12 +64,11 @@
 /* Sector size of the flash hardware; same as FLASH0_SECTOR_SIZE */
 #define FLASH_AREA_IMAGE_SECTOR_SIZE    (0x1000)    /* 4 KB */
 /* Same as FLASH0_SIZE */
-#define FLASH_TOTAL_SIZE                (BOOT_FLASH_SIZE)
+#define FLASH_TOTAL_SIZE                (SI_FLASH_SIZE)  /* 128 MB */
 
 /* Flash layout info for BL2 bootloader */
-/* Same as FLASH0_BASE_S */
-#define FLASH_BASE_ADDRESS              (BOOT_FLASH)
-
+/* Same as SI_FLASH_BASE_NS_LOG */
+#define FLASH_BASE_ADDRESS              (SI_FLASH_BASE_NS_LOG)
 /* Offset and size definitions of the flash partitions that are handled by the
  * bootloader. The image swapping is done between IMAGE_PRIMARY and
  * IMAGE_SECONDARY, SCRATCH is used as a temporary storage during image

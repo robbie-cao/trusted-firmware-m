@@ -44,6 +44,7 @@
 #define RSS_ATU_SCP_RSS_MAILBOX_ATU_ID  4
 #define RSS_ATU_AP_RSS_MAILBOX_ATU_ID   5 /*ID to use for region mapping to MHU
                                             outband msg buffer between AP and RSS */
+#define RSS_ATU_SI_FLASH_ID             6  /* ID to use for region mapping to SI NVM flash */
 
 /* The ATU has a minimum size and all regions are restricted to align with it */
 #define RSS_ATU_PAGE_SIZE           0x2000U /* 8KB */
@@ -236,5 +237,15 @@
 #define HOST_AP_RSS_MAILBOX_PHYS_BASE  UINT64_C(0x86000)
 #define HOST_AP_RSS_MAILBOX_ATU_SIZE   ALIGN_UP(0x1000, RSS_ATU_PAGE_SIZE)
 #define HOST_AP_RSS_MAILBOX_ATU_ID     RSS_ATU_AP_RSS_MAILBOX_ATU_ID
+
+
+/* Safety Island NVM flash */
+#define SI_FLASH_BASE           0x60000000   /* Safety Island NVM flash base address */
+#define SI_FLASH_SIZE           0x8000000    /* 128 MB */
+
+/* Safety Island NVM flash logical base address using Non-secure ATU region */
+#define SI_FLASH_BASE_NS_LOG    (HOST_ACCESS_BASE_NS + 0x8000000)
+/* Safety Island NVM flash physical base address */
+#define SI_FLASH_BASE_NS_PHY    (0x2000000000000 + SI_FLASH_BASE)
 
 #endif  /* __HOST_BASE_ADDRESS_H__ */

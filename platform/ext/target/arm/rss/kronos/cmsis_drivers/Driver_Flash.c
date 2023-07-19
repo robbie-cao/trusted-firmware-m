@@ -21,13 +21,14 @@
 #include "Driver_Flash.h"
 #include "RTE_Device.h"
 #include "platform_base_address.h"
+#include "host_base_address.h"
 
 #ifndef ARG_UNUSED
 #define ARG_UNUSED(arg)  ((void)arg)
 #endif
 
 #define FLASH0_BASE_S         BOOT_FLASH
-#define FLASH0_SIZE           BOOT_FLASH_SIZE
+#define FLASH0_SIZE           SI_FLASH_SIZE
 #define FLASH0_SECTOR_SIZE    0x00001000 /* 4 kB */
 #define FLASH0_PAGE_SIZE      0x00001000 /* 4 kB */
 #define FLASH0_PROGRAM_UNIT   0x1        /* Minimum write size */
@@ -142,11 +143,7 @@ static ARM_FLASH_INFO ARM_FLASH0_DEV_DATA = {
     .erased_value = ARM_FLASH_DRV_ERASE_VALUE};
 
 static struct arm_flash_dev_t ARM_FLASH0_DEV = {
-#if (__DOMAIN_NS == 1)
-    .memory_base = FLASH0_BASE_NS,
-#else
-    .memory_base = FLASH0_BASE_S,
-#endif /* __DOMAIN_NS == 1 */
+    .memory_base = SI_FLASH_BASE_NS_LOG,
     .data        = &(ARM_FLASH0_DEV_DATA)};
 
 struct arm_flash_dev_t *FLASH0_DEV = &ARM_FLASH0_DEV;

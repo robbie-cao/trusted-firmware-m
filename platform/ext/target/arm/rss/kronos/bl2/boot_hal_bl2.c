@@ -234,8 +234,7 @@ static int boot_platform_pre_load_secure()
             HOST_AP_RSS_MAILBOX_BASE_S, HOST_AP_RSS_MAILBOX_PHYS_BASE,
             HOST_AP_RSS_MAILBOX_ATU_SIZE);
 
-    if (atu_err != ATU_ERR_NONE)
-{
+    if (atu_err != ATU_ERR_NONE) {
         BOOT_LOG_ERR("BL2: Failed to map AP<->RSS MHU Outband msg region in ATU"
                 ": error:%d", atu_err);
         return -1;
@@ -260,6 +259,17 @@ fail:
 
 static int boot_platform_post_load_secure()
 {
+#ifdef RSS_USE_SI_FLASH
+	enum atu_error_t err;
+
+    /* All the images had been loaded from SI NVM flash */
+    /* Close SI NVM flash ATU region */
+    err = atu_uninitialize_region(&ATU_DEV_S, 6);
+    if (err != ATU_ERR_NONE) {
+        return 1;
+    }
+#endif
+
     return 0;
 }
 

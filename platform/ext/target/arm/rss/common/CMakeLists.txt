@@ -25,6 +25,7 @@ target_compile_definitions(platform_region_defs
         $<$<BOOL:${RSS_USE_HOST_UART}>:RSS_USE_HOST_UART>
         $<$<BOOL:${RSS_GPT_SUPPORT}>:RSS_GPT_SUPPORT>
         $<$<BOOL:${RSS_HAS_EXPANSION_PERIPHERALS}>:RSS_HAS_EXPANSION_PERIPHERALS>
+        $<$<BOOL:${RSS_USE_SI_FLASH}>:RSS_USE_SI_FLASH>
 )
 
 #========================= Platform common defs ===============================#
