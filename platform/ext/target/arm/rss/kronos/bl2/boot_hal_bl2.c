@@ -800,8 +800,7 @@ static int boot_platform_pre_load_ap_bl1(void)
     atu_err = atu_initialize_region(&ATU_DEV_S,
                                     HOST_AP_BL1_IMG_CODE_ATU_ID,
                                     HOST_AP_BL1_CODE_BASE_S,
-                                    (HOST_REMOTE_CHIP_PERIPH_OFFSET(chip_id) +
-                                     HOST_AP_BL1_PHYS_BASE),
+                                    HOST_AP_BL1_PHYS_BASE,
                                     HOST_AP_BL1_ATU_SIZE);
     if (atu_err != ATU_ERR_NONE) {
         return 1;
@@ -854,6 +853,229 @@ static int boot_platform_post_load_ap_bl1(void)
 }
 
 /*
+ * ================================== Safety Island Cluster0 ==================================
+ */
+
+/* Fuction called before si cl0 firmware is loaded. */
+static int boot_platform_pre_load_si_cl0(void)
+{
+    enum atu_error_t atu_err;
+
+    BOOT_LOG_INF("BL2: SI CL0 pre load start");
+
+    /* Configure RSS ATU to access RSS header region for SI CL0 */
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                    HOST_SI_CL0_IMG_HDR_ATU_ID,
+                                    HOST_SI_CL0_HDR_ATU_BASE_S,
+                                    RSS_HDR_PHYS_BASE,
+                                    RSS_IMG_HDR_ATU_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+    /* Configure RSS ATU to access AP BL1 SRAM code region */
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                    HOST_SI_CL0_IMG_CODE_ATU_ID,
+                                    HOST_SI_CL0_CODE_BASE_S,
+                                    HOST_SI_CL0_SRAM_PHYS_BASE,
+                                    HOST_SI_CL0_ATU_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    BOOT_LOG_INF("BL2: SI CL0 pre load complete");
+
+    return 0;
+}
+
+/* Fuction called after si cl0 firmware is loaded. */
+static int boot_platform_post_load_si_cl0(void)
+{
+    enum atu_error_t atu_err;
+    enum mhu_v3_x_error_t mhu_error;
+
+    BOOT_LOG_INF("BL2: SI CL0 post load start");
+    /* Clear the header from the header region but avoid removing anything that
+     * the region may be incidentally overlapping.
+     */
+    memset(HOST_SI_CL0_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+    /*
+     * Send doorbell to SCP to indicate that the RSS initialization is
+     * complete and that the SCP can release safety island cluster0
+     */
+    BOOT_LOG_INF("Telling SCP to reset SI CL0");
+    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, 2, 0x1);
+
+    if (mhu_error != MHU_V_3_X_ERR_NONE) {
+        return mhu_error;
+    }
+    BOOT_LOG_INF("BL2: RSS-->SCP doorbell set!");
+
+    /* Close RSS ATU region configured to access RSS header region for SI CL0 */
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SI_CL0_IMG_HDR_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+    /* Close RSS ATU region configured to access SI CL0 SRAM code region */
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SI_CL0_IMG_CODE_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    BOOT_LOG_INF("BL2: SI CL0 post load complete");
+
+    return 0;
+}
+
+/*
+ * ================================== Safety Island Cluster1 ==================================
+ */
+
+/* Fuction called before si cl1 firmware is loaded. */
+static int boot_platform_pre_load_si_cl1(void)
+{
+    enum atu_error_t atu_err;
+
+    BOOT_LOG_INF("BL2: SI CL1 pre load start");
+
+    /* Configure RSS ATU to access RSS header region for SI CL1 */
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                    HOST_SI_CL1_IMG_HDR_ATU_ID,
+                                    HOST_SI_CL1_HDR_ATU_BASE_S,
+                                    RSS_HDR_PHYS_BASE,
+                                    RSS_IMG_HDR_ATU_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+    /* Configure RSS ATU to access AP BL1 SRAM code region */
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                    HOST_SI_CL1_IMG_CODE_ATU_ID,
+                                    HOST_SI_CL1_CODE_BASE_S,
+                                    HOST_SI_CL1_SRAM_PHYS_BASE,
+                                    HOST_SI_CL1_ATU_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    BOOT_LOG_INF("BL2: SI CL1 pre load complete");
+
+    return 0;
+}
+
+/* Fuction called after si cl1 firmware is loaded. */
+static int boot_platform_post_load_si_cl1(void)
+{
+    enum atu_error_t atu_err;
+    enum mhu_v3_x_error_t mhu_error;
+
+    BOOT_LOG_INF("BL2: SI CL1 post load start");
+
+    /* Clear the header from the header region but avoid removing anything that
+     * the region may be incidentally overlapping.
+     */
+    memset(HOST_SI_CL1_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+    /*
+     * Send doorbell to SCP to indicate that the RSS initialization is
+     * complete and that the SCP can release safety island cluster1
+     */
+    BOOT_LOG_INF("Telling SCP to reset SI CL1");
+    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, 3, 0x1);
+
+    if (mhu_error != MHU_V_3_X_ERR_NONE) {
+        return mhu_error;
+    }
+    BOOT_LOG_INF("BL2: RSS-->SCP doorbell set!");
+
+    /* Close RSS ATU region configured to access RSS header region for SI CL1 */
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SI_CL1_IMG_HDR_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+    /* Close RSS ATU region configured to access SI CL1 SRAM code region */
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SI_CL1_IMG_CODE_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    BOOT_LOG_INF("BL2: SI CL1 post load complete");
+
+    return 0;
+}
+
+/*
+ * ================================== Safety Island Cluster2 ==================================
+ */
+
+/* Fuction called before si cl2 firmware is loaded. */
+static int boot_platform_pre_load_si_cl2(void)
+{
+    enum atu_error_t atu_err;
+
+    BOOT_LOG_INF("BL2: SI CL2 pre load start");
+
+    /* Configure RSS ATU to access RSS header region for SI CL2 */
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                    HOST_SI_CL2_IMG_HDR_ATU_ID,
+                                    HOST_SI_CL2_HDR_ATU_BASE_S,
+                                    RSS_HDR_PHYS_BASE,
+                                    RSS_IMG_HDR_ATU_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+    /* Configure RSS ATU to access SI CL2 SRAM code region */
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                    HOST_SI_CL2_IMG_CODE_ATU_ID,
+                                    HOST_SI_CL2_CODE_BASE_S,
+                                    HOST_SI_CL2_SRAM_PHYS_BASE,
+                                    HOST_SI_CL2_ATU_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    BOOT_LOG_INF("BL2: SI CL2 pre load complete");
+
+    return 0;
+}
+
+/* Fuction called after si cl2 firmware is loaded. */
+static int boot_platform_post_load_si_cl2(void)
+{
+    enum atu_error_t atu_err;
+    enum mhu_v3_x_error_t mhu_error;
+
+    BOOT_LOG_INF("BL2: SI CL2 post load start");
+
+    /* Clear the header from the header region but avoid removing anything that
+     * the region may be incidentally overlapping.
+     */
+    memset(HOST_SI_CL2_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+    /*
+     * Send doorbell to SCP to indicate that the RSS initialization is
+     * complete and that the SCP can release safety island cluster2
+     */
+	BOOT_LOG_INF("Telling SCP to reset SI CL2");
+    mhu_error = mhu_v3_x_doorbell_write(&MHU_V3_RSS_TO_SCP_DEV, 4, 0x1);
+
+    if (mhu_error != MHU_V_3_X_ERR_NONE) {
+        return mhu_error;
+    }
+    BOOT_LOG_INF("BL2: RSS-->SCP doorbell set!");
+
+    /* Close RSS ATU region configured to access RSS header region for SI CL2 */
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SI_CL2_IMG_HDR_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+    /* Close RSS ATU region configured to access SI CL2 SRAM code region */
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SI_CL2_IMG_CODE_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    BOOT_LOG_INF("BL2: SI CL2 post load complete");
+
+    return 0;
+}
+/*
  * ================================= VECTORS ==================================
  */
 
@@ -864,6 +1086,9 @@ static int (*boot_platform_pre_load_vector[RSS_FIRMWARE_COUNT]) (void) = {
     [RSS_FIRMWARE_SCP_ID]           = boot_platform_pre_load_scp,
     [RSS_FIRMWARE_MCP_ID]           = boot_platform_pre_load_mcp,
     [RSS_FIRMWARE_LCP_ID]           = boot_platform_pre_load_lcp,
+    [RSS_FIRMWARE_SI_CL0_ID]        = boot_platform_pre_load_si_cl0,
+    [RSS_FIRMWARE_SI_CL1_ID]        = boot_platform_pre_load_si_cl1,
+    [RSS_FIRMWARE_SI_CL2_ID]        = boot_platform_pre_load_si_cl2,
     [RSS_FIRMWARE_AP_BL1_ID]        = boot_platform_pre_load_ap_bl1,
 };
 
@@ -874,13 +1099,15 @@ static int (*boot_platform_post_load_vector[RSS_FIRMWARE_COUNT]) (void) = {
     [RSS_FIRMWARE_SCP_ID]           = boot_platform_post_load_scp,
     [RSS_FIRMWARE_MCP_ID]           = boot_platform_post_load_mcp,
     [RSS_FIRMWARE_LCP_ID]           = boot_platform_post_load_lcp,
+    [RSS_FIRMWARE_SI_CL0_ID]        = boot_platform_post_load_si_cl0,
+    [RSS_FIRMWARE_SI_CL1_ID]        = boot_platform_post_load_si_cl1,
+    [RSS_FIRMWARE_SI_CL2_ID]        = boot_platform_post_load_si_cl2,
     [RSS_FIRMWARE_AP_BL1_ID]        = boot_platform_post_load_ap_bl1,
 };
 
 /*
  * ============================== LOAD FUNCTIONS ==============================
  */
-
 int boot_platform_pre_load(uint32_t image_id)
 {
     if (image_id >= RSS_FIRMWARE_COUNT) {

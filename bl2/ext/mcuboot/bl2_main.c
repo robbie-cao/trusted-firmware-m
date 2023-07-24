@@ -146,6 +146,11 @@ int main(void)
      * TF-M image, which means the response is filled correctly.
      */
     for (image_id = MCUBOOT_IMAGE_NUMBER - 1; image_id >= 0; image_id--) {
+        if (image_id == RSS_FIRMWARE_MCP_ID) {
+            BOOT_LOG_INF("Skip loading MCP");
+            continue;
+        }
+
         if (boot_platform_pre_load(image_id)) {
             BOOT_LOG_ERR("Pre-load step for image %d failed", image_id);
             FIH_PANIC;

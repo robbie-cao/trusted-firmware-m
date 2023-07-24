@@ -108,6 +108,48 @@ const struct flash_area flash_map[] = {
         .fa_off = FLASH_AREA_13_OFFSET,
         .fa_size = FLASH_AREA_13_SIZE,
     },
+    {
+        .fa_id = FLASH_AREA_14_ID,
+        .fa_device_id = FLASH_DEVICE_ID,
+        .fa_driver = &FLASH_DEV_NAME,
+        .fa_off = FLASH_AREA_14_OFFSET,
+        .fa_size = FLASH_AREA_14_SIZE,
+    },
+    {
+        .fa_id = FLASH_AREA_15_ID,
+        .fa_device_id = FLASH_DEVICE_ID,
+        .fa_driver = &FLASH_DEV_NAME,
+        .fa_off = FLASH_AREA_15_OFFSET,
+        .fa_size = FLASH_AREA_15_SIZE,
+    },
+    {
+        .fa_id = FLASH_AREA_16_ID,
+        .fa_device_id = FLASH_DEVICE_ID,
+        .fa_driver = &FLASH_DEV_NAME,
+        .fa_off = FLASH_AREA_16_OFFSET,
+        .fa_size = FLASH_AREA_16_SIZE,
+    },
+    {
+        .fa_id = FLASH_AREA_17_ID,
+        .fa_device_id = FLASH_DEVICE_ID,
+        .fa_driver = &FLASH_DEV_NAME,
+        .fa_off = FLASH_AREA_17_OFFSET,
+        .fa_size = FLASH_AREA_17_SIZE,
+    },
+    {
+        .fa_id = FLASH_AREA_18_ID,
+        .fa_device_id = FLASH_DEVICE_ID,
+        .fa_driver = &FLASH_DEV_NAME,
+        .fa_off = FLASH_AREA_18_OFFSET,
+        .fa_size = FLASH_AREA_18_SIZE,
+    },
+    {
+        .fa_id = FLASH_AREA_19_ID,
+        .fa_device_id = FLASH_DEVICE_ID,
+        .fa_driver = &FLASH_DEV_NAME,
+        .fa_off = FLASH_AREA_19_OFFSET,
+        .fa_size = FLASH_AREA_19_SIZE,
+    },
 };
 
 const int flash_map_entry_num = ARRAY_SIZE(flash_map);
@@ -142,6 +184,21 @@ int boot_get_image_exec_ram_info(uint32_t image_id,
     else if (image_id == RSS_FIRMWARE_AP_BL1_ID) {
         *exec_ram_start = HOST_AP_BL1_IMG_BASE_S;
         *exec_ram_size  = HOST_AP_BL1_ATU_SIZE;
+        rc = 0;
+    }
+    else if (image_id == RSS_FIRMWARE_SI_CL0_ID) {
+        *exec_ram_start = HOST_SI_CL0_IMG_BASE_S;
+        *exec_ram_size  = HOST_SI_CL0_ATU_SIZE;
+        rc = 0;
+    }
+    else if (image_id == RSS_FIRMWARE_SI_CL1_ID) {
+        *exec_ram_start = HOST_SI_CL1_IMG_BASE_S;
+        *exec_ram_size  = HOST_SI_CL1_ATU_SIZE;
+        rc = 0;
+    }
+    else if (image_id == RSS_FIRMWARE_SI_CL2_ID) {
+        *exec_ram_start = HOST_SI_CL2_IMG_BASE_S;
+        *exec_ram_size  = HOST_SI_CL2_ATU_SIZE;
         rc = 0;
     }
 

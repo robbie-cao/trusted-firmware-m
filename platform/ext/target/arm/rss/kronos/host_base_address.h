@@ -163,7 +163,7 @@
 /*  AP BL1 Image address start, offset so end of HEADER is at end of ATU HEADER */
 #define HOST_AP_BL1_IMG_BASE_S         (HOST_AP_BL1_CODE_BASE_S - BL2_HEADER_SIZE)
 /*  AP BL1 ITCM physical address start */
-#define HOST_AP_BL1_PHYS_BASE          0x0000000000000ULL
+#define HOST_AP_BL1_PHYS_BASE          (0x0000000000000ULL +  0x42000UL) /* AP initial boot SRAM base address
 /*  AP BL1 ATU CODE size (aligned size of SCP image) */
 #define HOST_AP_BL1_ATU_SIZE           ALIGN_UP(SIZE_DEF_AP_BL1_IMAGE, RSS_ATU_PAGE_SIZE)
 /*  AP BL1 ID for SCP ATU HEADER region */
@@ -172,10 +172,51 @@
 #define HOST_AP_BL1_IMG_CODE_ATU_ID    RSS_ATU_IMG_CODE_LOAD_ID
 
 /* ATU HEADER physical address start (mapped so end of region is end of MCP ITCM) */
-#define RSS_HDR_PHYS_BASE      HOST_MCP_PHYS_BASE + HOST_MCP_ATU_SIZE - RSS_IMG_HDR_ATU_SIZE
+#define RSS_HDR_PHYS_BASE              (HOST_SCP_PHYS_BASE + HOST_SCP_ATU_SIZE - RSS_IMG_HDR_ATU_SIZE)
+
+/* SI CL0 ATU HEADER logical address start */
+#define HOST_SI_CL0_HDR_ATU_BASE_S     (HOST_AP_BL1_CODE_BASE_S + HOST_AP_BL1_ATU_SIZE)
+/*  SI CL0 Code region and AP ATU CODE logical address start */
+#define HOST_SI_CL0_CODE_BASE_S        (HOST_SI_CL0_HDR_ATU_BASE_S + RSS_IMG_HDR_ATU_SIZE)
+/*  SI CL0 Image address start, offset so end of HEADER is at end of ATU HEADER */
+#define HOST_SI_CL0_IMG_BASE_S         (HOST_SI_CL0_CODE_BASE_S - BL2_HEADER_SIZE)
+/*  SI physical address start */
+#define HOST_SI_PHYS_BASE              0x2000000000000ULL
+/*  SI CL0 ATU CODE size (aligned size of SI image) */
+#define HOST_SI_CL0_ATU_SIZE           ALIGN_UP(SIZE_DEF_SI_CL0_IMAGE, RSS_ATU_PAGE_SIZE)
+/*  SI CL0 ID for SI CL0 ATU HEADER region */
+#define HOST_SI_CL0_IMG_HDR_ATU_ID     RSS_ATU_IMG_HDR_LOAD_ID
+/*  SI CL0 ID for SI CL0 ATU CODE region */
+#define HOST_SI_CL0_IMG_CODE_ATU_ID    RSS_ATU_IMG_CODE_LOAD_ID
+
+/* SI CL1 ATU HEADER logical address start */
+#define HOST_SI_CL1_HDR_ATU_BASE_S     (HOST_SI_CL0_CODE_BASE_S + HOST_SI_CL0_ATU_SIZE)
+/*  SI CL1 Code region and AP ATU CODE logical address start */
+#define HOST_SI_CL1_CODE_BASE_S        (HOST_SI_CL1_HDR_ATU_BASE_S + RSS_IMG_HDR_ATU_SIZE)
+/*  SI CL1 Image address start, offset so end of HEADER is at end of ATU HEADER */
+#define HOST_SI_CL1_IMG_BASE_S         (HOST_SI_CL1_CODE_BASE_S - BL2_HEADER_SIZE)
+/*  SI CL1 ATU CODE size (aligned size of SI image) */
+#define HOST_SI_CL1_ATU_SIZE           ALIGN_UP(SIZE_DEF_SI_CL1_IMAGE, RSS_ATU_PAGE_SIZE)
+/*  SI CL1 ID for SI CL1 ATU HEADER region */
+#define HOST_SI_CL1_IMG_HDR_ATU_ID     RSS_ATU_IMG_HDR_LOAD_ID
+/*  SI CL1 ID for SI CL1 ATU CODE region */
+#define HOST_SI_CL1_IMG_CODE_ATU_ID    RSS_ATU_IMG_CODE_LOAD_ID
+
+/* SI CL2 ATU HEADER logical address start */
+#define HOST_SI_CL2_HDR_ATU_BASE_S     (HOST_SI_CL1_CODE_BASE_S + HOST_SI_CL1_ATU_SIZE)
+/*  SI CL2 Code region and AP ATU CODE logical address start */
+#define HOST_SI_CL2_CODE_BASE_S        (HOST_SI_CL2_HDR_ATU_BASE_S + RSS_IMG_HDR_ATU_SIZE)
+/*  SI CL2 Image address start, offset so end of HEADER is at end of ATU HEADER */
+#define HOST_SI_CL2_IMG_BASE_S         (HOST_SI_CL2_CODE_BASE_S - BL2_HEADER_SIZE)
+/*  SI CL2 ATU CODE size (aligned size of SI image) */
+#define HOST_SI_CL2_ATU_SIZE           ALIGN_UP(SIZE_DEF_SI_CL2_IMAGE, RSS_ATU_PAGE_SIZE)
+/*  SI CL2 ID for SI CL2 ATU HEADER region */
+#define HOST_SI_CL2_IMG_HDR_ATU_ID     RSS_ATU_IMG_HDR_LOAD_ID
+/*  SI CL2 ID for SI CL2 CODE region */
+#define HOST_SI_CL2_IMG_CODE_ATU_ID    RSS_ATU_IMG_CODE_LOAD_ID
 
 /* Last rss logical address used for loading images */
-#define RSS_IMAGE_LOADING_END   (HOST_AP_BL1_CODE_BASE_S + HOST_AP_BL1_ATU_SIZE)
+#define RSS_IMAGE_LOADING_END   (HOST_SI_CL2_CODE_BASE_S + HOST_SI_CL2_ATU_SIZE)
 
 /*
  * RSS ATU Regions for accessing the initiation registers.
@@ -246,6 +287,15 @@
 /* Safety Island NVM flash logical base address using Non-secure ATU region */
 #define SI_FLASH_BASE_NS_LOG    (HOST_ACCESS_BASE_NS + 0x8000000)
 /* Safety Island NVM flash physical base address */
-#define SI_FLASH_BASE_NS_PHY    (0x2000000000000 + SI_FLASH_BASE)
+#define SI_FLASH_BASE_NS_PHY    (HOST_SI_PHYS_BASE + SI_FLASH_BASE)
+
+/* Address to access safety island images */
+#define SI_CL0_SRAM_BASE        0x120000000ULL
+#define SI_CL1_SRAM_BASE        0x140000000ULL
+#define SI_CL2_SRAM_BASE        0x160000000ULL
+
+#define HOST_SI_CL0_SRAM_PHYS_BASE      (HOST_SI_PHYS_BASE + SI_CL0_SRAM_BASE)
+#define HOST_SI_CL1_SRAM_PHYS_BASE      (HOST_SI_PHYS_BASE + SI_CL1_SRAM_BASE)
+#define HOST_SI_CL2_SRAM_PHYS_BASE      (HOST_SI_PHYS_BASE + SI_CL2_SRAM_BASE)
 
 #endif  /* __HOST_BASE_ADDRESS_H__ */
