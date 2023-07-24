@@ -100,7 +100,6 @@ target_sources(platform_bl2
 target_compile_definitions(platform_bl2
     PRIVATE
         $<$<BOOL:${ENABLE_SCP_ATU_CTRL}>:ENABLE_SCP_ATU_CTRL>
-        $<$<BOOL:${ENABLE_MCP_ATU_CTRL}>:ENABLE_MCP_ATU_CTRL>
         MEASURED_BOOT_HASH_ALG=${MEASURED_BOOT_HASH_ALG}
 )
 

@@ -13,7 +13,6 @@ set(RSS_USE_SI_FLASH                        OFF      CACHE BOOL    "Enable RSS u
 set(MCUBOOT_IMAGE_NUMBER                    9        CACHE STRING  "Number of images supported by MCUBoot")
 set(ENABLE_SCP_ATU_CTRL                     OFF      CACHE BOOL    "Enable SCP to configure ATU")
 set(RSS_HAS_EXPANSION_PERIPHERALS           ON       CACHE BOOL    "Whether RSS has sub-platform specific peripherals in the expansion layer")
-set(ENABLE_MCP_ATU_CTRL                     OFF      CACHE BOOL    "Enable MCP to configure ATU")
 set(PLATFORM_DEFAULT_MCUBOOT_IMAGE_NUMBER   OFF      CACHE BOOL    "Whether to use default value of MCUBOOT_IMAGE_NUMBER")
 if (TFM_PLATFORM_VARIANT STREQUAL "1")
     set(RSS_LCP_COUNT                          8        CACHE STRING   "Number of LCPs to load")

@@ -22,9 +22,8 @@
 #define RSS_FIRMWARE_SI_CL1_ID       4
 #define RSS_FIRMWARE_SI_CL0_ID       5
 #define RSS_FIRMWARE_LCP_ID          6
-#define RSS_FIRMWARE_MCP_ID          7
-#define RSS_FIRMWARE_SCP_ID          8
+#define RSS_FIRMWARE_SCP_ID          7
 /* Number of firmware loaded by BL2 */
-#define RSS_FIRMWARE_COUNT           9
+#define RSS_FIRMWARE_COUNT           8
 
 #endif /* __RSS_FIRMWARE_IMAGE_ID_H__ */

@@ -100,23 +100,8 @@
  * Note: MCU Boot requires that the logical addresses do not overlap.
  */
 
-/* MCP ATU HEADER logical address start */
-#define HOST_MCP_HDR_ATU_BASE_S     HOST_ACCESS_BASE_S
-/* MCP Code region and MCP ATU CODE logical address start */
-#define HOST_MCP_CODE_BASE_S        (HOST_MCP_HDR_ATU_BASE_S + RSS_IMG_HDR_ATU_SIZE)
-/* MCP Image address start, offset so end of HEADER is at end of ATU HEADER */
-#define HOST_MCP_IMG_BASE_S         (HOST_MCP_CODE_BASE_S - BL2_HEADER_SIZE)
-/* MCP ITCM physical address start */
-#define HOST_MCP_PHYS_BASE          0x2000000000000ULL
-/* MCP ATU CODE size (aligned size of MCP image) */
-#define HOST_MCP_ATU_SIZE           ALIGN_UP(SIZE_DEF_MCP_IMAGE, RSS_ATU_PAGE_SIZE)
-/* ATU ID for MCP ATU HEADER region */
-#define HOST_MCP_IMG_HDR_ATU_ID     RSS_ATU_IMG_HDR_LOAD_ID
-/* ATU ID for MCP ATU CODE region */
-#define HOST_MCP_IMG_CODE_ATU_ID    RSS_ATU_IMG_CODE_LOAD_ID
-
 /* SCP ATU HEADER logical address start */
-#define HOST_SCP_HDR_ATU_BASE_S     (HOST_MCP_CODE_BASE_S + HOST_MCP_ATU_SIZE)
+#define HOST_SCP_HDR_ATU_BASE_S     HOST_ACCESS_BASE_S
 /* SCP Code region and SCP ATU CODE logical address start */
 #define HOST_SCP_CODE_BASE_S        (HOST_SCP_HDR_ATU_BASE_S + RSS_IMG_HDR_ATU_SIZE)
 /* SCP Image address start, offset so end of HEADER is at end of ATU HEADER */
@@ -171,7 +156,7 @@
 /*  AP BL1 ID for SCP ATU CODE region */
 #define HOST_AP_BL1_IMG_CODE_ATU_ID    RSS_ATU_IMG_CODE_LOAD_ID
 
-/* ATU HEADER physical address start (mapped so end of region is end of MCP ITCM) */
+/* ATU HEADER physical address start (mapped so end of region is end of SCP ITCM) */
 #define RSS_HDR_PHYS_BASE              (HOST_SCP_PHYS_BASE + HOST_SCP_ATU_SIZE - RSS_IMG_HDR_ATU_SIZE)
 
 /* SI CL0 ATU HEADER logical address start */
@@ -222,15 +207,6 @@
  * RSS ATU Regions for accessing the initiation registers.
  * These will not be used at the same time so logical addresses can overlap.
  */
-
-/* MCP initialisation region logical address start */
-#define HOST_MCP_INIT_BASE_S    RSS_IMAGE_LOADING_END
-/* MCP initialisation region physical address start */
-#define HOST_MCP_INIT_PHYS_BASE 0x2000050020000ULL
-/* MCP initialisation region ATU size */
-#define HOST_MCP_INIT_SIZE      ALIGN_UP(0x1000U, RSS_ATU_PAGE_SIZE)
-/* MCP initialisation region ATU id */
-#define HOST_MCP_INIT_ATU_ID    RSS_ATU_FW_INIT_ID
 
 /* SCP initialisation region logical address start */
 #define HOST_SCP_INIT_BASE_S    RSS_IMAGE_LOADING_END

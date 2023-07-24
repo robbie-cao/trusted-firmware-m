@@ -544,95 +544,6 @@ static int boot_platform_post_load_scp(void)
 }
 
 /*
- * =================================== MCP ====================================
- */
-
-/* Fuction called before mcp firmware is loaded. */
-static int boot_platform_pre_load_mcp(void)
-{
-    enum atu_error_t atu_err;
-
-    BOOT_LOG_INF("BL2: MCP pre load start");
-
-    /* Configure RSS ATU to access RSS header region for MCP */
-    atu_err = atu_initialize_region(&ATU_DEV_S,
-                                    HOST_MCP_IMG_HDR_ATU_ID,
-                                    HOST_MCP_HDR_ATU_BASE_S,
-                                    RSS_HDR_PHYS_BASE,
-                                    RSS_IMG_HDR_ATU_SIZE);
-    if (atu_err != ATU_ERR_NONE) {
-        return 1;
-    }
-    /* Configure RSS ATU to access MCP SRAM code region */
-    atu_err = atu_initialize_region(&ATU_DEV_S,
-                                    HOST_MCP_IMG_CODE_ATU_ID,
-                                    HOST_MCP_CODE_BASE_S,
-                                    HOST_MCP_PHYS_BASE,
-                                    HOST_MCP_ATU_SIZE);
-    if (atu_err != ATU_ERR_NONE) {
-        return 1;
-    }
-    /* Configure RSS ATU to access MCP INIT_CTRL region */
-    atu_err = atu_initialize_region(&ATU_DEV_S,
-                                    HOST_MCP_INIT_ATU_ID,
-                                    HOST_MCP_INIT_BASE_S,
-                                    HOST_MCP_INIT_PHYS_BASE,
-                                    HOST_MCP_INIT_SIZE);
-    if (atu_err != ATU_ERR_NONE) {
-        return 1;
-    }
-
-#ifdef ENABLE_MCP_ATU_CTRL
-    /* Enable MCP ATU control */
-    *(volatile uint32_t *)RSS_ATU_AP |= (0x1 << 1);
-    /* Enable MCP ATU driver to configure the ATU */
-    *(volatile uint32_t *)RSS_SCP_ATU_CFG_BASE = 0x1;
-    BOOT_LOG_WRN("BL2: Enabled MCP ATU CONTROL!");
-#endif
-    BOOT_LOG_INF("BL2: MCP pre load complete");
-
-    return 0;
-}
-
-/* Fuction called after mcp firmware is loaded. */
-static int boot_platform_post_load_mcp(void)
-{
-    enum atu_error_t atu_err;
-    struct mscp_sysctrl *mcp_init = (void *) HOST_MCP_INIT_BASE_S;
-
-    BOOT_LOG_INF("BL2: MCP post load start");
-
-    /* Clear the header from the header region but avoid removing anything that
-     * the region may be incidentally overlapping.
-     */
-    memset(HOST_MCP_IMG_BASE_S, 0, BL2_HEADER_SIZE);
-
-    mcp_init->cpuwait = 0x1;
-    mcp_init->cpuwait = 0x0;
-    BOOT_LOG_INF("MCP is released out of reset");
-
-    /* Close RSS ATU region configured to access RSS header region for MCP */
-    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_MCP_IMG_HDR_ATU_ID);
-    if (atu_err != ATU_ERR_NONE) {
-        return 1;
-    }
-    /* Close RSS ATU region configured to access MCP SRAM code region */
-    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_MCP_IMG_CODE_ATU_ID);
-    if (atu_err != ATU_ERR_NONE) {
-        return 1;
-    }
-    /* Close RSS ATU region configured to access MCP INIT_CTRL region */
-    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_MCP_INIT_ATU_ID);
-    if (atu_err != ATU_ERR_NONE) {
-        return 1;
-    }
-
-    BOOT_LOG_INF("BL2: MCP post load complete");
-
-    return 0;
-}
-
-/*
  * =================================== LCP ====================================
  */
 
@@ -1084,7 +995,6 @@ static int (*boot_platform_pre_load_vector[RSS_FIRMWARE_COUNT]) (void) = {
     [RSS_FIRMWARE_SECURE_ID]        = boot_platform_pre_load_secure,
     [RSS_FIRMWARE_NON_SECURE_ID]    = boot_platform_pre_load_non_secure,
     [RSS_FIRMWARE_SCP_ID]           = boot_platform_pre_load_scp,
-    [RSS_FIRMWARE_MCP_ID]           = boot_platform_pre_load_mcp,
     [RSS_FIRMWARE_LCP_ID]           = boot_platform_pre_load_lcp,
     [RSS_FIRMWARE_SI_CL0_ID]        = boot_platform_pre_load_si_cl0,
     [RSS_FIRMWARE_SI_CL1_ID]        = boot_platform_pre_load_si_cl1,
@@ -1097,7 +1007,6 @@ static int (*boot_platform_post_load_vector[RSS_FIRMWARE_COUNT]) (void) = {
     [RSS_FIRMWARE_SECURE_ID]        = boot_platform_post_load_secure,
     [RSS_FIRMWARE_NON_SECURE_ID]    = boot_platform_post_load_non_secure,
     [RSS_FIRMWARE_SCP_ID]           = boot_platform_post_load_scp,
-    [RSS_FIRMWARE_MCP_ID]           = boot_platform_post_load_mcp,
     [RSS_FIRMWARE_LCP_ID]           = boot_platform_post_load_lcp,
     [RSS_FIRMWARE_SI_CL0_ID]        = boot_platform_post_load_si_cl0,
     [RSS_FIRMWARE_SI_CL1_ID]        = boot_platform_post_load_si_cl1,
@@ -1110,6 +1019,7 @@ static int (*boot_platform_post_load_vector[RSS_FIRMWARE_COUNT]) (void) = {
  */
 int boot_platform_pre_load(uint32_t image_id)
 {
+
     if (image_id >= RSS_FIRMWARE_COUNT) {
         BOOT_LOG_WRN("BL2: no pre load for image %d", image_id);
         return 0;
