@@ -17,7 +17,7 @@
 #define RSS_FIRMWARE_SECURE_ID       0
 #define RSS_FIRMWARE_NON_SECURE_ID   1
 /* Host Firmware */
-#define RSS_FIRMWARE_AP_BL1_ID       2
+#define RSS_FIRMWARE_AP_BL2_ID       2
 #define RSS_FIRMWARE_SI_CL2_ID       3
 #define RSS_FIRMWARE_SI_CL1_ID       4
 #define RSS_FIRMWARE_SI_CL0_ID       5

@@ -141,26 +141,26 @@
 /* ATU ID for LCP ATU CODE region */
 #define HOST_LCP_IMG_CODE_ATU_ID    RSS_ATU_IMG_CODE_LOAD_ID
 
-/* AP BL1 ATU HEADER logical address start */
-#define HOST_AP_BL1_HDR_ATU_BASE_S     (HOST_LCP_CODE_BASE_S + HOST_LCP_ATU_SIZE)
-/*  AP BL1 Code region and SCP ATU CODE logical address start */
-#define HOST_AP_BL1_CODE_BASE_S        (HOST_AP_BL1_HDR_ATU_BASE_S + RSS_IMG_HDR_ATU_SIZE)
-/*  AP BL1 Image address start, offset so end of HEADER is at end of ATU HEADER */
-#define HOST_AP_BL1_IMG_BASE_S         (HOST_AP_BL1_CODE_BASE_S - BL2_HEADER_SIZE)
-/*  AP BL1 ITCM physical address start */
-#define HOST_AP_BL1_PHYS_BASE          (0x0000000000000ULL +  0x42000UL) /* AP initial boot SRAM base address
-/*  AP BL1 ATU CODE size (aligned size of SCP image) */
-#define HOST_AP_BL1_ATU_SIZE           ALIGN_UP(SIZE_DEF_AP_BL1_IMAGE, RSS_ATU_PAGE_SIZE)
-/*  AP BL1 ID for SCP ATU HEADER region */
-#define HOST_AP_BL1_IMG_HDR_ATU_ID     RSS_ATU_IMG_HDR_LOAD_ID
-/*  AP BL1 ID for SCP ATU CODE region */
-#define HOST_AP_BL1_IMG_CODE_ATU_ID    RSS_ATU_IMG_CODE_LOAD_ID
+/* AP BL2 ATU HEADER logical address start */
+#define HOST_AP_BL2_HDR_ATU_BASE_S     (HOST_LCP_CODE_BASE_S + HOST_LCP_ATU_SIZE)
+/*  AP BL2 Code region and SCP ATU CODE logical address start */
+#define HOST_AP_BL2_CODE_BASE_S        (HOST_AP_BL2_HDR_ATU_BASE_S + RSS_IMG_HDR_ATU_SIZE)
+/*  AP BL2 Image address start, offset so end of HEADER is at end of ATU HEADER */
+#define HOST_AP_BL2_IMG_BASE_S         (HOST_AP_BL2_CODE_BASE_S - BL2_HEADER_SIZE)
+/*  AP BL2 ITCM physical address start */
+#define HOST_AP_BL2_PHYS_BASE          (0x0000000000000ULL +  0x42000UL) /* AP initial boot SRAM base address
+/*  AP BL2 ATU CODE size (aligned size of SCP image) */
+#define HOST_AP_BL2_ATU_SIZE           ALIGN_UP(SIZE_DEF_AP_BL2_IMAGE, RSS_ATU_PAGE_SIZE)
+/*  AP BL2 ID for SCP ATU HEADER region */
+#define HOST_AP_BL2_IMG_HDR_ATU_ID     RSS_ATU_IMG_HDR_LOAD_ID
+/*  AP BL2 ID for SCP ATU CODE region */
+#define HOST_AP_BL2_IMG_CODE_ATU_ID    RSS_ATU_IMG_CODE_LOAD_ID
 
 /* ATU HEADER physical address start (mapped so end of region is end of SCP ITCM) */
 #define RSS_HDR_PHYS_BASE              (HOST_SCP_PHYS_BASE + HOST_SCP_ATU_SIZE - RSS_IMG_HDR_ATU_SIZE)
 
 /* SI CL0 ATU HEADER logical address start */
-#define HOST_SI_CL0_HDR_ATU_BASE_S     (HOST_AP_BL1_CODE_BASE_S + HOST_AP_BL1_ATU_SIZE)
+#define HOST_SI_CL0_HDR_ATU_BASE_S     (HOST_AP_BL2_CODE_BASE_S + HOST_AP_BL2_ATU_SIZE)
 /*  SI CL0 Code region and AP ATU CODE logical address start */
 #define HOST_SI_CL0_CODE_BASE_S        (HOST_SI_CL0_HDR_ATU_BASE_S + RSS_IMG_HDR_ATU_SIZE)
 /*  SI CL0 Image address start, offset so end of HEADER is at end of ATU HEADER */

@@ -162,23 +162,19 @@ int boot_get_image_exec_ram_info(uint32_t image_id,
         *exec_ram_start = HOST_LCP_IMG_BASE_S;
         *exec_ram_size  = HOST_LCP_ATU_SIZE;
         rc = 0;
-    }
-    else if (image_id == RSS_FIRMWARE_AP_BL1_ID) {
-        *exec_ram_start = HOST_AP_BL1_IMG_BASE_S;
-        *exec_ram_size  = HOST_AP_BL1_ATU_SIZE;
+    } else if (image_id == RSS_FIRMWARE_AP_BL2_ID) {
+        *exec_ram_start = HOST_AP_BL2_IMG_BASE_S;
+        *exec_ram_size  = HOST_AP_BL2_ATU_SIZE;
         rc = 0;
-    }
-    else if (image_id == RSS_FIRMWARE_SI_CL0_ID) {
+    } else if (image_id == RSS_FIRMWARE_SI_CL0_ID) {
         *exec_ram_start = HOST_SI_CL0_IMG_BASE_S;
         *exec_ram_size  = HOST_SI_CL0_ATU_SIZE;
         rc = 0;
-    }
-    else if (image_id == RSS_FIRMWARE_SI_CL1_ID) {
+    } else if (image_id == RSS_FIRMWARE_SI_CL1_ID) {
         *exec_ram_start = HOST_SI_CL1_IMG_BASE_S;
         *exec_ram_size  = HOST_SI_CL1_ATU_SIZE;
         rc = 0;
-    }
-    else if (image_id == RSS_FIRMWARE_SI_CL2_ID) {
+    } else if (image_id == RSS_FIRMWARE_SI_CL2_ID) {
         *exec_ram_start = HOST_SI_CL2_IMG_BASE_S;
         *exec_ram_size  = HOST_SI_CL2_ATU_SIZE;
         rc = 0;

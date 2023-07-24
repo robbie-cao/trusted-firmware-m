@@ -688,52 +688,52 @@ static int boot_platform_post_load_lcp(void)
 }
 
 /*
- * ================================== AP BL1 ==================================
+ * ================================== AP BL2 ==================================
  */
 
-/* Fuction called before ap bl1 firmware is loaded. */
-static int boot_platform_pre_load_ap_bl1(void)
+/* Fuction called before ap bl2 firmware is loaded. */
+static int boot_platform_pre_load_ap_bl2(void)
 {
     enum atu_error_t atu_err;
 
-    BOOT_LOG_INF("BL2: AP BL1 pre load start");
+    BOOT_LOG_INF("BL2: AP BL2 pre load start");
 
-    /* Configure RSS ATU to access RSS header region for AP BL1 */
+    /* Configure RSS ATU to access RSS header region for AP BL2 */
     atu_err = atu_initialize_region(&ATU_DEV_S,
-                                    HOST_AP_BL1_IMG_HDR_ATU_ID,
-                                    HOST_AP_BL1_HDR_ATU_BASE_S,
+                                    HOST_AP_BL2_IMG_HDR_ATU_ID,
+                                    HOST_AP_BL2_HDR_ATU_BASE_S,
                                     RSS_HDR_PHYS_BASE,
                                     RSS_IMG_HDR_ATU_SIZE);
     if (atu_err != ATU_ERR_NONE) {
         return 1;
     }
-    /* Configure RSS ATU to access AP BL1 SRAM code region */
+    /* Configure RSS ATU to access AP BL2 SRAM code region */
     atu_err = atu_initialize_region(&ATU_DEV_S,
-                                    HOST_AP_BL1_IMG_CODE_ATU_ID,
-                                    HOST_AP_BL1_CODE_BASE_S,
-                                    HOST_AP_BL1_PHYS_BASE,
-                                    HOST_AP_BL1_ATU_SIZE);
+                                    HOST_AP_BL2_IMG_CODE_ATU_ID,
+                                    HOST_AP_BL2_CODE_BASE_S,
+                                    HOST_AP_BL2_PHYS_BASE,
+                                    HOST_AP_BL2_ATU_SIZE);
     if (atu_err != ATU_ERR_NONE) {
         return 1;
     }
 
-    BOOT_LOG_INF("BL2: AP BL1 pre load complete");
+    BOOT_LOG_INF("BL2: AP BL2 pre load complete");
 
     return 0;
 }
 
-/* Fuction called after ap bl1 firmware is loaded. */
-static int boot_platform_post_load_ap_bl1(void)
+/* Fuction called after ap bl2 firmware is loaded. */
+static int boot_platform_post_load_ap_bl2(void)
 {
     enum atu_error_t atu_err;
     enum mhu_v3_x_error_t mhu_error;
 
-    BOOT_LOG_INF("BL2: AP BL1 post load start");
+    BOOT_LOG_INF("BL2: AP BL2 post load start");
 
     /* Clear the header from the header region but avoid removing anything that
      * the region may be incidentally overlapping.
      */
-    memset(HOST_AP_BL1_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+    memset(HOST_AP_BL2_IMG_BASE_S, 0, BL2_HEADER_SIZE);
 
     /*
      * Send doorbell to SCP to indicate that the RSS initialization is
@@ -747,18 +747,18 @@ static int boot_platform_post_load_ap_bl1(void)
     }
     BOOT_LOG_INF("BL2: RSS-->SCP doorbell set!");
 
-    /* Close RSS ATU region configured to access RSS header region for AP BL1 */
-    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_AP_BL1_IMG_HDR_ATU_ID);
+    /* Close RSS ATU region configured to access RSS header region for AP BL2 */
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_AP_BL2_IMG_HDR_ATU_ID);
     if (atu_err != ATU_ERR_NONE) {
         return 1;
     }
-    /* Close RSS ATU region configured to access AP BL1 SRAM code region */
-    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_AP_BL1_IMG_CODE_ATU_ID);
+    /* Close RSS ATU region configured to access AP BL2 SRAM code region */
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_AP_BL2_IMG_CODE_ATU_ID);
     if (atu_err != ATU_ERR_NONE) {
         return 1;
     }
 
-    BOOT_LOG_INF("BL2: AP BL1 post load complete");
+    BOOT_LOG_INF("BL2: AP BL2 post load complete");
 
     return 0;
 }
@@ -783,7 +783,7 @@ static int boot_platform_pre_load_si_cl0(void)
     if (atu_err != ATU_ERR_NONE) {
         return 1;
     }
-    /* Configure RSS ATU to access AP BL1 SRAM code region */
+    /* Configure RSS ATU to access AP BL2 SRAM code region */
     atu_err = atu_initialize_region(&ATU_DEV_S,
                                     HOST_SI_CL0_IMG_CODE_ATU_ID,
                                     HOST_SI_CL0_CODE_BASE_S,
@@ -857,7 +857,7 @@ static int boot_platform_pre_load_si_cl1(void)
     if (atu_err != ATU_ERR_NONE) {
         return 1;
     }
-    /* Configure RSS ATU to access AP BL1 SRAM code region */
+    /* Configure RSS ATU to access AP BL2 SRAM code region */
     atu_err = atu_initialize_region(&ATU_DEV_S,
                                     HOST_SI_CL1_IMG_CODE_ATU_ID,
                                     HOST_SI_CL1_CODE_BASE_S,
@@ -999,7 +999,7 @@ static int (*boot_platform_pre_load_vector[RSS_FIRMWARE_COUNT]) (void) = {
     [RSS_FIRMWARE_SI_CL0_ID]        = boot_platform_pre_load_si_cl0,
     [RSS_FIRMWARE_SI_CL1_ID]        = boot_platform_pre_load_si_cl1,
     [RSS_FIRMWARE_SI_CL2_ID]        = boot_platform_pre_load_si_cl2,
-    [RSS_FIRMWARE_AP_BL1_ID]        = boot_platform_pre_load_ap_bl1,
+    [RSS_FIRMWARE_AP_BL2_ID]        = boot_platform_pre_load_ap_bl2,
 };
 
 /* Array of function pointers to call after each image is loaded indexed by image id */
@@ -1011,7 +1011,7 @@ static int (*boot_platform_post_load_vector[RSS_FIRMWARE_COUNT]) (void) = {
     [RSS_FIRMWARE_SI_CL0_ID]        = boot_platform_post_load_si_cl0,
     [RSS_FIRMWARE_SI_CL1_ID]        = boot_platform_post_load_si_cl1,
     [RSS_FIRMWARE_SI_CL2_ID]        = boot_platform_post_load_si_cl2,
-    [RSS_FIRMWARE_AP_BL1_ID]        = boot_platform_post_load_ap_bl1,
+    [RSS_FIRMWARE_AP_BL2_ID]        = boot_platform_post_load_ap_bl2,
 };
 
 /*

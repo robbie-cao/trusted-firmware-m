@@ -34,8 +34,8 @@
  * 0x3122_0000 SCP BL1 secondary slot (512 KB)
  * 0x313A_0000 LCP BL1 primary slot (64 KB)
  * 0x313B_0000 LCP BL1 secondary slot (64 KB)
- * 0x312A_0000 AP BL1 primary slot (512 KB)
- * 0x3132_0000 AP BL1 secondary slot (512 KB)
+ * 0x312A_0000 AP BL2 primary slot (512 KB)
+ * 0x3132_0000 AP BL2 secondary slot (512 KB)
  */
 
 /* This header file is included from linker scatter file as well, where only a
@@ -52,7 +52,7 @@
 #define FLASH_NS_PARTITION_SIZE         (SIZE_DEF_NS_IMAGE)  /* NS  partition */
 #define FLASH_SCP_PARTITION_SIZE        (SIZE_DEF_SCP_IMAGE) /* SCP partition */
 #define FLASH_LCP_PARTITION_SIZE        (SIZE_DEF_LCP_IMAGE) /* LCP  partition */
-#define FLASH_AP_BL1_PARTITION_SIZE     (SIZE_DEF_AP_BL1_IMAGE) /* AP BL1  partition */
+#define FLASH_AP_BL2_PARTITION_SIZE     (SIZE_DEF_AP_BL2_IMAGE) /* AP BL2  partition */
 #define FLASH_SI_CL0_PARTITION_SIZE     (SIZE_DEF_SI_CL0_IMAGE)  /* SI CL0 partition */
 #define FLASH_SI_CL1_PARTITION_SIZE     (SIZE_DEF_SI_CL1_IMAGE)  /* SI CL1 partition */
 #define FLASH_SI_CL2_PARTITION_SIZE     (SIZE_DEF_SI_CL2_IMAGE)  /* SI CL2 partition */
@@ -117,14 +117,14 @@
 #define FLASH_AREA_9_ID            (FLASH_AREA_8_ID + 1)
 #define FLASH_AREA_9_OFFSET        (FLASH_AREA_8_OFFSET + FLASH_AREA_8_SIZE)
 #define FLASH_AREA_9_SIZE          (FLASH_LCP_PARTITION_SIZE)
-/* AP BL1 image primary slot */
+/* AP BL2 image primary slot */
 #define FLASH_AREA_10_ID            (FLASH_AREA_9_ID + 1)
 #define FLASH_AREA_10_OFFSET        (FLASH_AREA_9_OFFSET + FLASH_AREA_9_SIZE)
-#define FLASH_AREA_10_SIZE          (FLASH_AP_BL1_PARTITION_SIZE)
-/* AP BL1 image secondary slot */
+#define FLASH_AREA_10_SIZE          (FLASH_AP_BL2_PARTITION_SIZE)
+/* AP BL2 image secondary slot */
 #define FLASH_AREA_11_ID            (FLASH_AREA_10_ID + 1)
 #define FLASH_AREA_11_OFFSET        (FLASH_AREA_10_OFFSET + FLASH_AREA_10_SIZE)
-#define FLASH_AREA_11_SIZE          (FLASH_AP_BL1_PARTITION_SIZE)
+#define FLASH_AREA_11_SIZE          (FLASH_AP_BL2_PARTITION_SIZE)
 /* SI0 image primary slot */
 #define FLASH_AREA_12_ID            (FLASH_AREA_11_ID + 1)
 #define FLASH_AREA_12_OFFSET        (FLASH_AREA_11_OFFSET + FLASH_AREA_11_SIZE)
@@ -165,7 +165,7 @@
          ((x) == RSS_FIRMWARE_NON_SECURE_ID) ? FLASH_AREA_3_ID : \
          ((x) == RSS_FIRMWARE_SCP_ID)        ? FLASH_AREA_6_ID : \
          ((x) == RSS_FIRMWARE_LCP_ID)        ? FLASH_AREA_8_ID : \
-         ((x) == RSS_FIRMWARE_AP_BL1_ID)     ? FLASH_AREA_10_ID : \
+         ((x) == RSS_FIRMWARE_AP_BL2_ID)     ? FLASH_AREA_10_ID : \
          ((x) == RSS_FIRMWARE_SI_CL0_ID)     ? FLASH_AREA_12_ID : \
          ((x) == RSS_FIRMWARE_SI_CL1_ID)     ? FLASH_AREA_14_ID : \
          ((x) == RSS_FIRMWARE_SI_CL2_ID)     ? FLASH_AREA_16_ID : \
@@ -175,7 +175,7 @@
          ((x) == RSS_FIRMWARE_NON_SECURE_ID) ? FLASH_AREA_5_ID : \
          ((x) == RSS_FIRMWARE_SCP_ID)        ? FLASH_AREA_7_ID : \
          ((x) == RSS_FIRMWARE_LCP_ID)        ? FLASH_AREA_9_ID : \
-         ((x) == RSS_FIRMWARE_AP_BL1_ID)     ? FLASH_AREA_11_ID : \
+         ((x) == RSS_FIRMWARE_AP_BL2_ID)     ? FLASH_AREA_11_ID : \
          ((x) == RSS_FIRMWARE_SI_CL0_ID)     ? FLASH_AREA_13_ID : \
          ((x) == RSS_FIRMWARE_SI_CL1_ID)     ? FLASH_AREA_15_ID : \
          ((x) == RSS_FIRMWARE_SI_CL2_ID)     ? FLASH_AREA_17_ID : \
