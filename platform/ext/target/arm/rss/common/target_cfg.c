@@ -26,6 +26,7 @@
 #include "tfm_plat_defs.h"
 #include "region.h"
 #include "dma350_lib.h"
+#include "device_cfg.h"
 #include "device_definition.h"
 
 /* Throw out bus error when an access causes security violation */
@@ -208,6 +209,12 @@ enum tfm_plat_err_t nvic_interrupt_target_state_cfg(void)
     NVIC_ClearTargetState(MPC_IRQn);
     NVIC_ClearTargetState(PPC_IRQn);
 
+#ifdef MHU_V3_SCP_TO_RSS
+    /* Target SCP-->RSS MHU interrupt to secure state */
+    NVIC_ClearTargetState(CMU_MHU4_Receiver_IRQn);
+#endif
+    NVIC_ClearTargetState(CMU_MHU0_Receiver_IRQn);
+
     return TFM_PLAT_ERR_SUCCESS;
 }
 
@@ -248,6 +255,14 @@ enum tfm_plat_err_t nvic_interrupt_enable(void)
 
     NVIC_ClearPendingIRQ(PPC_IRQn);
     NVIC_EnableIRQ(PPC_IRQn);
+
+#ifdef MHU_V3_SCP_TO_RSS
+    /* Enable SCP<-->RSS MHU Interrupt */
+    NVIC_ClearPendingIRQ(CMU_MHU4_Receiver_IRQn);
+    NVIC_EnableIRQ(CMU_MHU4_Receiver_IRQn);
+#endif
+    NVIC_ClearPendingIRQ(CMU_MHU0_Receiver_IRQn);
+    NVIC_EnableIRQ(CMU_MHU0_Receiver_IRQn);
 
     return TFM_PLAT_ERR_SUCCESS;
 }

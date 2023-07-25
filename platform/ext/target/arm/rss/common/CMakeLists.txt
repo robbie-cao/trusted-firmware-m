@@ -22,7 +22,9 @@ target_compile_definitions(platform_region_defs
     INTERFACE
         $<$<BOOL:${RSS_XIP}>:RSS_XIP>
         $<$<BOOL:${RSS_DEBUG_UART}>:RSS_DEBUG_UART>
+        $<$<BOOL:${RSS_USE_HOST_UART}>:RSS_USE_HOST_UART>
         $<$<BOOL:${RSS_GPT_SUPPORT}>:RSS_GPT_SUPPORT>
+        $<$<BOOL:${RSS_HAS_EXPANSION_PERIPHERALS}>:RSS_HAS_EXPANSION_PERIPHERALS>
 )
 
 #========================= Platform common defs ===============================#
@@ -101,6 +103,10 @@ if (TFM_MULTI_CORE_TOPOLOGY)
     add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/rss_comms rss_comms)
 endif()
 
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/provisioning provisioning)
+
+add_subdirectory(${PLATFORM_DIR}/ext/accelerator/cc312/cc312-rom cc312-rom)
+
 target_include_directories(platform_s
     PUBLIC
         .
@@ -129,7 +135,6 @@ target_sources(platform_s
         cmsis_drivers/Driver_MPC.c
         cmsis_drivers/Driver_PPC.c
         device/source/device_definition.c
-        device/source/host_device_definition.c
         device/source/system_core_init.c
         libraries/dma350_lib.c
         native_drivers/atu_rss_drv.c
@@ -137,8 +142,6 @@ target_sources(platform_s
         native_drivers/dma350_ch_drv.c
         native_drivers/kmu_drv.c
         native_drivers/sic_drv.c
-        native_drivers/mhu_v2_x.c
-        native_drivers/mhu_wrapper_v2_x.c
         native_drivers/ppc_rss_drv.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/counter/armv8m/syscounter_armv8-m_cntrl_drv.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/mpc_sie/mpc_sie_drv.c
@@ -154,7 +157,6 @@ target_sources(platform_s
         nv_counters.c
         attest_hal.c
         tfm_hal_platform_reset.c
-        provisioning.c
         $<$<BOOL:${PLATFORM_SVC_HANDLERS}>:${CMAKE_CURRENT_SOURCE_DIR}/platform_svc_handler.c>
         $<$<BOOL:${PLATFORM_SVC_HANDLERS}>:${CMAKE_CURRENT_SOURCE_DIR}/libraries/dma350_checker_layer.c>
         $<$<BOOL:${PLATFORM_SVC_HANDLERS}>:${CMAKE_CURRENT_SOURCE_DIR}/device/source/dma350_checker_device_defs.c>
@@ -210,7 +212,6 @@ endif()
 target_sources(platform_ns
     PRIVATE
         device/source/device_definition.c
-        device/source/host_device_definition.c
         device/source/system_core_init.c
         $<$<BOOL:${RSS_DEBUG_UART}>:${CMAKE_CURRENT_SOURCE_DIR}/cmsis_drivers/Driver_USART_cmsdk.c>
         $<$<BOOL:${RSS_DEBUG_UART}>:${PLATFORM_DIR}/ext/target/arm/drivers/usart/cmsdk/uart_cmsdk_drv.c>
@@ -242,9 +243,7 @@ target_include_directories(platform_ns
 target_sources(platform_bl2
     PRIVATE
         tfm_hal_platform_reset.c
-        bl2/provisioning.c
         device/source/device_definition.c
-        device/source/host_device_definition.c
         device/source/system_core_init.c
         $<$<BOOL:${PLATFORM_HAS_BOOT_DMA}>:${CMAKE_CURRENT_SOURCE_DIR}/libraries/dma350_lib.c>
         native_drivers/atu_rss_drv.c
@@ -252,15 +251,12 @@ target_sources(platform_bl2
         $<$<BOOL:${PLATFORM_HAS_BOOT_DMA}>:${CMAKE_CURRENT_SOURCE_DIR}/native_drivers/dma350_drv.c>
         native_drivers/kmu_drv.c
         native_drivers/sic_drv.c
-        native_drivers/mhu_v2_x.c
         $<$<BOOL:${RSS_DEBUG_UART}>:${CMAKE_CURRENT_SOURCE_DIR}/cmsis_drivers/Driver_USART_cmsdk.c>
         $<$<BOOL:${RSS_DEBUG_UART}>:${PLATFORM_DIR}/ext/target/arm/drivers/usart/cmsdk/uart_cmsdk_drv.c>
         native_drivers/lcm_drv.c
+        native_drivers/tower_nci_drv.c
         otp_lcm.c
         nv_counters.c
-        fip_parser/fip_parser.c
-        fip_parser/host_flash_atu.c
-        $<$<BOOL:${RSS_GPT_SUPPORT}>:${CMAKE_CURRENT_SOURCE_DIR}/fip_parser/gpt.c>
         $<$<BOOL:${RSS_XIP}>:${CMAKE_CURRENT_SOURCE_DIR}/bl2/sic_boot.c>
 )
 
@@ -286,7 +282,6 @@ target_include_directories(platform_bl2
 
     PRIVATE
         ${PLATFORM_DIR}/..
-        ./fip_parser
 )
 
 target_compile_definitions(platform_bl2
@@ -312,28 +307,24 @@ target_compile_definitions(platform_bl2
         $<$<AND:$<BOOL:${CONFIG_TFM_BOOT_STORE_MEASUREMENTS}>,$<BOOL:${TFM_PARTITION_MEASURED_BOOT}>>:MEASURED_BOOT_API>
 )
 
-#========================= Platform BL1 =======================================#
+#========================= Platform bl1_1 =======================================#
 
-target_sources(platform_bl1
+target_sources(platform_bl1_1
     PRIVATE
-        ./bl1/boot_hal_bl1.c
+        ./bl1/boot_hal_bl1_1.c
         ./device/source/device_definition.c
-        ./device/source/host_device_definition.c
         ./device/source/system_core_init.c
         ./native_drivers/atu_rss_drv.c
         ./native_drivers/kmu_drv.c
-        $<$<AND:$<BOOL:${TFM_BL1_LOGGING}>,$<BOOL:${RSS_DEBUG_UART}>>:${CMAKE_CURRENT_SOURCE_DIR}/cmsis_drivers/Driver_USART_cmsdk.c>
-        $<$<AND:$<BOOL:${TFM_BL1_LOGGING}>,$<BOOL:${RSS_DEBUG_UART}>>:${PLATFORM_DIR}/ext/target/arm/drivers/usart/cmsdk/uart_cmsdk_drv.c>
         ./native_drivers/lcm_drv.c
-        ./otp_lcm.c
         ./nv_counters.c
+        ./otp_lcm.c
         ./tfm_hal_platform_reset.c
-        ./fip_parser/fip_parser.c
-        ./fip_parser/host_flash_atu.c
-        $<$<BOOL:${RSS_GPT_SUPPORT}>:${CMAKE_CURRENT_SOURCE_DIR}/fip_parser/gpt.c>
+        $<$<BOOL:${RSS_DEBUG_UART}>:${CMAKE_CURRENT_SOURCE_DIR}/cmsis_drivers/Driver_USART_cmsdk.c>
+        $<$<BOOL:${RSS_DEBUG_UART}>:${PLATFORM_DIR}/ext/target/arm/drivers/usart/cmsdk/uart_cmsdk_drv.c>
 )
 
-target_include_directories(platform_bl1_interface
+target_include_directories(platform_bl1_1_interface
     INTERFACE
         .
         ./cmsis_drivers
@@ -341,23 +332,83 @@ target_include_directories(platform_bl1_interface
         ./device/config
         ./device/include
         ./native_drivers
-        ./fip_parser
         ${PLATFORM_DIR}/ext/target/arm/drivers/counter/armv8m
         ${PLATFORM_DIR}/ext/target/arm/drivers/mpc_sie
         ${PLATFORM_DIR}/ext/target/arm/drivers/timer/armv8m
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/cmsdk
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/common
+        ${PLATFORM_DIR}/ext/accelerator/cc312/cc312-rom
 )
 
-target_compile_definitions(platform_bl1
+target_compile_definitions(platform_bl1_1_interface
+    INTERFACE
+        $<$<AND:$<BOOL:${CONFIG_TFM_BOOT_STORE_MEASUREMENTS}>,$<BOOL:${TFM_PARTITION_MEASURED_BOOT}>>:MEASURED_BOOT_API>
+        RSS_AMOUNT=${RSS_AMOUNT}
+)
+
+target_link_libraries(platform_bl1_1
+    PRIVATE
+        cc312_rom
+)
+
+target_sources(bl1_1_shared_lib
+    PRIVATE
+        $<$<NOT:$<BOOL:${TFM_BL1_SOFTWARE_CRYPTO}>>:${CMAKE_CURRENT_SOURCE_DIR}/bl1/cc312_rom_crypto.c>
+        $<$<NOT:$<BOOL:${TFM_BL1_DUMMY_TRNG}>>:${CMAKE_CURRENT_SOURCE_DIR}/bl1/cc312_rom_trng.c>
+)
+
+target_link_libraries(cc312_rom
+    PRIVATE
+        platform_bl1_1
+)
+
+#========================= Platform BL1_2 =====================================#
+
+target_sources(platform_bl1_2
+    PRIVATE
+        ./bl1/boot_hal_bl1_2.c
+        ./rss_key_derivation.c
+)
+
+target_include_directories(platform_bl1_2
+    PRIVATE
+        .
+)
+
+target_compile_definitions(platform_bl1_2
     PUBLIC
         $<$<AND:$<BOOL:${CONFIG_TFM_BOOT_STORE_MEASUREMENTS}>,$<BOOL:${TFM_PARTITION_MEASURED_BOOT}>>:MEASURED_BOOT_API>
+        $<$<BOOL:${RSS_AMOUNT}>:RSS_AMOUNT=${RSS_AMOUNT}>
 )
 
-target_sources(bl1_1_lib
-    INTERFACE
-        ./bl1/provisioning.c
-)
+if(RSS_USE_HOST_FLASH)
+    add_subdirectory(./fip_parser)
+endif()
+
+#========================== MHU ===============================================#
+
+if(PLAT_MHU_VERSION EQUAL 2)
+    target_sources(platform_s
+        PRIVATE
+            native_drivers/mhu_v2_x.c
+            native_drivers/mhu_wrapper_v2_x.c
+    )
+    target_sources(platform_bl2
+        PRIVATE
+            native_drivers/mhu_v2_x.c
+    )
+elseif(PLAT_MHU_VERSION EQUAL 3)
+    target_sources(platform_s
+        PRIVATE
+            native_drivers/mhu_v3_x.c
+            native_drivers/mhu_wrapper_v3_x.c
+    )
+    target_sources(platform_bl2
+        PRIVATE
+            native_drivers/mhu_v3_x.c
+            native_drivers/mhu_wrapper_v3_x.c
+    )
+endif()
 
 #========================= ns_agent_mailbox ===================================#
 
@@ -564,3 +615,18 @@ if (RSS_XIP)
         DEPENDS bin/tfm_ns_sic_tables_signed.bin
     )
 endif()
+
+############################## BL1 DMA ###################################
+add_custom_target(bl1_1_dma_bin
+    ALL
+    SOURCES bl1_1_dma.bin ${bin_dir}/bl1_1_dma.bin
+)
+
+add_custom_command(OUTPUT bl1_1_dma.bin
+    OUTPUT ${bin_dir}/bl1_1_dma.bin
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/bl1/scripts/create_bl1_1_dma_bin.py
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/bl1/scripts/create_bl1_1_dma_bin.py
+                    --input_file ${CMAKE_CURRENT_SOURCE_DIR}/bl1/scripts/dma_config.yaml
+                    --output_file bl1_1_dma.bin
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/bl1_1_dma.bin $<TARGET_FILE_DIR:bl1_1>
+)

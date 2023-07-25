@@ -83,7 +83,7 @@
 /* Attest Partition Configs */
 
 /* Include optional claims in initial attestation token */
-#define ATTEST_INCLUDE_OPTIONAL_CLAIMS         1
+#define ATTEST_INCLUDE_OPTIONAL_CLAIMS         0
 
 /* Include COSE key-id in initial attestation token */
 #define ATTEST_INCLUDE_COSE_KEY_ID             0
@@ -141,9 +141,6 @@
 #define PS_STACK_SIZE                          0x700
 
 /* SPM Partition Configs */
-
-/* The maximal number of secure services that are connected or requested at the same time */
-#define CONFIG_TFM_CONN_HANDLE_MAX_NUM         3
 
 /* Disable the doorbell APIs */
 #define CONFIG_TFM_DOORBELL_API                0

@@ -475,4 +475,8 @@ struct rss_ewic_t {
     volatile uint32_t cidr2;          /* 0xFF8 (R/ ) Component ID 2 */
     volatile uint32_t cidr3;          /* 0xFFC (R/ ) Component ID 3 */
 };
+
+struct mscp_sysctrl {
+    volatile uint32_t cpuwait;
+};
 #endif /* __PLATFORM_REGS_H__ */

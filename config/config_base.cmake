@@ -31,7 +31,7 @@ set(MCUBOOT_PATH                        "DOWNLOAD"  CACHE PATH      "Path to MCU
 set(MCUBOOT_VERSION                     "v1.10.0"   CACHE STRING    "The version of MCUboot to use")
 
 set(PSA_ARCH_TESTS_PATH                 "DOWNLOAD"  CACHE PATH      "Path to PSA arch tests (or DOWNLOAD to fetch automatically")
-set(PSA_ARCH_TESTS_VERSION              "cf8bd71"   CACHE STRING    "The version of PSA arch tests to use")
+set(PSA_ARCH_TESTS_VERSION              "5c57920"   CACHE STRING    "The version of PSA arch tests to use")
 set(PSA_ARCH_TESTS_FORCE_PATCH          OFF         CACHE BOOL      "Always apply PSA arch tests patches")
 
 set(PLATFORM_PSA_ADAC_SECURE_DEBUG      FALSE       CACHE BOOL      "Whether to use psa-adac secure debug.")
@@ -111,6 +111,7 @@ set(PLATFORM_DEFAULT_OTP_WRITEABLE      ON          CACHE BOOL      "Use OTP mem
 set(PLATFORM_DEFAULT_PROVISIONING       ON          CACHE BOOL      "Use default provisioning implementation")
 set(PLATFORM_DEFAULT_SYSTEM_RESET_HALT  ON          CACHE BOOL      "Use default system reset/halt implementation")
 set(PLATFORM_DEFAULT_IMAGE_SIGNING      ON          CACHE BOOL      "Use default image signing implementation")
+set(PLATFORM_DEFAULT_MCUBOOT_IMAGE_NUMBER  ON       CACHE BOOL      "Use default value of MCUBOOT_IMAGE_NUMBER")
 
 set(TFM_DUMMY_PROVISIONING              ON          CACHE BOOL      "Provision with dummy values. NOT to be used in production")
 
@@ -134,6 +135,7 @@ set(TFM_PARTITION_INITIAL_ATTESTATION   OFF         CACHE BOOL      "Enable Init
 set(SYMMETRIC_INITIAL_ATTESTATION       OFF         CACHE BOOL      "Use symmetric crypto for inital attestation")
 set(ATTEST_INCLUDE_TEST_CODE            OFF         CACHE BOOL      "Include minimal development tests in the initial attestation regression test suite")
 set(ATTEST_KEY_BITS                     256         CACHE STRING    "The size of the initial attestation key in bits")
+set(PSA_INITIAL_ATTEST_MAX_TOKEN_SIZE   0x250       CACHE STRING    "The maximum possible size of a token")
 
 set(TFM_PARTITION_PLATFORM              OFF         CACHE BOOL      "Enable Platform partition")
 

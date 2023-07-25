@@ -1,5 +1,7 @@
 /*
  * Copyright (c) 2019-2023 Arm Limited. All rights reserved.
+ * Copyright (c) 2023 Cypress Semiconductor Corporation (an Infineon company)
+ * or an affiliate of Cypress Semiconductor Corporation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,10 +99,6 @@
 #define NS_HEAP_SIZE            (0x0001000)
 #define NS_STACK_SIZE           (0x0001000)
 
-/* This size of buffer is big enough to store an attestation
- * token produced by initial attestation service
- */
-#define PSA_INITIAL_ATTEST_TOKEN_MAX_SIZE   (0x800)
 /* This size of buffer is big enough to store an array of all the
  * boot records/measurements which is encoded in CBOR format.
  */
@@ -186,7 +184,7 @@
 /* Bootloader regions */
 /* BL1_1 is XIP from ROM */
 #define BL1_1_CODE_START  (ROM_BASE_S)
-#define BL1_1_CODE_SIZE   (0xE000) /* 56 KB */
+#define BL1_1_CODE_SIZE   (ROM_SIZE - ROM_DMA_ICS_SIZE) /* 28 KiB */
 #define BL1_1_CODE_LIMIT  (BL1_1_CODE_START + BL1_1_CODE_SIZE - 1)
 
 #define PROVISIONING_DATA_START (BL1_1_CODE_START + BL1_1_CODE_SIZE)
@@ -195,7 +193,7 @@
 
 /* BL1_2 is in the ITCM */
 #define BL1_2_CODE_START  (ITCM_BASE_S)
-#define BL1_2_CODE_SIZE   (0x2000) /* 8 KiB */
+#define BL1_2_CODE_SIZE   (0x3000) /* 12 KiB */
 #define BL1_2_CODE_LIMIT  (BL1_2_CODE_START + BL1_2_CODE_SIZE - 1)
 
 /* BL2 is aligned to the start of the combined secure/non-secure data region */
@@ -235,7 +233,16 @@
 #define BOOT_TFM_SHARED_DATA_LIMIT (BOOT_TFM_SHARED_DATA_BASE + \
                                     BOOT_TFM_SHARED_DATA_SIZE - 1)
 
-/* AP to RSS MHU receiver interrupt */
-#define MAILBOX_IRQ CMU_MHU0_Receiver_IRQn
+#define PROVISIONING_BUNDLE_CODE_START ITCM_BASE_S
+#define PROVISIONING_BUNDLE_CODE_SIZE  ITCM_SIZE
+#define PROVISIONING_BUNDLE_VALUES_START (BL1_2_DATA_START)
+#define PROVISIONING_BUNDLE_VALUES_SIZE (0x3800)
+#define PROVISIONING_BUNDLE_DATA_START (PROVISIONING_BUNDLE_VALUES_START + \
+                                        PROVISIONING_BUNDLE_VALUES_SIZE)
+#define PROVISIONING_BUNDLE_DATA_SIZE (BL1_2_DATA_SIZE - \
+                                       PROVISIONING_BUNDLE_VALUES_SIZE)
+
+#define CM_PROVISIONING_BUNDLE_START VM0_BASE_S
+#define DM_PROVISIONING_BUNDLE_START VM1_BASE_S
 
 #endif /* __REGION_DEFS_H__ */

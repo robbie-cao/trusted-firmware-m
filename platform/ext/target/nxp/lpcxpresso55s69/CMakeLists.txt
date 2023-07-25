@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 # Copyright (c) 2020-2022, Arm Limited. All rights reserved.
-# Copyright (c) 2021, NXP Semiconductors. All rights reserved.
 # Copyright (c) 2020, Linaro. All rights reserved.
+# Copyright 2021-2023 NXP. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -42,8 +42,9 @@ target_sources(tfm_s
         ${CMAKE_CURRENT_SOURCE_DIR}/Device/Source/startup_lpcxpresso55s69.c
 )
 target_add_scatter_file(tfm_s
-    $<$<C_COMPILER_ID:GNU>:${CMAKE_SOURCE_DIR}/platform/ext/common/gcc/tfm_common_s.ld>
-    $<$<C_COMPILER_ID:IAR>:${CMAKE_SOURCE_DIR}/platform/ext/common/iar/tfm_common_s.icf>
+    $<$<C_COMPILER_ID:ARMClang>:${PLATFORM_DIR}/ext/common/armclang/tfm_common_s.sct>
+    $<$<C_COMPILER_ID:GNU>:${PLATFORM_DIR}/ext/common/gcc/tfm_common_s.ld>
+    $<$<C_COMPILER_ID:IAR>:${PLATFORM_DIR}/ext/common/iar/tfm_common_s.icf>
 )
 
 if(NS)
@@ -52,8 +53,9 @@ if(NS)
             ${CMAKE_CURRENT_SOURCE_DIR}/Device/Source/startup_lpcxpresso55s69.c
     )
     target_add_scatter_file(tfm_ns
-            $<$<C_COMPILER_ID:GNU>:${CMAKE_CURRENT_SOURCE_DIR}/Device/Source/armgcc/LPC55S69_cm33_core0_ns.ld>
-            $<$<C_COMPILER_ID:IAR>:${CMAKE_CURRENT_SOURCE_DIR}/Device/Source/iar/LPC55S69_cm33_core0_ns.icf>
+        $<$<C_COMPILER_ID:ARMClang>:${PLATFORM_DIR}/ext/common/armclang/tfm_common_ns.sct>
+        $<$<C_COMPILER_ID:GNU>:${PLATFORM_DIR}/ext/common/gcc/tfm_common_ns.ld>
+        $<$<C_COMPILER_ID:IAR>:${PLATFORM_DIR}/ext/common/iar/tfm_common_ns.icf>
     )
     target_link_libraries(CMSIS_5_tfm_ns
         INTERFACE
@@ -67,7 +69,9 @@ if(BL2)
             ${CMAKE_CURRENT_SOURCE_DIR}/Device/Source/startup_lpcxpresso55s69.c
     )
     target_add_scatter_file(bl2
-            $<$<C_COMPILER_ID:GNU>:${CMAKE_CURRENT_SOURCE_DIR}/Device/Source/armgcc/LPC55S69_cm33_core0_bl2.ld>
+            $<$<C_COMPILER_ID:ARMClang>:${PLATFORM_DIR}/ext/common/armclang/tfm_common_bl2.sct>
+            $<$<C_COMPILER_ID:GNU>:${PLATFORM_DIR}/ext/common/gcc/tfm_common_bl2.ld>
+            $<$<C_COMPILER_ID:IAR>:${PLATFORM_DIR}/ext/common/iar/tfm_common_bl2.icf>
     )
 endif()
 
@@ -76,13 +80,14 @@ endif()
 target_include_directories(platform_s
     PUBLIC
         .
-        project_template/s
-        Device/Config
         Device/Include
+        project_template/s
         partition
+        ../../arm/drivers/mpu/armv8m
         ${PLATFORM_DIR}/ext/target/nxp/common
         ${PLATFORM_DIR}/ext/target/nxp/common/CMSIS_Driver
-        ${PLATFORM_DIR}/ext/target/nxp/common/Native_Driver
+        ${PLATFORM_DIR}/ext/target/nxp/common/Device/Config
+        ${PLATFORM_DIR}/ext/target/nxp/common/Device/Include
         ${NXP_HAL_FILE_PATH}/lpcxpresso55s69/Native_Driver
         ${NXP_HAL_FILE_PATH}/lpcxpresso55s69/Native_Driver/drivers
         ${NXP_HAL_FILE_PATH}/common/Native_Driver
@@ -98,7 +103,7 @@ target_sources(platform_s
     PRIVATE
         ../common/CMSIS_Driver/Driver_Flash_iap1.c
         ../common/CMSIS_Driver/Driver_USART.c
-        ../common/Native_Driver/mpu_armv8m_drv.c
+        ../../arm/drivers/mpu/armv8m/mpu_armv8m_drv.c
         project_template/s/board.c
         project_template/s/clock_config.c
         project_template/s/peripherals.c
@@ -127,7 +132,6 @@ target_sources(platform_s
         ${NXP_HAL_FILE_PATH}/common/Native_Driver/utilities/str/fsl_str.c
         $<$<BOOL:${TFM_PARTITION_PLATFORM}>:${PLATFORM_DIR}/ext/target/nxp/common/plat_test.c>
         $<$<BOOL:${TFM_PARTITION_PLATFORM}>:${PLATFORM_DIR}/ext/target/nxp/common/services/src/tfm_platform_system.c>
-        ${NXP_HAL_FILE_PATH}/common/plat_attest_hal.c
 )
 
 target_link_libraries(platform_s
@@ -156,10 +160,11 @@ target_sources(tfm_s
 target_include_directories(platform_ns
     PUBLIC
         .
-        Device/Config
         Device/Include
         Native_Driver
         project_template/ns
+        ${PLATFORM_DIR}/ext/target/nxp/common/Device/Config
+        ${PLATFORM_DIR}/ext/target/nxp/common/Device/Include
         ${NXP_HAL_FILE_PATH}/lpcxpresso55s69/Native_Driver/drivers
         ${NXP_HAL_FILE_PATH}/common/Native_Driver/components/lists
         ${NXP_HAL_FILE_PATH}/common/Native_Driver/components/serial_manager
@@ -210,12 +215,14 @@ if(BL2)
             partition
             Device/Include
             project_template/bl2
+            ${PLATFORM_DIR}/ext/target/nxp/common/Device/Include
             ${NXP_HAL_FILE_PATH}/lpcxpresso55s69/Native_Driver
             ${NXP_HAL_FILE_PATH}/lpcxpresso55s69/Native_Driver/drivers
             ${NXP_HAL_FILE_PATH}/common/Native_Driver/drivers
         PRIVATE
             .
-            Device/Config
+            ${PLATFORM_DIR}/ext/target/nxp/common/Device/Config
+            ${PLATFORM_DIR}/ext/target/nxp/common/Device/Include
             ${NXP_HAL_FILE_PATH}/common/Native_Driver/components/serial_manager
             ${NXP_HAL_FILE_PATH}/common/Native_Driver
             ${NXP_HAL_FILE_PATH}/common/Native_Driver/components/uart

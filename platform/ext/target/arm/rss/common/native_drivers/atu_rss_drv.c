@@ -129,6 +129,35 @@ struct _atu_reg_map_t {
                 /*!< Offset: 0xFFC (R/ ) Component ID 3 */
 };
 
+enum atu_error_t get_available_region_index(struct atu_dev_t *dev,
+                    uint8_t *region_idx)
+{
+    struct _atu_reg_map_t* p_atu = (struct _atu_reg_map_t*)dev->cfg->base;
+    uint8_t region_count;
+
+    if ((region_idx == NULL) || (dev == NULL)) {
+        return ATU_ERR_INVALID_ARG;
+    }
+
+    region_count = get_supported_region_count(dev);
+
+    /*
+     * Iterate through the bits in the ATU configuration register to get the
+     * region index that's available. A region index is available when the
+     * corresponding bit is not set i.e the region is not enabled in the ATU
+     * configuration register.
+     */
+    for (uint8_t pos = 0; pos < region_count; pos++) {
+        if (((p_atu->atuc >> pos) & 1) == 0) {
+            *region_idx = pos;
+            return ATU_ERR_NONE;
+        }
+    }
+
+    /* Region not available i.e. all the regions are enabled in the ATU */
+    return ATU_ERR_INVALID_REGION;
+}
+
 static enum atu_error_t _set_bus_attribute(struct atu_dev_t* dev,
                     enum atu_roba_t val, uint8_t region, uint8_t shift)
 {

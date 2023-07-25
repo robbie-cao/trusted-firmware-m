@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Arm Limited. All rights reserved.
+ * Copyright (c) 2021-2023 Arm Limited. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,6 +62,18 @@ struct atu_dev_cfg_t {
 struct atu_dev_t {
     const struct atu_dev_cfg_t* const cfg;       /*!< ATU configuration */
 };
+
+/**
+ * \brief Gets the region index that's not enabled.
+ *
+ * \param[in]  dev                ATU device struct \ref atu_dev_t
+ * \param[out] region_idx         Pointer to the variable that will store the
+ *                                available region index.
+ *
+ * \return Returns error code as specified in \ref atu_error_t
+ */
+enum atu_error_t get_available_region_index(struct atu_dev_t *dev,
+                    uint8_t *region_idx);
 
 /**
  * \brief Gets the ATU page size.
