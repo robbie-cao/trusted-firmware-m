@@ -127,14 +127,14 @@ struct atu_dev_info SCP_ATU_INFO = {
 /* Message Handling Units (MHU) */
 #ifdef MHU_V3_AP_TO_RSS
 struct mhu_v3_x_dev_t MHU_AP_TO_RSS_DEV = {
-    .base = MHU0_RECEIVER_BASE_S,
+    .base = MHU2_RECEIVER_BASE_S,
     .frame = MHU_V3_X_MBX_FRAME,
     .subversion = 0};
 #endif
 
 #ifdef MHU_V3_RSS_TO_AP
 struct mhu_v3_x_dev_t MHU_RSS_TO_AP_DEV = {
-    .base = MHU0_SENDER_BASE_S,
+    .base = MHU2_SENDER_BASE_S,
     .frame = MHU_V3_X_PBX_FRAME,
     .subversion = 0};
 #endif

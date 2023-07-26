@@ -215,6 +215,11 @@ enum tfm_plat_err_t nvic_interrupt_target_state_cfg(void)
 #endif
     NVIC_ClearTargetState(CMU_MHU0_Receiver_IRQn);
 
+#ifdef MHU_V3_AP_TO_RSS
+    /* Target AP-->RSS MHU interrupt to secure state */
+    NVIC_ClearTargetState(CMU_MHU2_Receiver_IRQn);
+#endif
+
     return TFM_PLAT_ERR_SUCCESS;
 }
 
@@ -263,6 +268,12 @@ enum tfm_plat_err_t nvic_interrupt_enable(void)
 #endif
     NVIC_ClearPendingIRQ(CMU_MHU0_Receiver_IRQn);
     NVIC_EnableIRQ(CMU_MHU0_Receiver_IRQn);
+
+#ifdef MHU_V3_AP_TO_RSS
+    /* Enable AP<-->RSS MHU Interrupt */
+    NVIC_ClearPendingIRQ(CMU_MHU2_Receiver_IRQn);
+    NVIC_EnableIRQ(CMU_MHU2_Receiver_IRQn);
+#endif
 
     return TFM_PLAT_ERR_SUCCESS;
 }

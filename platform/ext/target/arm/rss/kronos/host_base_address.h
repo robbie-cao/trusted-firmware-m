@@ -147,8 +147,8 @@
 #define HOST_AP_BL2_CODE_BASE_S        (HOST_AP_BL2_HDR_ATU_BASE_S + RSS_IMG_HDR_ATU_SIZE)
 /*  AP BL2 Image address start, offset so end of HEADER is at end of ATU HEADER */
 #define HOST_AP_BL2_IMG_BASE_S         (HOST_AP_BL2_CODE_BASE_S - BL2_HEADER_SIZE)
-/*  AP BL2 ITCM physical address start */
-#define HOST_AP_BL2_PHYS_BASE          (0x0000000000000ULL +  0x42000UL) /* AP initial boot SRAM base address
+/*  AP BL2 initial boot SRAM base address */
+#define HOST_AP_BL2_PHYS_BASE          (0x0000000000000ULL +  0x42000UL)
 /*  AP BL2 ATU CODE size (aligned size of SCP image) */
 #define HOST_AP_BL2_ATU_SIZE           ALIGN_UP(SIZE_DEF_AP_BL2_IMAGE, RSS_ATU_PAGE_SIZE)
 /*  AP BL2 ID for SCP ATU HEADER region */
@@ -250,8 +250,9 @@
  *
  * HOST_AP_RSS_MAILBOX_ATU_SIZE: Size of outband msg buffer as defined in TF-A.
  */
-#define HOST_AP_RSS_MAILBOX_BASE_S     HOST_ACCESS_BASE_NS
-#define HOST_AP_RSS_MAILBOX_PHYS_BASE  UINT64_C(0x86000)
+#define HOST_AP_RSS_MAILBOX_BASE_S     \
+    (HOST_SI_CL2_CODE_BASE_S + HOST_SI_CL2_ATU_SIZE)
+#define HOST_AP_RSS_MAILBOX_PHYS_BASE  UINT64_C(0xA03F0000)
 #define HOST_AP_RSS_MAILBOX_ATU_SIZE   ALIGN_UP(0x1000, RSS_ATU_PAGE_SIZE)
 #define HOST_AP_RSS_MAILBOX_ATU_ID     RSS_ATU_AP_RSS_MAILBOX_ATU_ID
 

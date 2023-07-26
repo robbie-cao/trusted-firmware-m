@@ -20,6 +20,9 @@
 #include "rss_comms_hal.h"
 #endif
 
+extern struct mhu_v3_x_dev_t MHU_AP_TO_RSS_DEV;
+extern struct mhu_v3_x_dev_t MHU_RSS_TO_AP_DEV;
+
 static struct irq_t timer0_irq = {0};
 
 void TFM_TIMER0_IRQ_Handler(void)
@@ -71,6 +74,18 @@ enum tfm_hal_status_t mailbox_irq_init(void *p_pt,
     NVIC_DisableIRQ(CMU_MHU0_Receiver_IRQn);
 
     return TFM_HAL_SUCCESS;
+}
+
+/* Platform specific inter-processor communication interrupt handler. */
+void CMU_MHU2_Receiver_Handler(void)
+{
+    (void)tfm_multi_core_hal_receive(&MHU_AP_TO_RSS_DEV, &MHU_RSS_TO_AP_DEV);
+
+    /*
+     * SPM will send a MAILBOX_SIGNAL to the corresponding partition
+     * indicating that a message has arrived and can be processed.
+     */
+    spm_handle_interrupt(mbox_irq_info.p_pt, mbox_irq_info.p_ildi);
 }
 #endif /* TFM_MULTI_CORE_TOPOLOGY */
 

@@ -241,7 +241,7 @@ static int boot_platform_pre_load_secure()
     }
 
     /* Configure output bus attribute for the ATU region */
-    atu_err = set_axnsc(&ATU_DEV_S, ATU_ROBA_SET_1, HOST_AP_RSS_MAILBOX_ATU_ID);
+    atu_err = set_axnsc(&ATU_DEV_S, ATU_ROBA_SET_0, HOST_AP_RSS_MAILBOX_ATU_ID);
     if (atu_err != ATU_ERR_NONE) {
         BOOT_LOG_ERR("BL2: Failed to set AP<->RSS MHU Outband msg region as "
                 "root in ATU mapping: error:%d", atu_err);
