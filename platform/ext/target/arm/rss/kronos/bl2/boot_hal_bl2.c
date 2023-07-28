@@ -33,6 +33,7 @@
 #endif /* CRYPTO_HW_ACCELERATOR */
 
 extern volatile bool scp_doorbell;
+extern ARM_DRIVER_FLASH FLASH_DEV_NAME;
 
 static uint8_t *lcp_measurement;
 static struct boot_measurement_metadata *lcp_measurement_metadata;
@@ -200,7 +201,14 @@ int boot_store_measurement(uint8_t index,
 
 int32_t boot_platform_init(void)
 {
+    int32_t result;
+
     read_chip_id();
+
+    result = FLASH_DEV_NAME.Initialize(NULL);
+    if (result != ARM_DRIVER_OK) {
+        return 1;
+    }
 
     return 0;
 }

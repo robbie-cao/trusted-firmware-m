@@ -373,6 +373,11 @@ target_sources(platform_bl1_2
 )
 
 target_include_directories(platform_bl1_2
+    PUBLIC
+        ${PLATFORM_DIR}/ext/target/arm/drivers/flash/common
+        ${PLATFORM_DIR}/ext/target/arm/drivers/flash/cfi
+        ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata
+        $<$<NOT:$<BOOL:${RSS_DEBUG_UART}>>:${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011>
     PRIVATE
         .
 )

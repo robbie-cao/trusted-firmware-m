@@ -129,9 +129,9 @@ int32_t boot_platform_post_init(void)
     enum atu_error_t err;
 
     /* Initialize SI NVM flash ATU region */
-    /* Allocate 128MiB for SI NVM flash as the limit of per ATU region size */
+    /* Allocate 64MiB for SI NVM flash as the limit of per ATU region size */
     err = atu_initialize_region(&ATU_DEV_S, RSS_ATU_SI_FLASH_ID, SI_FLASH_BASE_NS_LOG,
-                               SI_FLASH_BASE_NS_PHY, SI_FLASH_SIZE);
+                               SI_FLASH_BASE_NS_PHY, SI_FLASH_IMG_SIZE);
 
     if (err != ATU_ERR_NONE) {
         return 1;

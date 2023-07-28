@@ -27,4 +27,10 @@
 #define MHU_V3_RSS_TO_SCP
 #define MHU_V3_SCP_TO_RSS
 
+/*External Intel Strata Flash Device*/
+#define SPI_STRATAFLASHJ3_S
+
+/* CFI Controller */
+#define CFI_S
+
 #endif /* __HOST_DEVICE_CFG_H__ */

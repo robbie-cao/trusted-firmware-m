@@ -256,13 +256,23 @@
 #define HOST_AP_RSS_MAILBOX_ATU_SIZE   ALIGN_UP(0x1000, RSS_ATU_PAGE_SIZE)
 #define HOST_AP_RSS_MAILBOX_ATU_ID     RSS_ATU_AP_RSS_MAILBOX_ATU_ID
 
-
-/* Safety Island NVM flash */
-#define SI_FLASH_BASE           0x60000000   /* Safety Island NVM flash base address */
-#define SI_FLASH_SIZE           0x8000000    /* 128 MB */
+/* Safety Island NVM flash layout */
+/*
+ * ┌─────────────────────┬──────────────────────┐
+ * │ Signed Images       │  Protected Storage   │
+ * │     (64MB)          │       (64KB)         │
+ * └─────────────────────┴──────────────────────┘
+ *
+ */
+/* Safety Island NVM flash base address */
+#define SI_FLASH_BASE           0x60000000
+/* This part is for signed images. 64MB */
+#define SI_FLASH_IMG_SIZE       0x4000000
+/* This part is for Protected Storage. 64KB */
+#define SI_FLASH_PS_SIZE        0x10000
 
 /* Safety Island NVM flash logical base address using Non-secure ATU region */
-#define SI_FLASH_BASE_NS_LOG    (HOST_ACCESS_BASE_NS + 0x8000000)
+#define SI_FLASH_BASE_NS_LOG    HOST_ACCESS_BASE_NS
 /* Safety Island NVM flash physical base address */
 #define SI_FLASH_BASE_NS_PHY    (HOST_SI_PHYS_BASE + SI_FLASH_BASE)
 
@@ -274,5 +284,16 @@
 #define HOST_SI_CL0_SRAM_PHYS_BASE      (HOST_SI_PHYS_BASE + SI_CL0_SRAM_BASE)
 #define HOST_SI_CL1_SRAM_PHYS_BASE      (HOST_SI_PHYS_BASE + SI_CL1_SRAM_BASE)
 #define HOST_SI_CL2_SRAM_PHYS_BASE      (HOST_SI_PHYS_BASE + SI_CL2_SRAM_BASE)
+
+#ifdef TFM_PARTITION_PROTECTED_STORAGE
+/* Region into which to map Protected Storage */
+#define HOST_ACCESS_PS_BASE_S           (SI_FLASH_BASE_NS_LOG + SI_FLASH_IMG_SIZE)
+/* The offset is 64MB in SI Flash for PS */
+#define HOST_ACCESS_PS_BASE_OFFSET      SI_FLASH_IMG_SIZE
+
+/* The physical region base for PS */
+#define HOST_FLASH0_PS_BASE             (SI_FLASH_BASE_NS_PHY + SI_FLASH_IMG_SIZE)
+#define HOST_FLASH0_PS_SIZE             SI_FLASH_PS_SIZE
+#endif /* TFM_PARTITION_PROTECTED_STORAGE */
 
 #endif  /* __HOST_BASE_ADDRESS_H__ */

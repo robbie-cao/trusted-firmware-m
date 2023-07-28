@@ -27,7 +27,11 @@ if(MCUBOOT_IMAGE_NUMBER GREATER 9)
     message(FATAL_ERROR "INVALID CONFIG: MCUBOOT_IMAGE_NUMBER value not supported!")
 endif()
 
-set(PLATFORM_HAS_PS_NV_OTP_COUNTERS            ON  CACHE BOOL   "Platform supports nvm counters for PS in OTP")
+set(PLATFORM_HAS_PS_NV_OTP_COUNTERS           ON   CACHE BOOL   "Platform supports nvm counters for PS in OTP")
+set(TFM_PARTITION_MEASURED_BOOT               OFF  CACHE BOOL   "Disable Measured boot partition")
+set(TFM_PARTITION_DELEGATED_ATTESTATION       OFF  CACHE BOOL   "Disable Delegated Attestation partition")
+set(TFM_PARTITION_PROTECTED_STORAGE           ON   CACHE BOOL   "Enable Protected Storage partition")
+set(TFM_PARTITION_INTERNAL_TRUSTED_STORAGE    OFF  CACHE BOOL   "Disable Internal Trusted Storage partition")
 
 # Once all options are set, set common options as fallback
 include(${CMAKE_CURRENT_LIST_DIR}/../common/config.cmake)

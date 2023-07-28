@@ -19,4 +19,12 @@
 
 /* Currently no host cmsis drivers */
 
+#include "cmsis.h"
+#include "device_definition.h"
+#include "RTE_Device.h"
+
+extern struct cfi_strataflashj3_dev_t SPI_STRATAFLASHJ3_DEV;
+
+#define FLASH0_DEV                   SPI_STRATAFLASHJ3_DEV
+
 #endif  /* __HOST_CMSIS_DRIVER_CONFIG_H__ */

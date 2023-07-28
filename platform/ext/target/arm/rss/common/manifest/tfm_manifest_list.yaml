@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
-# Copyright (c) 2018-2022, Arm Limited. All rights reserved.
-# Copyright (c) 2021-2022 Cypress Semiconductor Corporation (an Infineon company)
+# Copyright (c) 2018-2023, Arm Limited. All rights reserved.
+# Copyright (c) 2021-2023 Cypress Semiconductor Corporation (an Infineon company)
 # or an affiliate of Cypress Semiconductor Corporation. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -36,6 +36,20 @@
          ],
       },
       "non_ffm_attributes": ['ns_agent']
+    },
+    {
+      "description": "Protected Storage Partition",
+      "manifest": "${CMAKE_SOURCE_DIR}/platform/ext/target/arm/rss/common/manifest/tfm_protected_storage.yaml",
+      "output_path": "secure_fw/partitions/protected_storage",
+      "conditional": "TFM_PARTITION_PROTECTED_STORAGE",
+      "version_major": 0,
+      "version_minor": 1,
+      "pid": 256,
+      "linker_pattern": {
+        "library_list": [
+           "*tfm_*partition_ps.*"
+         ],
+      }
     },
     {
       "description": "TFM Crypto Service",

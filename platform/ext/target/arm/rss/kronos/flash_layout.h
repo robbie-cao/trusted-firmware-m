@@ -64,7 +64,7 @@
 /* Sector size of the flash hardware; same as FLASH0_SECTOR_SIZE */
 #define FLASH_AREA_IMAGE_SECTOR_SIZE    (0x1000)    /* 4 KB */
 /* Same as FLASH0_SIZE */
-#define FLASH_TOTAL_SIZE                (SI_FLASH_SIZE)  /* 128 MB */
+#define FLASH_TOTAL_SIZE                (SI_FLASH_IMG_SIZE)  /* 64 MB */
 
 /* Flash layout info for BL2 bootloader */
 /* Same as SI_FLASH_BASE_NS_LOG */
@@ -206,5 +206,43 @@
 #define FLASH_DEV_NAME Driver_FLASH0
 /* Smallest flash programmable unit in bytes */
 #define TFM_HAL_FLASH_PROGRAM_UNIT      (0x1)
+
+#ifdef TFM_PARTITION_PROTECTED_STORAGE
+/*******************************/
+/* ITS */
+/*******************************/
+#define FLASH_DEV_NAME_SE_SECURE_FLASH  Driver_FLASH0
+
+/* Internal Trusted Storage (ITS) Service definitions
+ * Note: Further documentation of these definitions can be found in the
+ * TF-M ITS Integration Guide.
+ */
+#define TFM_HAL_ITS_FLASH_DRIVER FLASH_DEV_NAME_SE_SECURE_FLASH
+
+/* Smallest flash programmable unit in bytes */
+#define TFM_HAL_ITS_PROGRAM_UNIT        (1)
+
+/*******************************/
+/* PS */
+/*******************************/
+/* Protected Storage (PS) Service definitions
+ * Note: Further documentation of these definitions can be found in the
+ * TF-M PS Integration Guide.
+ */
+#define TFM_HAL_PS_FLASH_DRIVER FLASH_DEV_NAME_SE_SECURE_FLASH
+
+/* In this target the CMSIS driver requires only the offset from the base
+ * address instead of the full memory address.
+ */
+/* Base address of dedicated flash area for PS */
+#define TFM_HAL_PS_FLASH_AREA_ADDR      HOST_ACCESS_PS_BASE_OFFSET
+/* Size of dedicated flash area for PS */
+#define TFM_HAL_PS_FLASH_AREA_SIZE      HOST_FLASH0_PS_SIZE
+/* Number of physical erase sectors per logical FS block */
+#define TFM_HAL_PS_SECTORS_PER_BLOCK    (4)
+/* Smallest flash programmable unit in bytes */
+#define TFM_HAL_PS_PROGRAM_UNIT         (1)
+#endif /* TFM_PARTITION_PROTECTED_STORAGE */
+
 
 #endif /* __FLASH_LAYOUT_H__ */

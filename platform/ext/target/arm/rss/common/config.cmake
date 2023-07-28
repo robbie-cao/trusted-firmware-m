@@ -74,6 +74,9 @@ set(TEST_NS_MULTI_CORE                  OFF        CACHE BOOL     "Whether to bu
 configure_file(${CMAKE_CURRENT_LIST_DIR}/manifest/tfm_manifest_list.yaml ${CMAKE_BINARY_DIR}/tools/tfm_manifest_list.yaml)
 set(TFM_MANIFEST_LIST                   ${CMAKE_BINARY_DIR}/tools/tfm_manifest_list.yaml CACHE FILEPATH "TF-M native Secure Partition manifests list file")
 
+set(TFM_PLAT_SPECIFIC_MANIFEST_FILE "${CMAKE_CURRENT_LIST_DIR}/manifest/tfm_manifest_list.yaml" CACHE PATH "Platform specific Secure Partition manifests file")
+configure_file(${TFM_PLAT_SPECIFIC_MANIFEST_FILE} ${CMAKE_BINARY_DIR}/tools/tfm_manifest_list.yaml)
+
 # Platform-specific configurations
 set(CONFIG_TFM_USE_TRUSTZONE            OFF)
 set(TFM_MULTI_CORE_TOPOLOGY             ON)
