@@ -17,7 +17,7 @@ extern "C" {
 #endif
 
  /* size suits to get_attest_token() */
-#define RSS_COMMS_PAYLOAD_MAX_SIZE (0x40 + 0x800)
+#define RSS_COMMS_PAYLOAD_MAX_SIZE (0x40 + 0x1000)
 
 /*
  * Allocated for each client request.

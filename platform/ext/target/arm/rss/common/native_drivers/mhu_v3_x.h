@@ -59,7 +59,7 @@ extern "C" {
 #define MHU3_PBX_DBCH_FLAG_AP_COMMS     UINT32_C(0x2)
 
 /* Size of shared outband message buffer in bytes */
-#define MHU3_OUTBAND_BUF_SIZE UINT64_C(0x1000)
+#define MHU3_OUTBAND_BUF_SIZE UINT64_C(0x2000)
 #define MHU3_OUTBAND_BUF_HEADER_SIZE UINT64_C(0x4)
 
 /* Base of shared outband mesage buffer */
