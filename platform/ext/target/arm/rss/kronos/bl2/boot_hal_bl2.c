@@ -27,6 +27,7 @@
 #include "size_defs.h"
 #include "tfm_boot_status.h"
 #include "tfm_plat_defs.h"
+#include "fainlight_gic_lib.h"
 #ifdef CRYPTO_HW_ACCELERATOR
 #include "crypto_hw.h"
 #include "fih.h"
@@ -199,11 +200,50 @@ int boot_store_measurement(uint8_t index,
                              lock_measurement);
 }
 
+static int32_t gic_multiple_view_init(void)
+{
+    enum atu_error_t atu_err;
+    uint32_t err;
+
+    atu_err = atu_initialize_region(&ATU_DEV_S, RSS_ATU_FAINLIGHT_GIC_ID,
+                                    SI_GIC_VIEW_0_BASE_S_LOG,
+                                    SI_GIC_VIEW_0_BASE_S_PHY,
+                                    SI_GIC_VIEW_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    err = gic_multiple_view_probe(SI_GIC_VIEW_0_BASE_S_LOG);
+    if (err != 0) {
+        BOOT_LOG_INF("BL2: Error probing GIC Multiple Views device");
+        goto free_atu;
+    }
+
+    err = gic_multiple_view_programming();
+    if (err != 0) {
+        BOOT_LOG_INF("BL2: Error programming GIC Multiple Views");
+        goto free_atu;
+    }
+
+free_atu:
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, RSS_ATU_FAINLIGHT_GIC_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    return 0;
+}
+
 int32_t boot_platform_init(void)
 {
     int32_t result;
 
     read_chip_id();
+
+    result = gic_multiple_view_init();
+    if (result != ARM_DRIVER_OK) {
+        return 1;
+    }
 
     result = FLASH_DEV_NAME.Initialize(NULL);
     if (result != ARM_DRIVER_OK) {

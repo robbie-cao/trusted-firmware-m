@@ -54,6 +54,8 @@
 #define RSS_ATU_SI_CL2_RSS_MAILBOX_ATU_ID   9 /* ID to use for region mapping to MHU
                                                * outband msg buffer between SI CL2 and RSS
                                                */
+/* ID to use for region mapping to GIC fainlight MMIO pages. */
+#define RSS_ATU_FAINLIGHT_GIC_ID        10
 
 /* The ATU has a minimum size and all regions are restricted to align with it */
 #define RSS_ATU_PAGE_SIZE           0x2000U /* 8KB */
@@ -313,6 +315,16 @@
 #define HOST_SI_CL2_RSS_MAILBOX_ATU_SIZE   ALIGN_UP(0x1000, RSS_ATU_PAGE_SIZE)
 #define HOST_SI_CL2_RSS_MAILBOX_ATU_ID     RSS_ATU_SI_CL2_RSS_MAILBOX_ATU_ID
 
+/* Safety Island Multiple View GIC Base addresses */
+#define SI_GIC_VIEW_0_BASE          0x30000000
+#define SI_GIC_VIEW_1_BASE          0x30200000
+#define SI_GIC_VIEW_2_BASE          0x30400000
+#define SI_GIC_VIEW_3_BASE          0x30600000
+#define SI_GIC_VIEW_SIZE            0x200000
+/* Safety Island Multiple View GIC addresses using Non-secure ATU region */
+#define SI_GIC_VIEW_0_BASE_S_LOG   (HOST_ACCESS_BASE_S + 0x8000000)
+/* Safety Island Multiple View GIC addresses */
+#define SI_GIC_VIEW_0_BASE_S_PHY   (HOST_SI_PHYS_BASE + SI_GIC_VIEW_0_BASE)
 
 /* Safety Island NVM flash layout */
 /*
