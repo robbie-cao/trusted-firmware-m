@@ -133,6 +133,10 @@ enum tfm_plat_err_t comms_permissions_service_check(psa_handle_t handle,
 #endif /* TFM_PARTITION_MEASURED_BOOT */
 #ifdef TFM_PARTITION_CRYPTO
     case TFM_CRYPTO_HANDLE:
+        if (type == PSA_IPC_CALL) {
+            return TFM_PLAT_ERR_SUCCESS;
+        }
+
         if (in_len >= 1) {
             function_id = ((struct tfm_crypto_pack_iovec *)in_vec[0].base)->function_id;
             switch(function_id) {
