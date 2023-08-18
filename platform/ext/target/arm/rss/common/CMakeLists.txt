@@ -256,6 +256,7 @@ target_sources(platform_bl2
         $<$<BOOL:${RSS_DEBUG_UART}>:${PLATFORM_DIR}/ext/target/arm/drivers/usart/cmsdk/uart_cmsdk_drv.c>
         native_drivers/lcm_drv.c
         native_drivers/tower_nci_drv.c
+        native_drivers/ni710ae_drv.c
         native_drivers/fainlight_gic_drv.c
         otp_lcm.c
         nv_counters.c
