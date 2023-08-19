@@ -31,7 +31,9 @@ set(PLATFORM_HAS_PS_NV_OTP_COUNTERS           ON   CACHE BOOL   "Platform suppor
 set(TFM_PARTITION_MEASURED_BOOT               OFF  CACHE BOOL   "Disable Measured boot partition")
 set(TFM_PARTITION_DELEGATED_ATTESTATION       OFF  CACHE BOOL   "Disable Delegated Attestation partition")
 set(TFM_PARTITION_PROTECTED_STORAGE           ON   CACHE BOOL   "Enable Protected Storage partition")
-set(TFM_PARTITION_INTERNAL_TRUSTED_STORAGE    OFF  CACHE BOOL   "Disable Internal Trusted Storage partition")
+set(TFM_PARTITION_INTERNAL_TRUSTED_STORAGE    ON   CACHE BOOL   "Enable Internal Trusted Storage partition")
+set(TFM_PARTITION_CRYPTO                      ON   CACHE BOOL   "Enable Crypto partition")
+set(TFM_MBEDCRYPTO_PLATFORM_EXTRA_CONFIG_PATH  ""  CACHE PATH   "Config to append to standard Mbed Crypto config, used by platforms to cnfigure feature support")
 
 # Once all options are set, set common options as fallback
 include(${CMAKE_CURRENT_LIST_DIR}/../common/config.cmake)
