@@ -258,10 +258,10 @@
 
 /* Safety Island NVM flash layout */
 /*
- * ┌─────────────────────┬──────────────────────┐
- * │ Signed Images       │  Protected Storage   │
- * │     (64MB)          │       (64KB)         │
- * └─────────────────────┴──────────────────────┘
+ * ┌─────────────────────┬──────────────────────┬──────────────────────────┐
+ * │    Signed Images    │  Protected Storage   │ Internal Trusted Storage │
+ * │     (64MB)          │       (64KB)         │           (1MB)          │
+ * └─────────────────────┴──────────────────────┴──────────────────────────┘
  *
  */
 /* Safety Island NVM flash base address */
@@ -270,6 +270,8 @@
 #define SI_FLASH_IMG_SIZE       0x4000000
 /* This part is for Protected Storage. 64KB */
 #define SI_FLASH_PS_SIZE        0x10000
+/* This part is for Internal Trusted Storage. 1MB */
+#define SI_FLASH_ITS_SIZE       0x100000
 
 /* Safety Island NVM flash logical base address using Non-secure ATU region */
 #define SI_FLASH_BASE_NS_LOG    HOST_ACCESS_BASE_NS
@@ -285,7 +287,6 @@
 #define HOST_SI_CL1_SRAM_PHYS_BASE      (HOST_SI_PHYS_BASE + SI_CL1_SRAM_BASE)
 #define HOST_SI_CL2_SRAM_PHYS_BASE      (HOST_SI_PHYS_BASE + SI_CL2_SRAM_BASE)
 
-#ifdef TFM_PARTITION_PROTECTED_STORAGE
 /* Region into which to map Protected Storage */
 #define HOST_ACCESS_PS_BASE_S           (SI_FLASH_BASE_NS_LOG + SI_FLASH_IMG_SIZE)
 /* The offset is 64MB in SI Flash for PS */
@@ -294,6 +295,13 @@
 /* The physical region base for PS */
 #define HOST_FLASH0_PS_BASE             (SI_FLASH_BASE_NS_PHY + SI_FLASH_IMG_SIZE)
 #define HOST_FLASH0_PS_SIZE             SI_FLASH_PS_SIZE
-#endif /* TFM_PARTITION_PROTECTED_STORAGE */
+
+/* ITS region follows PS region */
+#define HOST_ACCESS_ITS_BASE_S          (HOST_ACCESS_PS_BASE_S + HOST_FLASH0_PS_SIZE)
+#define HOST_ACCESS_ITS_BASE_OFFSET     (HOST_ACCESS_PS_BASE_OFFSET + HOST_FLASH0_PS_SIZE)
+
+/* The physical region base and size for ITS */
+#define HOST_FLASH0_ITS_BASE            (HOST_FLASH0_PS_BASE + HOST_FLASH0_PS_SIZE)
+#define HOST_FLASH0_ITS_SIZE            SI_FLASH_ITS_SIZE
 
 #endif  /* __HOST_BASE_ADDRESS_H__ */

@@ -12,12 +12,20 @@
 #include "uart_stdout.h"
 #include "device_definition.h"
 
-#ifdef TFM_PARTITION_PROTECTED_STORAGE
+#if defined(TFM_PARTITION_PROTECTED_STORAGE) || \
+    defined(TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
 #include "host_base_address.h"
 #include "size_defs.h"
+#endif /* TFM_PARTITION_PROTECTED_STORAGE or
+        * TFM_PARTITION_INTERNAL_TRUSTED_STORAGE  */
 
+#ifdef TFM_PARTITION_PROTECTED_STORAGE
 #define  RSS_ATU_REGION_PS_SLOT  16
 #endif /* TFM_PARTITION_PROTECTED_STORAGE */
+
+#ifdef TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
+#define RSS_ATU_REGION_ITS_SLOT  17
+#endif /* TFM_PARTITION_INTERNAL_TRUSTED_STORAGE */
 
 
 extern const struct memory_region_limits memory_regions;
@@ -25,10 +33,11 @@ extern const struct memory_region_limits memory_regions;
 enum tfm_hal_status_t tfm_hal_platform_init(void)
 {
     enum tfm_plat_err_t plat_err = TFM_PLAT_ERR_SYSTEM_ERR;
-#ifdef TFM_PARTITION_PROTECTED_STORAGE
-    enum atu_error_t err;
-#endif /* TFM_PARTITION_PROTECTED_STORAGE */
-
+#if defined(TFM_PARTITION_PROTECTED_STORAGE) || \
+    defined(TFM_PARTITION_INTERNAL_TRUSTED_STORAGE)
+    enum atu_error_t atu_err;
+#endif /* TFM_PARTITION_PROTECTED_STORAGE or
+        * TFM_PARTITION_INTERNAL_TRUSTED_STORAGE  */
 
     plat_err = enable_fault_handlers();
     if (plat_err != TFM_PLAT_ERR_SUCCESS) {
@@ -65,16 +74,29 @@ enum tfm_hal_status_t tfm_hal_platform_init(void)
 
 #ifdef TFM_PARTITION_PROTECTED_STORAGE
     /* Initialize PS region */
-    err = atu_initialize_region(&ATU_DEV_S,
+    atu_err = atu_initialize_region(&ATU_DEV_S,
                                 RSS_ATU_REGION_PS_SLOT,
                                 HOST_ACCESS_PS_BASE_S,
                                 HOST_FLASH0_PS_BASE,
                                 HOST_FLASH0_PS_SIZE);
-    if (err != ATU_ERR_NONE) {
+    if (atu_err != ATU_ERR_NONE) {
         return TFM_HAL_ERROR_GENERIC;
     }
 
 #endif /* TFM_PARTITION_PROTECTED_STORAGE */
+
+#ifdef TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
+    /* Initialize ITS region */
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                RSS_ATU_REGION_ITS_SLOT,
+                                HOST_ACCESS_ITS_BASE_S,
+                                HOST_FLASH0_ITS_BASE,
+                                HOST_FLASH0_ITS_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return TFM_HAL_ERROR_GENERIC;
+    }
+
+#endif /* TFM_PARTITION_INTERNAL_TRUSTED_STORAGE */
 
     return TFM_HAL_SUCCESS;
 }
