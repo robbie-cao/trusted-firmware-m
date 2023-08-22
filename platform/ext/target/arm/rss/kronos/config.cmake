@@ -14,6 +14,7 @@ set(MCUBOOT_IMAGE_NUMBER                    9        CACHE STRING  "Number of im
 set(ENABLE_SCP_ATU_CTRL                     OFF      CACHE BOOL    "Enable SCP to configure ATU")
 set(RSS_HAS_EXPANSION_PERIPHERALS           ON       CACHE BOOL    "Whether RSS has sub-platform specific peripherals in the expansion layer")
 set(PLATFORM_DEFAULT_MCUBOOT_IMAGE_NUMBER   OFF      CACHE BOOL    "Whether to use default value of MCUBOOT_IMAGE_NUMBER")
+set(ITS_MAX_ASSET_SIZE                      4096     CACHE STRING  "The maximum asset size to be stored in the Internal Trusted Storage")
 if (TFM_PLATFORM_VARIANT STREQUAL "1")
     set(RSS_LCP_COUNT                          8        CACHE STRING   "Number of LCPs to load")
 elseif(TFM_PLATFORM_VARIANT STREQUAL "2")

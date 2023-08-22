@@ -61,6 +61,7 @@ target_link_libraries(tfm_psa_rot_partition_its
 target_compile_definitions(tfm_psa_rot_partition_its
     PUBLIC
         PS_CRYPTO_AEAD_ALG=${PS_CRYPTO_AEAD_ALG}
+        ITS_MAX_ASSET_SIZE=${ITS_MAX_ASSET_SIZE}
 )
 
 ################ Display the configuration being applied #######################
