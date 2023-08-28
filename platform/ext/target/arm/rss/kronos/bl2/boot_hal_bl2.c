@@ -28,6 +28,7 @@
 #include "tfm_boot_status.h"
 #include "tfm_plat_defs.h"
 #include "tower_nci_lib.h"
+#include "ni710ae_lib.h"
 #include "fainlight_gic_lib.h"
 #ifdef CRYPTO_HW_ACCELERATOR
 #include "crypto_hw.h"
@@ -280,6 +281,52 @@ int32_t tower_nci_sysctrl_init(void)
     return 0;
 }
 
+int32_t program_si_ni710ae(bool is_boot_time)
+{
+    enum atu_error_t atu_err;
+    enum atu_roba_t roba_value;
+    uint32_t err;
+
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                    HOST_NI710AE_ATU_ID,
+                                    HOST_NI710AE_BASE,
+                                    (HOST_REMOTE_CHIP_PERIPH_OFFSET(chip_id) +
+                                     HOST_NI710AE_PHYS_BASE),
+                                    HOST_NI710AE_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    roba_value = ATU_ROBA_SET_0;
+    atu_err = set_axnsc(&ATU_DEV_S, roba_value, HOST_NI710AE_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        printf("BL2: Unable to modify AxNSE");
+        return atu_err;
+    }
+
+    roba_value = ATU_ROBA_SET_0;
+    atu_err = set_axprot1(&ATU_DEV_S, roba_value, HOST_NI710AE_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        printf("BL2: Unable to modify AxPROT1");
+        return atu_err;
+    }
+
+    err = program_si_ni710ae_apu(HOST_NI710AE_BASE,
+                                 HOST_REMOTE_CHIP_PERIPH_OFFSET(chip_id),
+                                 is_boot_time);
+    if (err != 0) {
+        printf("BL2: Error programming Safety Island NI710AE");
+        return 1;
+    }
+
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_NI710AE_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    return 0;
+}
+
 int32_t tower_nci_periph_init(void) {
     enum atu_error_t atu_err;
     enum atu_roba_t roba_value;
@@ -330,6 +377,11 @@ int32_t boot_platform_init(void)
     read_chip_id();
 
     result = tower_nci_sysctrl_init();
+    if (result != ARM_DRIVER_OK) {
+        return 1;
+    }
+
+    result = program_si_ni710ae(true);
     if (result != ARM_DRIVER_OK) {
         return 1;
     }
@@ -1177,6 +1229,7 @@ static int boot_platform_post_load_si_cl2(void)
 {
     enum atu_error_t atu_err;
     enum mhu_v3_x_error_t mhu_error;
+    int32_t result;
 
     BOOT_LOG_INF("BL2: SI CL2 post load start");
 
@@ -1204,6 +1257,11 @@ static int boot_platform_post_load_si_cl2(void)
     /* Close RSS ATU region configured to access SI CL2 SRAM code region */
     atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SI_CL2_IMG_CODE_ATU_ID);
     if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    result = program_si_ni710ae(false);
+    if (result != ARM_DRIVER_OK) {
         return 1;
     }
 

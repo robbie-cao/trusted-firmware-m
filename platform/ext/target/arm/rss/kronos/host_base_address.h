@@ -55,6 +55,7 @@
                                                */
 /* ID to use for region mapping to GIC fainlight MMIO pages. */
 #define RSS_ATU_FAINLIGHT_GIC_ID        10
+#define RSS_ATU_NI710AE_ID              11
 #define RSS_ATU_TOWER_NCI_ID            12
 
 /* The ATU has a minimum size and all regions are restricted to align with it */
@@ -263,6 +264,11 @@
 #define HOST_PERIPH_TOWER_NCI_SIZE         0x1000000
 #define HOST_PERIPH_TOWER_NCI_ATU_ID       RSS_ATU_TOWER_NCI_ID
 
+/* ATU region mapping to access NI710AE */
+#define HOST_NI710AE_BASE         (HOST_SYSCTRL_TOWER_NCI_BASE + HOST_SYSCTRL_TOWER_NCI_SIZE)
+#define HOST_NI710AE_PHYS_BASE    (HOST_SI_PHYS_BASE + 0x00002A000000ULL)
+#define HOST_NI710AE_SIZE         0x100000
+#define HOST_NI710AE_ATU_ID       RSS_ATU_NI710AE_ID
 /*
  * ATU region for AP<->RSS MHU outband message buffer
  * HOST_AP_RSS_MAILBOX_BASE_S: Logical address at which the RSS should access

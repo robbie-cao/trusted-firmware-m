@@ -110,6 +110,7 @@ target_sources(platform_bl2
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011/uart_pl011_drv.c
         tfm_interrupts.c
         tower_nci_lib.c
+        ni710ae_lib.c
         fainlight_gic_lib.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata/spi_strataflashj3_flash_lib.c
 )
