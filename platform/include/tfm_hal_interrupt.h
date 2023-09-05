@@ -11,6 +11,18 @@
 #include <stdint.h>
 #include "tfm_hal_defs.h"
 
+#ifdef MHU_V3_RSS_TO_SCP
+enum mhu_scp_rss_doorbell_channel {
+    MHU_SCP_RSS_ATU_REQUEST_CHANNEL_ID=0,
+    MHU_SCP_RSS_SYSTOP_ON_CHANNEL_ID,
+    MHU_SCP_RSS_SYS_RESET_CHANNEL_ID,
+    MHU_SCP_RSS_SI_CL0_CHANNEL_ID,
+    MHU_SCP_RSS_SI_CL1_CHANNEL_ID,
+    MHU_SCP_RSS_SI_CL2_CHANNEL_ID,
+    MHU_SCP_RSS_CHANNEL_COUNT,
+};
+#endif
+
 /**
  * \brief  Enables an interrupt from the Interrupt Controller of the platform
  *

@@ -14,12 +14,8 @@
 #include "mscp_atu_request_handler.h"
 
 #include <inttypes.h>
-
-enum mhu_scp_rss_doorbell_channel {
-    MHU_SCP_RSS_ATU_REQUEST_CHANNEL_ID=0,
-    MHU_SCP_RSS_SYSTOP_ON_CHANNEL_ID,
-    MHU_SCP_RSS_CHANNEL_COUNT,
-};
+#include <tfm_hal_platform.h>
+#include <tfm_hal_interrupt.h>
 
 volatile bool scp_doorbell = false;
 
@@ -62,10 +58,18 @@ static int mhu_scp_rss_systop_on_doorbell_handler(uint32_t value) {
     return 0;
 }
 
+static int mhu_scp_rss_sys_reset_doorbell_handler(uint32_t value) {
+	tfm_hal_system_reset();
+
+	/* Not expected to return from this function call */
+	return -1;
+}
+
 /* Array of function pointers to call if a message is received on a channel */
 static int (*mhu_scp_rss_doorbell_vector[MHU_SCP_RSS_CHANNEL_COUNT]) (uint32_t) = {
     [MHU_SCP_RSS_ATU_REQUEST_CHANNEL_ID] = mhu_scp_rss_atu_request_doorbell_handler,
     [MHU_SCP_RSS_SYSTOP_ON_CHANNEL_ID]   = mhu_scp_rss_systop_on_doorbell_handler,
+    [MHU_SCP_RSS_SYS_RESET_CHANNEL_ID]   = mhu_scp_rss_sys_reset_doorbell_handler,
 };
 
 /* Function to handle the SCP-->RSS MHUv3 combined MBX interrupt */
