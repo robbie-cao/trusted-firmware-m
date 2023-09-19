@@ -45,6 +45,15 @@
 #define RSS_ATU_AP_RSS_MAILBOX_ATU_ID   5 /*ID to use for region mapping to MHU
                                             outband msg buffer between AP and RSS */
 #define RSS_ATU_SI_FLASH_ID             6  /* ID to use for region mapping to SI NVM flash */
+#define RSS_ATU_SI_CL0_RSS_MAILBOX_ATU_ID   7 /* ID to use for region mapping to MHU
+                                               * outband msg buffer between SI CL0 and RSS
+                                               */
+#define RSS_ATU_SI_CL1_RSS_MAILBOX_ATU_ID   8 /* ID to use for region mapping to MHU
+                                               * outband msg buffer between SI CL1 and RSS
+                                               */
+#define RSS_ATU_SI_CL2_RSS_MAILBOX_ATU_ID   9 /* ID to use for region mapping to MHU
+                                               * outband msg buffer between SI CL2 and RSS
+                                               */
 
 /* The ATU has a minimum size and all regions are restricted to align with it */
 #define RSS_ATU_PAGE_SIZE           0x2000U /* 8KB */
@@ -251,10 +260,59 @@
  * HOST_AP_RSS_MAILBOX_ATU_SIZE: Size of outband msg buffer as defined in TF-A.
  */
 #define HOST_AP_RSS_MAILBOX_BASE_S     \
-    (HOST_SI_CL2_CODE_BASE_S + HOST_SI_CL2_ATU_SIZE)
+    (HOST_SCP_RSS_MAILBOX_BASE_S + HOST_SCP_RSS_MAILBOX_ATU_SIZE)
 #define HOST_AP_RSS_MAILBOX_PHYS_BASE  UINT64_C(0xFFFFC000)
 #define HOST_AP_RSS_MAILBOX_ATU_SIZE   ALIGN_UP(0x1000, RSS_ATU_PAGE_SIZE)
 #define HOST_AP_RSS_MAILBOX_ATU_ID     RSS_ATU_AP_RSS_MAILBOX_ATU_ID
+
+/*
+ * ATU region for SI CL0<->RSS MHU outband message buffer
+ * HOST_SI_CL0_RSS_MAILBOX_BASE_S: Logical address at which the RSS should access
+ *                                 the SI CL0<->RSS outband msg buffer.
+ *
+ * HOST_SI_CL0_RSS_MAILBOX_PHYS_BASE: Physical address of outband msg buffer
+ *                                    located in the SI Shared RAM region.
+ *
+ * HOST_SI_CL0_RSS_MAILBOX_ATU_SIZE: Size of outband msg buffer.
+ */
+#define HOST_SI_CL0_RSS_MAILBOX_BASE_S     \
+    (HOST_AP_RSS_MAILBOX_BASE_S + HOST_AP_RSS_MAILBOX_ATU_SIZE)
+#define HOST_SI_CL0_RSS_MAILBOX_PHYS_BASE  HOST_SI_PHYS_BASE + UINT64_C(0x40000000)
+#define HOST_SI_CL0_RSS_MAILBOX_ATU_SIZE   ALIGN_UP(0x1000, RSS_ATU_PAGE_SIZE)
+#define HOST_SI_CL0_RSS_MAILBOX_ATU_ID     RSS_ATU_SI_CL0_RSS_MAILBOX_ATU_ID
+
+/*
+ * ATU region for SI CL1<->RSS MHU outband message buffer
+ * HOST_SI_CL1_RSS_MAILBOX_BASE_S: Logical address at which the RSS should access
+ *                                 the SI CL1<->RSS outband msg buffer.
+ *
+ * HOST_SI_CL1_RSS_MAILBOX_PHYS_BASE: Physical address of outband msg buffer
+ *                                    located in the SI Shared RAM region.
+ *
+ * HOST_SI_CL1_RSS_MAILBOX_ATU_SIZE: Size of outband msg buffer.
+ */
+#define HOST_SI_CL1_RSS_MAILBOX_BASE_S     \
+    (HOST_SI_CL0_RSS_MAILBOX_BASE_S + HOST_SI_CL0_RSS_MAILBOX_ATU_SIZE)
+#define HOST_SI_CL1_RSS_MAILBOX_PHYS_BASE  HOST_SI_PHYS_BASE + UINT64_C(0x40002000)
+#define HOST_SI_CL1_RSS_MAILBOX_ATU_SIZE   ALIGN_UP(0x1000, RSS_ATU_PAGE_SIZE)
+#define HOST_SI_CL1_RSS_MAILBOX_ATU_ID     RSS_ATU_SI_CL1_RSS_MAILBOX_ATU_ID
+
+/*
+ * ATU region for SI CL2<->RSS MHU outband message buffer
+ * HOST_SI_CL2_RSS_MAILBOX_BASE_S: Logical address at which the RSS should access
+ *                                 the SI CL2<->RSS outband msg buffer.
+ *
+ * HOST_SI_CL2_RSS_MAILBOX_PHYS_BASE: Physical address of outband msg buffer
+ *                                    located in the SI Shared RAM region.
+ *
+ * HOST_SI_CL2_RSS_MAILBOX_ATU_SIZE: Size of outband msg buffer.
+ */
+#define HOST_SI_CL2_RSS_MAILBOX_BASE_S     \
+    (HOST_SI_CL1_RSS_MAILBOX_BASE_S + HOST_SI_CL1_RSS_MAILBOX_ATU_SIZE)
+#define HOST_SI_CL2_RSS_MAILBOX_PHYS_BASE  HOST_SI_PHYS_BASE + UINT64_C(0x40004000)
+#define HOST_SI_CL2_RSS_MAILBOX_ATU_SIZE   ALIGN_UP(0x1000, RSS_ATU_PAGE_SIZE)
+#define HOST_SI_CL2_RSS_MAILBOX_ATU_ID     RSS_ATU_SI_CL2_RSS_MAILBOX_ATU_ID
+
 
 /* Safety Island NVM flash layout */
 /*

@@ -233,6 +233,64 @@ int32_t boot_platform_post_init(void)
  * ================================ Secure ====================================
  */
 
+static enum atu_error_t rss_si_atu_config(uint8_t si_cluster)
+{
+    enum atu_error_t atu_err;
+    uint8_t region;
+    uint32_t log_addr;
+    uint64_t phys_addr;
+    uint32_t size;
+
+    switch (si_cluster) {
+    case MHU_V3_RSS_SI_CL0:
+        region = HOST_SI_CL0_RSS_MAILBOX_ATU_ID;
+        log_addr = HOST_SI_CL0_RSS_MAILBOX_BASE_S;
+        phys_addr = HOST_SI_CL0_RSS_MAILBOX_PHYS_BASE;
+        size = HOST_SI_CL0_RSS_MAILBOX_ATU_SIZE;
+        break;
+    case MHU_V3_RSS_SI_CL1:
+        region = HOST_SI_CL1_RSS_MAILBOX_ATU_ID;
+        log_addr = HOST_SI_CL1_RSS_MAILBOX_BASE_S;
+        phys_addr = HOST_SI_CL1_RSS_MAILBOX_PHYS_BASE;
+        size = HOST_SI_CL1_RSS_MAILBOX_ATU_SIZE;
+        break;
+    case MHU_V3_RSS_SI_CL2:
+        region = HOST_SI_CL2_RSS_MAILBOX_ATU_ID;
+        log_addr = HOST_SI_CL2_RSS_MAILBOX_BASE_S;
+        phys_addr = HOST_SI_CL2_RSS_MAILBOX_PHYS_BASE;
+        size = HOST_SI_CL2_RSS_MAILBOX_ATU_SIZE;
+        break;
+    default:
+        return ATU_ERR_INVALID_ARG;
+    }
+
+    /* Configure RSS ATU to access the Safety Island Cluster SRAM region
+     * for MHU Outband Msg Buffer
+     */
+    atu_err = atu_initialize_region(&ATU_DEV_S, region, log_addr,
+                                    phys_addr, size);
+
+    if (atu_err != ATU_ERR_NONE) {
+        BOOT_LOG_ERR("BL2: Failed to map SI CL%d<->RSS MHU Outband "
+                "msg region in ATU: error:%d", si_cluster, atu_err);
+        goto end;
+    }
+
+    /* Configure output bus attribute for the ATU region */
+    atu_err = set_axnsc(&ATU_DEV_S, ATU_ROBA_SET_0, region);
+    if (atu_err != ATU_ERR_NONE) {
+        BOOT_LOG_ERR("BL2: Failed to set SI CL%d<->RSS MHU Outband msg region "
+                "as secure in ATU mapping: error:%d", si_cluster, atu_err);
+        goto end;
+    }
+
+    BOOT_LOG_INF("BL2: Mapped SI CL%d<->RSS MHU Outband msg region in ATU",
+                 si_cluster);
+
+end:
+    return atu_err;
+}
+
 static int boot_platform_pre_load_secure()
 {
     enum atu_error_t atu_err;
@@ -252,16 +310,46 @@ static int boot_platform_pre_load_secure()
     atu_err = set_axnsc(&ATU_DEV_S, ATU_ROBA_SET_0, HOST_AP_RSS_MAILBOX_ATU_ID);
     if (atu_err != ATU_ERR_NONE) {
         BOOT_LOG_ERR("BL2: Failed to set AP<->RSS MHU Outband msg region as "
-                "root in ATU mapping: error:%d", atu_err);
-        goto fail;
+                "secure in ATU mapping: error:%d", atu_err);
+        goto fail_ap;
     }
 
     BOOT_LOG_INF("BL2: Mapped AP<->RSS MHU Outband msg region in ATU");
+
+    /* Configure RSS ATU region for Safety Island Cluster 0 */
+    atu_err = rss_si_atu_config(MHU_V3_RSS_SI_CL0);
+    if (atu_err != ATU_ERR_NONE) {
+        goto fail_si_cl0;
+    }
+
+    /* Configure RSS ATU region for Safety Island Cluster 1 */
+    atu_err = rss_si_atu_config(MHU_V3_RSS_SI_CL1);
+    if (atu_err != ATU_ERR_NONE) {
+        goto fail_si_cl1;
+    }
+
+    /* Configure RSS ATU region for Safety Island Cluster 2 */
+    atu_err = rss_si_atu_config(MHU_V3_RSS_SI_CL2);
+    if (atu_err != ATU_ERR_NONE) {
+        goto fail_si_cl2;
+    }
+
     return 0;
 
-fail:
+fail_ap:
     atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_AP_RSS_MAILBOX_ATU_ID);
-
+    return -1;
+fail_si_cl0:
+    atu_err = atu_uninitialize_region(&ATU_DEV_S,
+                                      HOST_SI_CL0_RSS_MAILBOX_ATU_ID);
+    return -1;
+fail_si_cl1:
+    atu_err = atu_uninitialize_region(&ATU_DEV_S,
+                                      HOST_SI_CL1_RSS_MAILBOX_ATU_ID);
+    return -1;
+fail_si_cl2:
+    atu_err = atu_uninitialize_region(&ATU_DEV_S,
+                                      HOST_SI_CL2_RSS_MAILBOX_ATU_ID);
     return -1;
 }
 
