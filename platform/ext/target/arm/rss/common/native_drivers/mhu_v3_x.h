@@ -59,12 +59,37 @@ extern "C" {
 /* Flag Value used for AP<->RSS specific doorbell communication */
 #define MHU3_PBX_DBCH_FLAG_AP_COMMS     UINT32_C(0x2)
 
+#if defined(MHU_V3_RSS_SI_CL0) || defined(MHU_V3_RSS_SI_CL1) || \
+    defined(MHU_V3_RSS_SI_CL2)
+/* Flag Value used for SI<->RSS specific doorbell communication */
+#define MHU3_PBX_DBCH_FLAG_SI_COMMS     UINT32_C(0x1)
+#endif /* MHU_V3_RSS_SI_CL0 || MHU_V3_RSS_SI_CL1 || MHU_V3_RSS_SI_CL2 */
+
 /* Size of shared outband message buffer in bytes */
-#define MHU3_AP_RSS_OUTBAND_BUF_SIZE UINT64_C(0x2000)
+#define MHU3_AP_RSS_OUTBAND_BUF_SIZE     UINT64_C(0x2000)
+#ifdef MHU_V3_RSS_SI_CL0
+#define MHU3_SI_CL0_RSS_OUTBAND_BUF_SIZE UINT64_C(0x2000)
+#endif /* MHU_V3_RSS_SI_CL0 */
+#ifdef MHU_V3_RSS_SI_CL1
+#define MHU3_SI_CL1_RSS_OUTBAND_BUF_SIZE UINT64_C(0x2000)
+#endif /* MHU_V3_RSS_SI_CL1 */
+#ifdef MHU_V3_RSS_SI_CL2
+#define MHU3_SI_CL2_RSS_OUTBAND_BUF_SIZE UINT64_C(0x2000)
+#endif /* MHU_V3_RSS_SI_CL2 */
+
 #define MHU3_OUTBAND_BUF_HEADER_SIZE UINT64_C(0x4)
 
 /* Base of shared outband mesage buffer */
-#define MHU3_AP_RSS_OUTBAND_BUF_BASE HOST_AP_RSS_MAILBOX_BASE_S
+#define MHU3_AP_RSS_OUTBAND_BUF_BASE     HOST_AP_RSS_MAILBOX_BASE_S
+#ifdef MHU_V3_RSS_SI_CL0
+#define MHU3_SI_CL0_RSS_OUTBAND_BUF_BASE HOST_SI_CL0_RSS_MAILBOX_BASE_S
+#endif /* MHU_V3_RSS_SI_CL0 */
+#ifdef MHU_V3_RSS_SI_CL1
+#define MHU3_SI_CL1_RSS_OUTBAND_BUF_BASE HOST_SI_CL1_RSS_MAILBOX_BASE_S
+#endif /* MHU_V3_RSS_SI_CL1 */
+#ifdef MHU_V3_RSS_SI_CL2
+#define MHU3_SI_CL2_RSS_OUTBAND_BUF_BASE HOST_SI_CL2_RSS_MAILBOX_BASE_S
+#endif /* MHU_V3_RSS_SI_CL2 */
 
 /**
  * \brief MHUv3 error enumeration types.

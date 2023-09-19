@@ -23,6 +23,21 @@
 extern struct mhu_v3_x_dev_t MHU_AP_TO_RSS_DEV;
 extern struct mhu_v3_x_dev_t MHU_RSS_TO_AP_DEV;
 
+#ifdef MHU_V3_RSS_SI_CL0
+extern struct mhu_v3_x_dev_t MHU_SI_CL0_TO_RSS_DEV;
+extern struct mhu_v3_x_dev_t MHU_RSS_TO_SI_CL0_DEV;
+#endif /* MHU_V3_RSS_SI_CL0 */
+
+#ifdef MHU_V3_RSS_SI_CL1
+extern struct mhu_v3_x_dev_t MHU_SI_CL1_TO_RSS_DEV;
+extern struct mhu_v3_x_dev_t MHU_RSS_TO_SI_CL1_DEV;
+#endif /* MHU_V3_RSS_SI_CL1 */
+
+#ifdef MHU_V3_RSS_SI_CL2
+extern struct mhu_v3_x_dev_t MHU_SI_CL2_TO_RSS_DEV;
+extern struct mhu_v3_x_dev_t MHU_RSS_TO_SI_CL2_DEV;
+#endif /* MHU_V3_RSS_SI_CL2 */
+
 static struct irq_t timer0_irq = {0};
 
 void TFM_TIMER0_IRQ_Handler(void)
@@ -87,6 +102,51 @@ void CMU_MHU2_Receiver_Handler(void)
      */
     spm_handle_interrupt(mbox_irq_info.p_pt, mbox_irq_info.p_ildi);
 }
+
+#ifdef MHU_V3_RSS_SI_CL0
+/* Platform specific inter-processor communication interrupt handler. */
+void CMU_MHU6_Receiver_Handler(void)
+{
+    (void)tfm_multi_core_hal_receive(&MHU_SI_CL0_TO_RSS_DEV,
+                                     &MHU_RSS_TO_SI_CL0_DEV);
+
+    /*
+     * SPM will send a MAILBOX_SIGNAL to the corresponding partition
+     * indicating that a message has arrived and can be processed.
+     */
+    spm_handle_interrupt(mbox_irq_info.p_pt, mbox_irq_info.p_ildi);
+}
+#endif /* MHU_V3_RSS_SI_CL0 */
+
+#ifdef MHU_V3_RSS_SI_CL1
+/* Platform specific inter-processor communication interrupt handler. */
+void CMU_MHU7_Receiver_Handler(void)
+{
+    (void)tfm_multi_core_hal_receive(&MHU_SI_CL1_TO_RSS_DEV,
+                                     &MHU_RSS_TO_SI_CL1_DEV);
+
+    /*
+     * SPM will send a MAILBOX_SIGNAL to the corresponding partition
+     * indicating that a message has arrived and can be processed.
+     */
+    spm_handle_interrupt(mbox_irq_info.p_pt, mbox_irq_info.p_ildi);
+}
+#endif /* MHU_V3_RSS_SI_CL1 */
+
+#ifdef MHU_V3_RSS_SI_CL2
+/* Platform specific inter-processor communication interrupt handler. */
+void CMU_MHU8_Receiver_Handler(void)
+{
+    (void)tfm_multi_core_hal_receive(&MHU_SI_CL2_TO_RSS_DEV,
+                                     &MHU_RSS_TO_SI_CL2_DEV);
+
+    /*
+     * SPM will send a MAILBOX_SIGNAL to the corresponding partition
+     * indicating that a message has arrived and can be processed.
+     */
+    spm_handle_interrupt(mbox_irq_info.p_pt, mbox_irq_info.p_ildi);
+}
+#endif /* MHU_V3_RSS_SI_CL2 */
 #endif /* TFM_MULTI_CORE_TOPOLOGY */
 
 static struct irq_t dma0_ch0_irq = {0};

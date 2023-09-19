@@ -41,6 +41,60 @@ static enum tfm_plat_err_t initialize_mhu(void)
         return TFM_PLAT_ERR_SYSTEM_ERR;
     }
 
+#ifdef MHU_V3_RSS_SI_CL0
+    err = mhu_init_sender(&MHU_RSS_TO_SI_CL0_DEV);
+    if (err != MHU_ERR_NONE) {
+        SPMLOG_ERRMSGVAL(
+            "[COMMS] RSS to Safety Island Cluster 0 MHU driver init failed: ",
+            err);
+        return TFM_PLAT_ERR_SYSTEM_ERR;
+    }
+
+    err = mhu_init_receiver(&MHU_SI_CL0_TO_RSS_DEV);
+    if (err != MHU_ERR_NONE) {
+        SPMLOG_ERRMSGVAL(
+            "[COMMS] Safety Island Cluster 0 to RSS MHU driver init failed: ",
+            err);
+        return TFM_PLAT_ERR_SYSTEM_ERR;
+    }
+#endif /* MHU_V3_RSS_SI_CL0 */
+
+#ifdef MHU_V3_RSS_SI_CL1
+    err = mhu_init_sender(&MHU_RSS_TO_SI_CL1_DEV);
+    if (err != MHU_ERR_NONE) {
+        SPMLOG_ERRMSGVAL(
+            "[COMMS] RSS to Safety Island Cluster 1 MHU driver init failed: ",
+            err);
+        return TFM_PLAT_ERR_SYSTEM_ERR;
+    }
+
+    err = mhu_init_receiver(&MHU_SI_CL1_TO_RSS_DEV);
+    if (err != MHU_ERR_NONE) {
+        SPMLOG_ERRMSGVAL(
+            "[COMMS] Safety Island Cluster 1 to RSS MHU driver init failed: ",
+            err);
+        return TFM_PLAT_ERR_SYSTEM_ERR;
+    }
+#endif /* MHU_V3_RSS_SI_CL1 */
+
+#ifdef MHU_V3_RSS_SI_CL2
+    err = mhu_init_sender(&MHU_RSS_TO_SI_CL2_DEV);
+    if (err != MHU_ERR_NONE) {
+        SPMLOG_ERRMSGVAL(
+            "[COMMS] RSS to Safety Island Cluster 2 MHU driver init failed: ",
+            err);
+        return TFM_PLAT_ERR_SYSTEM_ERR;
+    }
+
+    err = mhu_init_receiver(&MHU_SI_CL2_TO_RSS_DEV);
+    if (err != MHU_ERR_NONE) {
+        SPMLOG_ERRMSGVAL(
+            "[COMMS] Safety Island Cluster 2 to RSS MHU driver init failed: ",
+            err);
+        return TFM_PLAT_ERR_SYSTEM_ERR;
+    }
+#endif /* MHU_V3_RSS_SI_CL2 */
+
     SPMLOG_DBGMSG("[COMMS] MHU driver initialized successfully.\r\n");
     return TFM_PLAT_ERR_SUCCESS;
 }

@@ -27,6 +27,12 @@
 #define MHU_V3_RSS_TO_SCP
 #define MHU_V3_SCP_TO_RSS
 
+#define MHU_V3_RSS_SI_CL0    0U
+
+#define MHU_V3_RSS_SI_CL1    1U
+
+#define MHU_V3_RSS_SI_CL2    2U
+
 /*External Intel Strata Flash Device*/
 #define SPI_STRATAFLASHJ3_S
 

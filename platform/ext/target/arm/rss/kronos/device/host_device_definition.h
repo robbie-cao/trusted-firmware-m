@@ -110,6 +110,30 @@ extern struct mhu_v3_x_dev_t MHU_V3_SCP_TO_RSS_DEV;
 extern struct mhu_v3_x_dev_t MHU_V3_RSS_TO_SCP_DEV;
 #endif
 
+#pragma message("Using mhuv3 si cl0 to rss h")
+#include "mhu_v3_x.h"
+extern struct mhu_v3_x_dev_t MHU_SI_CL0_TO_RSS_DEV;
+
+#pragma message("Using mhuv3 rss to si cl0 h")
+#include "mhu_v3_x.h"
+extern struct mhu_v3_x_dev_t MHU_RSS_TO_SI_CL0_DEV;
+
+#pragma message("Using mhuv3 si cl1 to rss h")
+#include "mhu_v3_x.h"
+extern struct mhu_v3_x_dev_t MHU_SI_CL1_TO_RSS_DEV;
+
+#pragma message("Using mhuv3 rss to si cl1 h")
+#include "mhu_v3_x.h"
+extern struct mhu_v3_x_dev_t MHU_RSS_TO_SI_CL1_DEV;
+
+#pragma message("Using mhuv3 si cl2 to rss h")
+#include "mhu_v3_x.h"
+extern struct mhu_v3_x_dev_t MHU_SI_CL2_TO_RSS_DEV;
+
+#pragma message("Using mhuv3 rss to si cl2 h")
+#include "mhu_v3_x.h"
+extern struct mhu_v3_x_dev_t MHU_RSS_TO_SI_CL2_DEV;
+
 #ifdef __cplusplus
 }
 #endif

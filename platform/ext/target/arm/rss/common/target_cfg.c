@@ -220,6 +220,21 @@ enum tfm_plat_err_t nvic_interrupt_target_state_cfg(void)
     NVIC_ClearTargetState(CMU_MHU2_Receiver_IRQn);
 #endif
 
+#ifdef MHU_V3_RSS_SI_CL0
+    /* Target SI CL0-->RSS MHU interrupt to secure state */
+    NVIC_ClearTargetState(CMU_MHU6_Receiver_IRQn);
+#endif
+
+#ifdef MHU_V3_RSS_SI_CL1
+    /* Target SI CL1-->RSS MHU interrupt to secure state */
+    NVIC_ClearTargetState(CMU_MHU7_Receiver_IRQn);
+#endif
+
+#ifdef MHU_V3_RSS_SI_CL2
+    /* Target SI CL2-->RSS MHU interrupt to secure state */
+    NVIC_ClearTargetState(CMU_MHU8_Receiver_IRQn);
+#endif
+
     return TFM_PLAT_ERR_SUCCESS;
 }
 
@@ -273,6 +288,24 @@ enum tfm_plat_err_t nvic_interrupt_enable(void)
     /* Enable AP<-->RSS MHU Interrupt */
     NVIC_ClearPendingIRQ(CMU_MHU2_Receiver_IRQn);
     NVIC_EnableIRQ(CMU_MHU2_Receiver_IRQn);
+#endif
+
+#ifdef MHU_V3_RSS_SI_CL0
+    /* Enable SI CL0<-->RSS MHU Interrupt */
+    NVIC_ClearPendingIRQ(CMU_MHU6_Receiver_IRQn);
+    NVIC_EnableIRQ(CMU_MHU6_Receiver_IRQn);
+#endif
+
+#ifdef MHU_V3_RSS_SI_CL1
+    /* Enable SI CL1<-->RSS MHU Interrupt */
+    NVIC_ClearPendingIRQ(CMU_MHU7_Receiver_IRQn);
+    NVIC_EnableIRQ(CMU_MHU7_Receiver_IRQn);
+#endif
+
+#ifdef MHU_V3_RSS_SI_CL2
+    /* Enable SI CL2<-->RSS MHU Interrupt */
+    NVIC_ClearPendingIRQ(CMU_MHU8_Receiver_IRQn);
+    NVIC_EnableIRQ(CMU_MHU8_Receiver_IRQn);
 #endif
 
     return TFM_PLAT_ERR_SUCCESS;

@@ -158,3 +158,51 @@ struct mhu_v3_x_dev_t MHU_V3_RSS_TO_SCP_DEV = {
     .frame = MHU_V3_X_PBX_FRAME,
     .subversion = 0};
 #endif
+
+struct mhu_v3_x_dev_t MHU_SI_CL0_TO_RSS_DEV = {
+    .base = MHU6_RECEIVER_BASE_S,
+    .frame = MHU_V3_X_MBX_FRAME,
+    .outband_buf_base = MHU3_SI_CL0_RSS_OUTBAND_BUF_BASE,
+    .outband_buf_size = MHU3_SI_CL0_RSS_OUTBAND_BUF_SIZE,
+    .pbx_dbch_flag = MHU3_PBX_DBCH_FLAG_SI_COMMS,
+    .subversion = 0};
+
+struct mhu_v3_x_dev_t MHU_RSS_TO_SI_CL0_DEV = {
+    .base = MHU6_SENDER_BASE_S,
+    .frame = MHU_V3_X_PBX_FRAME,
+    .outband_buf_base = MHU3_SI_CL0_RSS_OUTBAND_BUF_BASE,
+    .outband_buf_size = MHU3_SI_CL0_RSS_OUTBAND_BUF_SIZE,
+    .pbx_dbch_flag = MHU3_PBX_DBCH_FLAG_SI_COMMS,
+    .subversion = 0};
+
+struct mhu_v3_x_dev_t MHU_SI_CL1_TO_RSS_DEV = {
+    .base = MHU7_RECEIVER_BASE_S,
+    .frame = MHU_V3_X_MBX_FRAME,
+    .outband_buf_base = MHU3_SI_CL1_RSS_OUTBAND_BUF_BASE,
+    .outband_buf_size = MHU3_SI_CL1_RSS_OUTBAND_BUF_SIZE,
+    .pbx_dbch_flag = MHU3_PBX_DBCH_FLAG_SI_COMMS,
+    .subversion = 0};
+
+struct mhu_v3_x_dev_t MHU_RSS_TO_SI_CL1_DEV = {
+    .base = MHU7_SENDER_BASE_S,
+    .frame = MHU_V3_X_PBX_FRAME,
+    .outband_buf_base = MHU3_SI_CL1_RSS_OUTBAND_BUF_BASE,
+    .outband_buf_size = MHU3_SI_CL1_RSS_OUTBAND_BUF_SIZE,
+    .pbx_dbch_flag = MHU3_PBX_DBCH_FLAG_SI_COMMS,
+    .subversion = 0};
+
+struct mhu_v3_x_dev_t MHU_SI_CL2_TO_RSS_DEV = {
+    .base = MHU8_RECEIVER_BASE_S,
+    .frame = MHU_V3_X_MBX_FRAME,
+    .outband_buf_base = MHU3_SI_CL2_RSS_OUTBAND_BUF_BASE,
+    .outband_buf_size = MHU3_SI_CL2_RSS_OUTBAND_BUF_SIZE,
+    .pbx_dbch_flag = MHU3_PBX_DBCH_FLAG_SI_COMMS,
+    .subversion = 0};
+
+struct mhu_v3_x_dev_t MHU_RSS_TO_SI_CL2_DEV = {
+    .base = MHU8_SENDER_BASE_S,
+    .frame = MHU_V3_X_PBX_FRAME,
+    .outband_buf_base = MHU3_SI_CL2_RSS_OUTBAND_BUF_BASE,
+    .outband_buf_size = MHU3_SI_CL2_RSS_OUTBAND_BUF_SIZE,
+    .pbx_dbch_flag = MHU3_PBX_DBCH_FLAG_SI_COMMS,
+    .subversion = 0};
