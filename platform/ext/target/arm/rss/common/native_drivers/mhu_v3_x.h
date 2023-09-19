@@ -23,6 +23,7 @@
 #define __MHU_V3_X_H__
 
 #include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
 #include "host_base_address.h"
 
@@ -59,11 +60,11 @@ extern "C" {
 #define MHU3_PBX_DBCH_FLAG_AP_COMMS     UINT32_C(0x2)
 
 /* Size of shared outband message buffer in bytes */
-#define MHU3_OUTBAND_BUF_SIZE UINT64_C(0x2000)
+#define MHU3_AP_RSS_OUTBAND_BUF_SIZE UINT64_C(0x2000)
 #define MHU3_OUTBAND_BUF_HEADER_SIZE UINT64_C(0x4)
 
 /* Base of shared outband mesage buffer */
-#define MHU3_OUTBAND_BUF_BASE HOST_AP_RSS_MAILBOX_BASE_S
+#define MHU3_AP_RSS_OUTBAND_BUF_BASE HOST_AP_RSS_MAILBOX_BASE_S
 
 /**
  * \brief MHUv3 error enumeration types.
@@ -105,6 +106,12 @@ struct mhu_v3_x_dev_t {
     const uintptr_t base;
     /* Type of the MHUv3 frame */
     enum mhu_v3_x_frame_t frame;
+    /* Base of shared outband message buffer */
+    const uintptr_t outband_buf_base;
+    /* Size of shared outband message buffer in bytes */
+    const size_t outband_buf_size;
+    /* PBX_DBCH_FLAG */
+    const uint32_t pbx_dbch_flag;
     /* Minor revision of the MHUv3 */
     uint32_t subversion;
     /* Flag to indicate if the MHUv3 is initialized */

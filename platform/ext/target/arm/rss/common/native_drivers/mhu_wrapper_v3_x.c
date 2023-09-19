@@ -141,19 +141,23 @@ fail:
     return error_mapping_to_mhu_error_t(err);
 }
 
-size_t mhu_get_max_message_size(void)
+size_t mhu_get_max_message_size(void *mhu_dev)
 {
+    struct mhu_v3_x_dev_t *dev = mhu_dev;
+
     /*
      * First 4 bytes represent the MHU msg header. Rest of buffer
      * holds the actual message.
      */
-    return (MHU3_OUTBAND_BUF_SIZE - MHU3_OUTBAND_BUF_HEADER_SIZE);
+    return (dev->outband_buf_size - MHU3_OUTBAND_BUF_HEADER_SIZE);
 }
 
-static int validate_buffer_params(uintptr_t buf_addr, size_t buf_size)
+static int validate_buffer_params(void *mhu_dev,
+                                  uintptr_t buf_addr,
+                                  size_t buf_size)
 {
     if ((buf_addr == 0) || (!IS_ALIGNED(buf_addr, 4)) ||
-            buf_size > mhu_get_max_message_size()) {
+            buf_size > mhu_get_max_message_size(mhu_dev)) {
         return MHU_V_3_X_ERR_INVALID_PARAM;
     }
 
@@ -227,7 +231,7 @@ enum mhu_error_t mhu_send_data(void *mhu_sender_dev,
         return error_mapping_to_mhu_error_t(MHU_V_3_X_ERR_NONE);
     }
 
-    err = validate_buffer_params((uintptr_t)send_buffer, size);
+    err = validate_buffer_params(mhu_sender_dev, (uintptr_t)send_buffer, size);
     if (err != MHU_V_3_X_ERR_NONE) {
         goto fail;
     }
@@ -236,11 +240,11 @@ enum mhu_error_t mhu_send_data(void *mhu_sender_dev,
      * First 4 bytes represents the header which currently stores the size
      * of msg. Rest of buffer holds the actual message.
      */
-    (void)memcpy((void *)MHU3_OUTBAND_BUF_BASE, (void *)&msg_len,
+    (void)memcpy((void *)dev->outband_buf_base, (void *)&msg_len,
             MHU3_OUTBAND_BUF_HEADER_SIZE);
 
     /* Copy the message */
-    (void)memcpy((void *)(MHU3_OUTBAND_BUF_BASE + MHU3_OUTBAND_BUF_HEADER_SIZE),
+    (void)memcpy((void *)(dev->outband_buf_base + MHU3_OUTBAND_BUF_HEADER_SIZE),
             (void *)send_buffer, msg_len);
     /*
      * Use only one channel 0 to ring the doorbell on receiver for
@@ -250,7 +254,7 @@ enum mhu_error_t mhu_send_data(void *mhu_sender_dev,
      * bits on the same channel or else transmitter will continue waiting
      * on the status bit indefinitely.
      */
-    err = signal_and_wait_for_clear(dev, 0, MHU3_PBX_DBCH_FLAG_AP_COMMS);
+    err = signal_and_wait_for_clear(dev, 0, dev->pbx_dbch_flag);
     if (err != MHU_V_3_X_ERR_NONE)
         goto fail;
 
@@ -268,7 +272,9 @@ enum mhu_error_t mhu_receive_data(void *mhu_receiver_dev,
     uint32_t msg_len;
     enum mhu_v3_x_error_t err;
 
-    err = validate_buffer_params((uintptr_t)receive_buffer, *size);
+    err = validate_buffer_params(mhu_receiver_dev,
+                                 (uintptr_t)receive_buffer,
+                                 *size);
     if (err != MHU_V_3_X_ERR_NONE) {
         goto fail;
     }
@@ -278,7 +284,7 @@ enum mhu_error_t mhu_receive_data(void *mhu_receiver_dev,
      * attestation report and measurements, while the actual data is shared
      * through a common memory region in Secure/Root PAS.
      */
-    err = wait_for_signal_and_clear(dev, 0, MHU3_PBX_DBCH_FLAG_AP_COMMS);
+    err = wait_for_signal_and_clear(dev, 0, dev->pbx_dbch_flag);
     if (err != MHU_V_3_X_ERR_NONE) {
         goto fail;
     }
@@ -287,7 +293,7 @@ enum mhu_error_t mhu_receive_data(void *mhu_receiver_dev,
      * First 4 bytes represents the header which currently stores the size
      * of msg. Rest of buffer holds the actual message.
      */
-    (void)memcpy((void *)&msg_len, (void *)MHU3_OUTBAND_BUF_BASE,
+    (void)memcpy((void *)&msg_len, (void *)dev->outband_buf_base,
             MHU3_OUTBAND_BUF_HEADER_SIZE);
     if (*size < msg_len) {
         return MHU_V_3_X_ERR_UNSUPPORTED;
@@ -296,7 +302,7 @@ enum mhu_error_t mhu_receive_data(void *mhu_receiver_dev,
     *size = msg_len;
 
     /* Copy the message */
-    (void)memcpy((void *)receive_buffer, (void *)(MHU3_OUTBAND_BUF_BASE +
+    (void)memcpy((void *)receive_buffer, (void *)(dev->outband_buf_base +
                 MHU3_OUTBAND_BUF_HEADER_SIZE), msg_len);
 
     return MHU_V_3_X_ERR_NONE;

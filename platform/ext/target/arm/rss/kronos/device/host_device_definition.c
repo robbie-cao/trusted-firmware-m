@@ -129,6 +129,9 @@ struct atu_dev_info SCP_ATU_INFO = {
 struct mhu_v3_x_dev_t MHU_AP_TO_RSS_DEV = {
     .base = MHU2_RECEIVER_BASE_S,
     .frame = MHU_V3_X_MBX_FRAME,
+    .outband_buf_base = MHU3_AP_RSS_OUTBAND_BUF_BASE,
+    .outband_buf_size = MHU3_AP_RSS_OUTBAND_BUF_SIZE,
+    .pbx_dbch_flag = MHU3_PBX_DBCH_FLAG_AP_COMMS,
     .subversion = 0};
 #endif
 
@@ -136,6 +139,9 @@ struct mhu_v3_x_dev_t MHU_AP_TO_RSS_DEV = {
 struct mhu_v3_x_dev_t MHU_RSS_TO_AP_DEV = {
     .base = MHU2_SENDER_BASE_S,
     .frame = MHU_V3_X_PBX_FRAME,
+    .outband_buf_base = MHU3_AP_RSS_OUTBAND_BUF_BASE,
+    .outband_buf_size = MHU3_AP_RSS_OUTBAND_BUF_SIZE,
+    .pbx_dbch_flag = MHU3_PBX_DBCH_FLAG_AP_COMMS,
     .subversion = 0};
 #endif
 
