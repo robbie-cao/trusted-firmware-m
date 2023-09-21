@@ -27,6 +27,7 @@
 #include "size_defs.h"
 #include "tfm_boot_status.h"
 #include "tfm_plat_defs.h"
+#include "tower_nci_lib.h"
 #include "fainlight_gic_lib.h"
 #ifdef CRYPTO_HW_ACCELERATOR
 #include "crypto_hw.h"
@@ -234,11 +235,104 @@ free_atu:
     return 0;
 }
 
+int32_t tower_nci_sysctrl_init(void)
+{
+    enum atu_error_t atu_err;
+    enum atu_roba_t roba_value;
+    uint32_t err;
+
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                    HOST_SYSCTRL_TOWER_NCI_ATU_ID,
+                                    HOST_SYSCTRL_TOWER_NCI_BASE,
+                                    (HOST_REMOTE_CHIP_PERIPH_OFFSET(chip_id) +
+                                     HOST_SYSCTRL_TOWER_NCI_PHYS_BASE),
+                                    HOST_SYSCTRL_TOWER_NCI_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    roba_value = ATU_ROBA_SET_0;
+    atu_err = set_axnsc(&ATU_DEV_S, roba_value, HOST_SYSCTRL_TOWER_NCI_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        BOOT_LOG_INF("BL2: Unable to modify AxNSE");
+        return atu_err;
+    }
+
+    roba_value = ATU_ROBA_SET_0;
+    atu_err = set_axprot1(&ATU_DEV_S, roba_value, HOST_SYSCTRL_TOWER_NCI_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        BOOT_LOG_INF("BL2: Unable to modify AxPROT1");
+        return atu_err;
+    }
+
+    err = program_sysctrl_tower_nci(HOST_SYSCTRL_TOWER_NCI_BASE,
+                                    HOST_REMOTE_CHIP_PERIPH_OFFSET(chip_id));
+    if (err != 0) {
+        BOOT_LOG_INF("BL2: Error programming System Control Tower NCI");
+        return 1;
+    }
+
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_SYSCTRL_TOWER_NCI_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int32_t tower_nci_periph_init(void) {
+    enum atu_error_t atu_err;
+    enum atu_roba_t roba_value;
+    uint32_t err;
+
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                    HOST_PERIPH_TOWER_NCI_ATU_ID,
+                                    HOST_PERIPH_TOWER_NCI_BASE,
+                                    (HOST_REMOTE_CHIP_PERIPH_OFFSET(chip_id) +
+                                     HOST_PERIPH_TOWER_NCI_PHYS_BASE),
+                                    HOST_PERIPH_TOWER_NCI_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    roba_value = ATU_ROBA_SET_0;
+    atu_err = set_axnsc(&ATU_DEV_S, roba_value, HOST_PERIPH_TOWER_NCI_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        BOOT_LOG_INF("BL2: Unable to modify AxNSE");
+        return atu_err;
+    }
+
+    roba_value = ATU_ROBA_SET_0;
+    atu_err = set_axprot1(&ATU_DEV_S, roba_value, HOST_PERIPH_TOWER_NCI_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        BOOT_LOG_INF("BL2: Unable to modify AxPROT1");
+        return atu_err;
+    }
+
+    err = program_periph_tower_nci(HOST_PERIPH_TOWER_NCI_BASE);
+    if (err != 0) {
+        BOOT_LOG_INF("BL2: Error programming Periph Tower NCI");
+        return 1;
+    }
+
+    atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_PERIPH_TOWER_NCI_ATU_ID);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
+    return 0;
+}
+
 int32_t boot_platform_init(void)
 {
     int32_t result;
 
     read_chip_id();
+
+    result = tower_nci_sysctrl_init();
+    if (result != ARM_DRIVER_OK) {
+        return 1;
+    }
 
     result = gic_multiple_view_init();
     if (result != ARM_DRIVER_OK) {
@@ -652,7 +746,7 @@ static int boot_platform_post_load_scp(void)
     /* Clear the header from the header region but avoid removing anything that
      * the region may be incidentally overlapping.
      */
-    memset(HOST_SCP_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+    memset((void *)HOST_SCP_IMG_BASE_S, 0, BL2_HEADER_SIZE);
 
     scp_init->cpuwait = 0x1;
     scp_init->cpuwait = 0x0;
@@ -706,8 +800,14 @@ static int boot_platform_pre_load_lcp(void)
         }
     }
 
+    /* Perform Peripheral Block Tower NCI programming */
+    err = tower_nci_periph_init();
+    if (err != 0) {
+        return 1;
+    }
+
     /* Intialize LCP boot measurements */
-    lcp_measurement = calloc(PSA_HASH_LENGTH(MEASURED_BOOT_HASH_ALG),
+    lcp_measurement = (void *)calloc(PSA_HASH_LENGTH(MEASURED_BOOT_HASH_ALG),
                             sizeof(uint8_t));
     lcp_measurement_metadata =
             calloc(1, sizeof(struct boot_measurement_metadata));
@@ -754,7 +854,7 @@ static int boot_platform_post_load_lcp(void)
     /* Clear the header from the header region but avoid removing anything that
      * the region may be incidentally overlapping.
      */
-    memset(HOST_LCP_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+    memset((void *)HOST_LCP_IMG_BASE_S, 0, BL2_HEADER_SIZE);
 
     /* Close RSS ATU region configured to access LCP SRAM code region */
     atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_LCP_IMG_CODE_ATU_ID);
@@ -780,7 +880,7 @@ static int boot_platform_post_load_lcp(void)
 
         /* Cleaning 'rsp' to avoid accidentally loading
          * the NS image in case of a fault injection attack. */
-        memset(&rsp, 0, sizeof(struct boot_rsp));
+        memset((void *)&rsp, 0, sizeof(struct boot_rsp));
 
         FIH_CALL(boot_go_for_image_id, fih_rc, &rsp, RSS_FIRMWARE_LCP_ID);
         if (FIH_NOT_EQ(fih_rc, FIH_SUCCESS)) {
@@ -791,7 +891,7 @@ static int boot_platform_post_load_lcp(void)
         /* Clear the header from the header region but avoid removing anything that
          * the region may be incidentally overlapping.
          */
-        memset(HOST_LCP_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+        memset((void *)HOST_LCP_IMG_BASE_S, 0, BL2_HEADER_SIZE);
 
         /* Close RSS ATU region configured to access LCP SRAM code region */
         atu_err = atu_uninitialize_region(&ATU_DEV_S, HOST_LCP_IMG_CODE_ATU_ID);
@@ -869,7 +969,7 @@ static int boot_platform_post_load_ap_bl2(void)
     /* Clear the header from the header region but avoid removing anything that
      * the region may be incidentally overlapping.
      */
-    memset(HOST_AP_BL2_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+    memset((void *)HOST_AP_BL2_IMG_BASE_S, 0, BL2_HEADER_SIZE);
 
     /*
      * Send doorbell to SCP to indicate that the RSS initialization is
@@ -944,7 +1044,7 @@ static int boot_platform_post_load_si_cl0(void)
     /* Clear the header from the header region but avoid removing anything that
      * the region may be incidentally overlapping.
      */
-    memset(HOST_SI_CL0_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+    memset((void *)HOST_SI_CL0_IMG_BASE_S, 0, BL2_HEADER_SIZE);
     /*
      * Send doorbell to SCP to indicate that the RSS initialization is
      * complete and that the SCP can release safety island cluster0
@@ -1019,7 +1119,7 @@ static int boot_platform_post_load_si_cl1(void)
     /* Clear the header from the header region but avoid removing anything that
      * the region may be incidentally overlapping.
      */
-    memset(HOST_SI_CL1_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+    memset((void *)HOST_SI_CL1_IMG_BASE_S, 0, BL2_HEADER_SIZE);
     /*
      * Send doorbell to SCP to indicate that the RSS initialization is
      * complete and that the SCP can release safety island cluster1
@@ -1094,7 +1194,7 @@ static int boot_platform_post_load_si_cl2(void)
     /* Clear the header from the header region but avoid removing anything that
      * the region may be incidentally overlapping.
      */
-    memset(HOST_SI_CL2_IMG_BASE_S, 0, BL2_HEADER_SIZE);
+    memset((void *)HOST_SI_CL2_IMG_BASE_S, 0, BL2_HEADER_SIZE);
     /*
      * Send doorbell to SCP to indicate that the RSS initialization is
      * complete and that the SCP can release safety island cluster2

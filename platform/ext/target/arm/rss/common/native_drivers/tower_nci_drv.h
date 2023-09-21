@@ -41,9 +41,7 @@ struct tower_nci_dev_t {
     void *const base;
 };
 
-/**
- * \brief Tower NCI Discovery tree structure
- */
+/*  Tower NCI Discovery tree structure */
 struct tower_nci_discovery_tree_t {
     uint16_t type;
     uint16_t id;
@@ -52,6 +50,14 @@ struct tower_nci_discovery_tree_t {
     uint32_t children;
     struct tower_nci_discovery_tree_t *child;
     struct tower_nci_discovery_tree_t *sibling;
+};
+
+/**
+ * \brief Tower NCI Discovery prune node structure
+ */
+struct tower_nci_prune_node_t {
+    uint16_t type;
+    uint16_t id;
 };
 
 /**
@@ -70,11 +76,13 @@ enum tower_nci_node_type_t {
     TOWER_NCI_HSNI,
     TOWER_NCI_HMNI,
     TOWER_NCI_PMNI,
-    // Sub-features
+    // Sub-features - Implementation defined
     TOWER_NCI_PSAM,
     TOWER_NCI_APU,
     TOWER_NCI_FCU,
-    TOWER_NCI_IDM
+    TOWER_NCI_IDM,
+    // FMU - Implementation defined
+    TOWER_NCI_FMU
 };
 
 /**
@@ -130,17 +138,27 @@ enum tower_nci_apu_entity_valid_type_t {
     T_NCI_ID_1_VALID = 0b0010,
     T_NCI_ID_2_VALID = 0b0100,
     T_NCI_ID_3_VALID = 0b1000,
-    T_NCI_VALID_ALL_IDS = T_NCI_ID_0_VALID | T_NCI_ID_1_VALID |
-                          T_NCI_ID_2_VALID | T_NCI_ID_3_VALID
+    T_NCI_ID_VALID_ALL = T_NCI_ID_0_VALID | T_NCI_ID_1_VALID |
+                         T_NCI_ID_2_VALID | T_NCI_ID_3_VALID,
+    T_NCI_ID_VALID_NONE = 0,
 };
 
 /**
- * \brief Tower NCI APU lcok type enumerations
+ * \brief Tower NCI APU lock type enumerations
  */
 enum tower_nci_apu_lock_type_t {
     /* program specific values */
     T_NCI_UNLOCK = 0x0,
     T_NCI_LOCK = 0x1,
+};
+
+/**
+ * \brief Tower NCI APU region enable type enumerations
+ */
+enum tower_nci_apu_region_enable_type_t {
+    /* program specific values */
+    T_NCI_REGION_DISABLE = 0x0,
+    T_NCI_REGION_ENABLE = 0x1,
 };
 
 /**
@@ -307,13 +325,14 @@ enum tower_nci_err_t tower_nci_apu_assign_id(struct tower_nci_apu_dev_t *dev,
  * \param[in] end_addr      End address of the region
  * \param[in] background    Specify if the region is backgroun or a foreground
  *                          region \ref tower_nci_apu_br_type_t
- * \param[in] permission    Or'ing of required access permissions
+ * \param[in] permissions   Array of Or'ed access permissions for all entity
  *                          \ref tower_nci_apu_access_perm_type_t
- * \param[in] id_select     Or'ing of entity id's where these permission needs
- *                          to be applied \ref tower_nci_apu_entity_type_t
+ * \param[in] entity_ids    Array of entity ids
+ * \param[in] id_valid      Or'ing of entity id's where these ids are valid
+ *                          \ref tower_nci_apu_entity_valid_type_t
+ * \param[in] region_enable Specify if the region needs to be enabled or not.
+ *                          \ref tower_nci_apu_region_enable_type_t
  * \param[in] lock          Lock or Unlock an APU region \ref tower_nci_apu_lock_type_t
- * \param[in] valid         Or'ing of entity id's where these ids are valid
- *                          \ref tower_nci_apu_entity_type_t
  *
  * \return Returns error code as specified in \ref tower_nci_err_t
  */
@@ -321,20 +340,26 @@ enum tower_nci_err_t tower_nci_apu_initialize_region(
                         struct tower_nci_apu_dev_t *dev, uint32_t region,
                         uint64_t base_addr, uint64_t end_addr,
                         enum tower_nci_apu_br_type_t background,
-                        uint32_t permission, uint32_t id_select,
-                        uint32_t valid);
+                        uint32_t permissions[4], uint8_t entity_ids[4],
+                        uint32_t id_valid,
+                        enum tower_nci_apu_region_enable_type_t region_enable,
+                        enum tower_nci_apu_lock_type_t lock);
 
 /**
  * \brief Executes Tower NCI discovery flow
  *
- * \param[in] cfg_node      Tower NCI Discovery struct \ref tower_nci_discovery_tree_t
- * \param[in] periph_base   Tower NCI base address, same as CFGNI0 address
+ * \param[in] cfg_node          Tower NCI Discovery struct \ref tower_nci_discovery_tree_t
+ * \param[in] periph_base       Tower NCI base address, same as CFGNI0 address
+ * \param[in] pruning_function  Pointer to pruning callback function. Takes node type and
+ *                              node id respectively. Should return 1 to skip the node
+ *                              discovery, else 0
  *
  * \return Returns error code as specified in \ref tower_nci_err_t
  */
 enum tower_nci_err_t tower_nci_discovery(
-                        struct tower_nci_discovery_tree_t *cfg_node,
-                        const uint32_t periph_base);
+                    struct tower_nci_discovery_tree_t *cfg_node,
+                    const uint32_t periph_base,
+                    uint8_t (*pruning_function)(uint16_t, uint16_t, uint16_t));
 
 /**
  * \brief Fetches sub-feature base address based on the parent component ID and

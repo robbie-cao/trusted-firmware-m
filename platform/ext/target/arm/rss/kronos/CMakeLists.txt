@@ -109,6 +109,7 @@ target_sources(platform_bl2
         ${CMAKE_CURRENT_LIST_DIR}/../common/mscp_mailbox.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011/uart_pl011_drv.c
         tfm_interrupts.c
+        tower_nci_lib.c
         fainlight_gic_lib.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata/spi_strataflashj3_flash_lib.c
 )

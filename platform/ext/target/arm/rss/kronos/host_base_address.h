@@ -56,6 +56,7 @@
                                                */
 /* ID to use for region mapping to GIC fainlight MMIO pages. */
 #define RSS_ATU_FAINLIGHT_GIC_ID        10
+#define RSS_ATU_TOWER_NCI_ID            12
 
 /* The ATU has a minimum size and all regions are restricted to align with it */
 #define RSS_ATU_PAGE_SIZE           0x2000U /* 8KB */
@@ -250,6 +251,18 @@
 #define HOST_SCP_RSS_MAILBOX_PHYS_BASE 0x2F000000
 #define HOST_SCP_RSS_MAILBOX_ATU_SIZE ALIGN_UP(0x2000, RSS_ATU_PAGE_SIZE)
 #define HOST_SCP_RSS_MAILBOX_ATU_ID RSS_ATU_SCP_RSS_MAILBOX_ATU_ID
+
+/* ATU region mapping to access System Control Tower NCI */
+#define HOST_SYSCTRL_TOWER_NCI_BASE         (HOST_SCP_RSS_MAILBOX_BASE_S + HOST_SCP_RSS_MAILBOX_ATU_SIZE)
+#define HOST_SYSCTRL_TOWER_NCI_PHYS_BASE    0x000020000000ULL
+#define HOST_SYSCTRL_TOWER_NCI_SIZE         0x1000000
+#define HOST_SYSCTRL_TOWER_NCI_ATU_ID       RSS_ATU_TOWER_NCI_ID
+
+/* ATU region mapping to access Peripheral Block Tower NCI */
+#define HOST_PERIPH_TOWER_NCI_BASE         HOST_ACCESS_BASE_NS
+#define HOST_PERIPH_TOWER_NCI_PHYS_BASE    0x000022000000ULL
+#define HOST_PERIPH_TOWER_NCI_SIZE         0x1000000
+#define HOST_PERIPH_TOWER_NCI_ATU_ID       RSS_ATU_TOWER_NCI_ID
 
 /*
  * ATU region for AP<->RSS MHU outband message buffer
