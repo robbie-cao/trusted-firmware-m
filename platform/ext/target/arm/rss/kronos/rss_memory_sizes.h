@@ -20,7 +20,7 @@
 #define VM0_SIZE                         0x00080000 /* 512 KiB */
 #define VM1_SIZE                         0x00080000 /* 512 KiB */
 
-#define BOOT_FLASH_SIZE                  0x00800000 /* 8MB */
+#define BOOT_FLASH_SIZE                  0x04000000 /* 64 MB */
 
 /* The total size of the OTP for the RSS */
 #define OTP_TOTAL_SIZE     (0x4000)

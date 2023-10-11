@@ -489,17 +489,6 @@ fail_si_cl2:
 
 static int boot_platform_post_load_secure()
 {
-#ifdef RSS_USE_SI_FLASH
-	enum atu_error_t err;
-
-    /* All the images had been loaded from SI NVM flash */
-    /* Close SI NVM flash ATU region */
-    err = atu_uninitialize_region(&ATU_DEV_S, 6);
-    if (err != ATU_ERR_NONE) {
-        return 1;
-    }
-#endif
-
     return 0;
 }
 

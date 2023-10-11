@@ -29,7 +29,7 @@
 #endif
 
 #define FLASH0_BASE_S         BOOT_FLASH
-#define FLASH0_SIZE           SI_FLASH_SIZE
+#define FLASH0_SIZE           BOOT_FLASH_SIZE
 #define FLASH0_SECTOR_SIZE    0x00001000 /* 4 kB */
 #define FLASH0_PAGE_SIZE      0x00001000 /* 4 kB */
 #define FLASH0_PROGRAM_UNIT   0x1        /* Minimum write size */
@@ -56,7 +56,7 @@ static const struct cfi_dev_cfg_t CFI_DEV_CFG_S = {
     /* Define the flash base/size to be the same as the host access area, as the
      * flash may not be mapped contiguously or predictably within that area.
      */
-    .base = SI_FLASH_BASE_NS_LOG,
+    .base = BOOT_FLASH,
 };
 
 struct cfi_dev_t CFI_DEV_S = {

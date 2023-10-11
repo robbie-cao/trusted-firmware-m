@@ -72,32 +72,6 @@ enum tfm_hal_status_t tfm_hal_platform_init(void)
         return TFM_HAL_ERROR_GENERIC;
     }
 
-#ifdef TFM_PARTITION_PROTECTED_STORAGE
-    /* Initialize PS region */
-    atu_err = atu_initialize_region(&ATU_DEV_S,
-                                RSS_ATU_REGION_PS_SLOT,
-                                HOST_ACCESS_PS_BASE_S,
-                                HOST_FLASH0_PS_BASE,
-                                HOST_FLASH0_PS_SIZE);
-    if (atu_err != ATU_ERR_NONE) {
-        return TFM_HAL_ERROR_GENERIC;
-    }
-
-#endif /* TFM_PARTITION_PROTECTED_STORAGE */
-
-#ifdef TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
-    /* Initialize ITS region */
-    atu_err = atu_initialize_region(&ATU_DEV_S,
-                                RSS_ATU_REGION_ITS_SLOT,
-                                HOST_ACCESS_ITS_BASE_S,
-                                HOST_FLASH0_ITS_BASE,
-                                HOST_FLASH0_ITS_SIZE);
-    if (atu_err != ATU_ERR_NONE) {
-        return TFM_HAL_ERROR_GENERIC;
-    }
-
-#endif /* TFM_PARTITION_INTERNAL_TRUSTED_STORAGE */
-
     return TFM_HAL_SUCCESS;
 }
 

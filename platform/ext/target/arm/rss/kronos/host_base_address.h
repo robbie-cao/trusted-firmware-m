@@ -44,7 +44,6 @@
 #define RSS_ATU_SCP_RSS_MAILBOX_ATU_ID  4
 #define RSS_ATU_AP_RSS_MAILBOX_ATU_ID   5 /*ID to use for region mapping to MHU
                                             outband msg buffer between AP and RSS */
-#define RSS_ATU_SI_FLASH_ID             6  /* ID to use for region mapping to SI NVM flash */
 #define RSS_ATU_SI_CL0_RSS_MAILBOX_ATU_ID   7 /* ID to use for region mapping to MHU
                                                * outband msg buffer between SI CL0 and RSS
                                                */
@@ -339,27 +338,20 @@
 /* Safety Island Multiple View GIC addresses */
 #define SI_GIC_VIEW_0_BASE_S_PHY   (HOST_SI_PHYS_BASE + SI_GIC_VIEW_0_BASE)
 
-/* Safety Island NVM flash layout */
+/* RSS flash layout */
 /*
  * ┌─────────────────────┬──────────────────────┬──────────────────────────┐
  * │    Signed Images    │  Protected Storage   │ Internal Trusted Storage │
- * │     (64MB)          │       (64KB)         │           (1MB)          │
+ * │     (48MB)          │       (64KB)         │           (1MB)          │
  * └─────────────────────┴──────────────────────┴──────────────────────────┘
  *
  */
-/* Safety Island NVM flash base address */
-#define SI_FLASH_BASE           0x60000000
-/* This part is for signed images. 64MB */
-#define SI_FLASH_IMG_SIZE       0x4000000
+/* This part is for signed images. 48MB */
+#define RSS_FLASH_IMG_SIZE       0x3000000
 /* This part is for Protected Storage. 64KB */
-#define SI_FLASH_PS_SIZE        0x10000
+#define RSS_FLASH_PS_SIZE        0x10000
 /* This part is for Internal Trusted Storage. 1MB */
-#define SI_FLASH_ITS_SIZE       0x100000
-
-/* Safety Island NVM flash logical base address using Non-secure ATU region */
-#define SI_FLASH_BASE_NS_LOG    HOST_ACCESS_BASE_NS
-/* Safety Island NVM flash physical base address */
-#define SI_FLASH_BASE_NS_PHY    (HOST_SI_PHYS_BASE + SI_FLASH_BASE)
+#define RSS_FLASH_ITS_SIZE       0x100000
 
 /* Address to access safety island images */
 #define SI_CL0_SRAM_BASE        0x120000000ULL
@@ -370,21 +362,18 @@
 #define HOST_SI_CL1_SRAM_PHYS_BASE      (HOST_SI_PHYS_BASE + SI_CL1_SRAM_BASE)
 #define HOST_SI_CL2_SRAM_PHYS_BASE      (HOST_SI_PHYS_BASE + SI_CL2_SRAM_BASE)
 
-/* Region into which to map Protected Storage */
-#define HOST_ACCESS_PS_BASE_S           (SI_FLASH_BASE_NS_LOG + SI_FLASH_IMG_SIZE)
-/* The offset is 64MB in SI Flash for PS */
-#define HOST_ACCESS_PS_BASE_OFFSET      SI_FLASH_IMG_SIZE
+/* The offset is 48MB in RSS Flash for PS */
+#define HOST_ACCESS_PS_BASE_OFFSET      RSS_FLASH_IMG_SIZE
 
 /* The physical region base for PS */
-#define HOST_FLASH0_PS_BASE             (SI_FLASH_BASE_NS_PHY + SI_FLASH_IMG_SIZE)
-#define HOST_FLASH0_PS_SIZE             SI_FLASH_PS_SIZE
+#define HOST_FLASH0_PS_BASE             (BOOT_FLASH + RSS_FLASH_IMG_SIZE)
+#define HOST_FLASH0_PS_SIZE             RSS_FLASH_PS_SIZE
 
 /* ITS region follows PS region */
-#define HOST_ACCESS_ITS_BASE_S          (HOST_ACCESS_PS_BASE_S + HOST_FLASH0_PS_SIZE)
 #define HOST_ACCESS_ITS_BASE_OFFSET     (HOST_ACCESS_PS_BASE_OFFSET + HOST_FLASH0_PS_SIZE)
 
 /* The physical region base and size for ITS */
 #define HOST_FLASH0_ITS_BASE            (HOST_FLASH0_PS_BASE + HOST_FLASH0_PS_SIZE)
-#define HOST_FLASH0_ITS_SIZE            SI_FLASH_ITS_SIZE
+#define HOST_FLASH0_ITS_SIZE            RSS_FLASH_ITS_SIZE
 
 #endif  /* __HOST_BASE_ADDRESS_H__ */
