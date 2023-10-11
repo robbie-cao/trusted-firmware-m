@@ -264,7 +264,7 @@ uint32_t program_sysctrl_psam(struct tower_nci_discovery_tree_t* dis_tree,
         { mhu_send_frame_rss.base_2,          mhu_send_frame_rss.end_2,           SYSCTRL_APP_AMNI_ID    , 14 },
         { 0x0004000000000,                    0x0FFFFFFFFFFFF,                    SYSCTRL_APP_AMNI_ID    , 15 },
         { 0x1000000000000,                    0x10000FFFFFFFF,                    SYSCTRL_RSS_SCP_AMNI_ID, 16 },
-        { 0x2000000000000,                    0x20000FFFFFFFF,                    SYSCTRL_RSS_MCP_AMNI_ID, 17 }
+        { 0x2000000000000,                    0x2000FFFFFFFFF,                    SYSCTRL_RSS_MCP_AMNI_ID, 17 }
     };
 
     struct psam_region_cfgs scp_axis[] = {
@@ -311,7 +311,9 @@ uint32_t program_sysctrl_psam(struct tower_nci_discovery_tree_t* dis_tree,
         { 0x000002AA00000, 0x000002AA5FFFF, SYSCTRL_APP_MCP_AMNI_ID, 1 },
         { 0x000002AB00000, 0x000002AC2FFFF, SYSCTRL_APP_SCP_AMNI_ID, 2 },
         { 0x000002AC60000, 0x000002AC8FFFF, SYSCTRL_APP_MCP_AMNI_ID, 3 },
-        { 0x000002ACC0000, 0x000002B12FFFF, SYSCTRL_APP_SCP_AMNI_ID, 4 },
+        { 0x000002ACC0000, 0x000002ACEFFFF, SYSCTRL_APP_SCP_AMNI_ID, 4 },
+        { 0x000002ACF0000, 0x000002AF5FFFF, SYSCTRL_APP_MCP_AMNI_ID, 5 },
+        { 0x000002AF60000, 0x000002AFFFFFF, SYSCTRL_APP_SCP_AMNI_ID, 6 },
     };
 
     struct psam_region_cfgs lcp_axis[] = {
@@ -346,24 +348,24 @@ uint32_t program_sysctrl_apu(struct tower_nci_discovery_tree_t* dis_tree,
                              uint64_t nci_addr, uint64_t chip_addr_offset)
 {
     struct apu_region_cfgs mcp_axis[] = {
-        { 0x000000000000, 0x00002A42FFFF,  T_NCI_FOREGROUND, T_NCI_ALL_PERM, 0 },
-        { 0x00002A430000, 0x00002A43FFFF,  T_NCI_FOREGROUND, T_NCI_ROOT_RW,  1 },
-        { 0x00002A440000, 0x0FFFFFFFFFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM, 2 },
+        { 0x000000000000, 0x00002A42FFFF,  T_NCI_FOREGROUND, T_NCI_ALL_PERM,               0 },
+        { 0x00002A430000, 0x00002A43FFFF,  T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW, 1 },
+        { 0x00002A440000, 0x0FFFFFFFFFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,               2 },
     };
 
     struct apu_region_cfgs app_axis[] = {
-        { 0x00002A430000, 0x00002A43FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW,                  0  },
-        { 0x00002A440000, 0x00002A93FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                 1 },
-        { 0x00002A940000, 0x00002A95FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW,                  2 },
-        { 0x00002A960000, 0x00002AA3FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                 3 },
-        { 0x00002AA40000, 0x00002AA5FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW,                  4 },
-        { 0x00002AA60000, 0x00002AB3FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                 5 },
-        { 0x00002AB40000, 0x00002AB5FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW,                  6 },
-        { 0x00002AB60000, 0x00002AB7FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_REALM_RW, 7 },
-        { 0x00002AB80000, 0x00002ABFFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                 8 },
-        { 0x00002AC00000, 0x00002ACEFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW,                  9 },
-        { 0x00002ACF0000, 0x00002B09FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                 10 },
-        { 0x00002B100000, 0x00002B12FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW,                  11 },
+        { 0x00002A430000, 0x00002A43FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  0 },
+        { 0x00002A440000, 0x00002A93FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                                1 },
+        { 0x00002A940000, 0x00002A95FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  2 },
+        { 0x00002A960000, 0x00002AA3FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                                3 },
+        { 0x00002AA40000, 0x00002AA5FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  4 },
+        { 0x00002AA60000, 0x00002AB3FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                                5 },
+        { 0x00002AB40000, 0x00002AB5FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  6 },
+        { 0x00002AB60000, 0x00002AB7FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_REALM_RW | T_NCI_SEC_RW, 7 },
+        { 0x00002AB80000, 0x00002ABFFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                                8 },
+        { 0x00002AC00000, 0x00002ACEFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  9 },
+        { 0x00002ACF0000, 0x00002B09FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                               10 },
+        { 0x00002B100000, 0x00002B12FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                 11 },
     };
 
     struct apu_region_cfgs rsm_axim[] = {
@@ -397,7 +399,7 @@ uint32_t program_sysctrl_apu(struct tower_nci_discovery_tree_t* dis_tree,
     };
 
     struct apu_region_cfgs rss_mcp_axim[] = {
-        { 0x2000000000000, 0x20000FFFFFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM, 0, },
+        { 0x2000000000000, 0x2000FFFFFFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM, 0, },
     };
 
     struct apu_cfgs apu_table[] = {
@@ -449,8 +451,8 @@ uint32_t program_periph_apu(struct tower_nci_discovery_tree_t* dis_tree,
     };
 
     struct apu_region_cfgs rootgenwdog_apbm[] = {
-        { 0x002A460000, 0x002A46FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW, 0 },
-        { 0x002A470000, 0x002A47FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW, 1 },
+        { 0x002A460000, 0x002A46FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW, 0 },
+        { 0x002A470000, 0x002A47FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW, 1 },
     };
 
     struct apu_region_cfgs secgenwdog_apbm[] = {
@@ -460,22 +462,22 @@ uint32_t program_periph_apu(struct tower_nci_discovery_tree_t* dis_tree,
 
     // ECCREG APU
     struct apu_region_cfgs eccreg_apbm[] = {
-        { 0x002A4B0000, 0x002A4BFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,   0  },
-        { 0x002A4C0000, 0x002A4CFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                 1  },
-        { 0x002A4D0000, 0x002A4DFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW,                  2  },
-        { 0x002A4E0000, 0x002A4EFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_REALM_RW, 3  },
-        { 0x002A4F0000, 0x002A4FFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,   4  },
-        { 0x002A500000, 0x002A50FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                 5  },
-        { 0x002A510000, 0x002A51FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW,                  6  },
-        { 0x002A520000, 0x002A52FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_REALM_RW, 7  },
-        { 0x002A530000, 0x002A53FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,   8  },
-        { 0x002A540000, 0x002A54FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                 9  },
-        { 0x002A550000, 0x002A55FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW,                  10 },
-        { 0x002A560000, 0x002A56FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_REALM_RW, 11 },
-        { 0x002A570000, 0x002A57FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,   12 },
-        { 0x002A580000, 0x002A58FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                 13 },
-        { 0x002A590000, 0x002A59FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW,                  14 },
-        { 0x002A5A0000, 0x002A5AFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_REALM_RW, 15 },
+        { 0x002A4B0000, 0x002A4BFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  0  },
+        { 0x002A4C0000, 0x002A4CFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                                1  },
+        { 0x002A4D0000, 0x002A4DFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  2  },
+        { 0x002A4E0000, 0x002A4EFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_REALM_RW | T_NCI_SEC_RW, 3  },
+        { 0x002A4F0000, 0x002A4FFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  4  },
+        { 0x002A500000, 0x002A50FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                                5  },
+        { 0x002A510000, 0x002A51FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  6  },
+        { 0x002A520000, 0x002A52FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_REALM_RW | T_NCI_SEC_RW, 7  },
+        { 0x002A530000, 0x002A53FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  8  },
+        { 0x002A540000, 0x002A54FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                                9  },
+        { 0x002A550000, 0x002A55FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  10 },
+        { 0x002A560000, 0x002A56FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_REALM_RW | T_NCI_SEC_RW, 11 },
+        { 0x002A570000, 0x002A57FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  12 },
+        { 0x002A580000, 0x002A58FFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM,                                13 },
+        { 0x002A590000, 0x002A59FFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_SEC_RW,                  14 },
+        { 0x002A5A0000, 0x002A5AFFFF, T_NCI_FOREGROUND, T_NCI_ROOT_RW | T_NCI_REALM_RW | T_NCI_SEC_RW, 15 },
     };
 
     // GTIMER APUs
