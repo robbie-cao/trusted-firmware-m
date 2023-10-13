@@ -85,4 +85,8 @@
 // <i> Configuration settings for Driver_Flash0 in component ::Drivers:Flash
 #define   RTE_FLASH0                     1
 
+// <q> Flash device emulated by SRAM [Driver_Flash1]
+// <i> Configuration settings for Driver_Flash1 in component ::Drivers:Flash
+#define   RTE_FLASH1                     1
+
 #endif  /* __RTE_DEVICE_H */

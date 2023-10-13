@@ -74,3 +74,43 @@ struct cfi_strataflashj3_dev_t SPI_STRATAFLASHJ3_DEV = {
 #endif /* (SPI_STRATAFLASHJ3_S) && (CFI_S) */
 
 #endif /* RTE_FLASH0 */
+
+#if (RTE_FLASH1)
+static ARM_FLASH_INFO ARM_FLASH1_DEV_DATA = {
+    .sector_info    = NULL,     /* Uniform sector layout */
+    .sector_count   = AP_FLASH_SIZE / 0x1000,
+    .sector_size    = 0x1000,
+    .page_size      = 256U,
+    .program_unit   = 1U,
+    .erased_value   = ARM_FLASH_DRV_ERASE_VALUE
+};
+
+static struct arm_strata_flash_dev_t ARM_FLASH1_DEV = {
+    .dev    = &FLASH1_DEV,
+    .data   = &ARM_FLASH1_DEV_DATA
+};
+
+ARM_FLASH_STRATA(ARM_FLASH1_DEV, Driver_FLASH1);
+
+#if (defined (SPI_STRATAFLASHJ3_S) && defined (CFI_S))
+static const struct cfi_dev_cfg_t CFI_DEV_CFG_S_AP = {
+    /* Define the flash base/size to be the same as the host access area, as the
+     * flash may not be mapped contiguously or predictably within that area.
+     */
+    .base = AP_FLASH_LOG_BASE,
+};
+
+struct cfi_dev_t CFI_DEV_S_AP = {
+    .cfg = &CFI_DEV_CFG_S_AP,
+};
+
+struct cfi_strataflashj3_dev_t SPI_STRATAFLASHJ3_AP_DEV = {
+    .controller = &CFI_DEV_S_AP,
+    .total_sector_cnt = 0,
+    .page_size = 0,
+    .sector_size = 0,
+    .program_unit = 1U,
+    .is_initialized = false,
+};
+#endif /* (SPI_STRATAFLASHJ3_S) && (CFI_S) */
+#endif

@@ -41,6 +41,7 @@ extern volatile bool scp_doorbell;
 extern ARM_DRIVER_FLASH FLASH_DEV_NAME;
 extern struct flash_area flash_map[];
 extern const int flash_map_entry_num;
+extern ARM_DRIVER_FLASH AP_FLASH_DEV_NAME;
 
 static uint8_t *lcp_measurement;
 static struct boot_measurement_metadata *lcp_measurement_metadata;
@@ -458,6 +459,12 @@ int32_t boot_platform_init(void)
 
     if (!fill_rss_flash_map_with_data(0)) {
         BOOT_LOG_ERR("Filling flash map with signed images has failed!");
+        return 1;
+    }
+
+    /* AP flash initial */
+    result = AP_FLASH_DEV_NAME.Initialize(NULL);
+    if (result != ARM_DRIVER_OK) {
         return 1;
     }
 
@@ -1040,6 +1047,16 @@ static int boot_platform_pre_load_ap_bl2(void)
 
     BOOT_LOG_INF("BL2: AP BL2 pre load start");
 
+    /* Configure RSS ATU to access AP Secure Flash for AP BL2   */
+    atu_err = atu_initialize_region(&ATU_DEV_S,
+                                    RSS_ATU_AP_FLASH_ID,
+                                    AP_FLASH_LOG_BASE,
+                                    AP_FLASH_PHY_BASE,
+                                    AP_FLASH_SIZE);
+    if (atu_err != ATU_ERR_NONE) {
+        return 1;
+    }
+
     /* Configure RSS ATU to access RSS header region for AP BL2 */
     atu_err = atu_initialize_region(&ATU_DEV_S,
                                     HOST_AP_BL2_IMG_HDR_ATU_ID,
@@ -1049,6 +1066,7 @@ static int boot_platform_pre_load_ap_bl2(void)
     if (atu_err != ATU_ERR_NONE) {
         return 1;
     }
+
     /* Configure RSS ATU to access AP BL2 SRAM code region */
     atu_err = atu_initialize_region(&ATU_DEV_S,
                                     HOST_AP_BL2_IMG_CODE_ATU_ID,

@@ -44,6 +44,7 @@
 #define RSS_ATU_SCP_RSS_MAILBOX_ATU_ID  4
 #define RSS_ATU_AP_RSS_MAILBOX_ATU_ID   5 /*ID to use for region mapping to MHU
                                             outband msg buffer between AP and RSS */
+#define RSS_ATU_AP_FLASH_ID             6  /* ID to use for region mapping to AP flash */
 #define RSS_ATU_SI_CL0_RSS_MAILBOX_ATU_ID   7 /* ID to use for region mapping to MHU
                                                * outband msg buffer between SI CL0 and RSS
                                                */
@@ -377,14 +378,27 @@
 #define HOST_ACCESS_PS_BASE_OFFSET      RSS_FLASH_IMG_SIZE
 
 /* The physical region base for PS */
-#define HOST_FLASH0_PS_BASE             (BOOT_FLASH + RSS_FLASH_IMG_SIZE)
 #define HOST_FLASH0_PS_SIZE             RSS_FLASH_PS_SIZE
 
 /* ITS region follows PS region */
 #define HOST_ACCESS_ITS_BASE_OFFSET     (HOST_ACCESS_PS_BASE_OFFSET + HOST_FLASH0_PS_SIZE)
 
 /* The physical region base and size for ITS */
-#define HOST_FLASH0_ITS_BASE            (HOST_FLASH0_PS_BASE + HOST_FLASH0_PS_SIZE)
 #define HOST_FLASH0_ITS_SIZE            RSS_FLASH_ITS_SIZE
+
+/* AP Secure flash layout */
+/*
+ * ┌────────────┬──────────────┬─────────────────┬───────────┬─────────┬────────────┐
+ * │   Reserved │ FWU-Metadata │  Bakup-Metadata │   FIP_A   │  FIP_B  │  Reserverd │
+ * │    (3KB)   │   (4KB)      │      (4KB)      │   (2MB)   │  (2MB)  │   (3KB)    │
+ * └────────────┴──────────────┴─────────────────┴───────────┴─────────┴────────────┘
+ */
+/* AP Secure flash logical base address */
+#define AP_FLASH_LOG_BASE           (HOST_PERIPH_TOWER_NCI_BASE + HOST_PERIPH_TOWER_NCI_SIZE)
+/* This part is for signed images. 64MB */
+#define AP_FLASH_SIZE               0x4000000UL
+
+/* AP Secure flash physical base address */
+#define AP_FLASH_PHY_BASE           (0x0000000000000ULL + 0x08000000ULL)
 
 #endif  /* __HOST_BASE_ADDRESS_H__ */

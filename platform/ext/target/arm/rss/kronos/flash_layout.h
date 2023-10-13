@@ -210,6 +210,15 @@
 #define FLASH_DEV_NAME_SE_SECURE_FLASH  Driver_FLASH0
 
 
+/* AP Secure Flash
+ * PHY addr: 0x0000_0000_0000_0000 + 0x0800_0000
+ * size    : 0x400_0000 64MB
+ */
+#define AP_FLASH_DEV_NAME Driver_FLASH1
+/* Smallest flash programmable unit in bytes */
+#define AP_TFM_HAL_FLASH_PROGRAM_UNIT      (0x1)
+
+
 /*******************************/
 /* ITS */
 /*******************************/
