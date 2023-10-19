@@ -252,4 +252,6 @@
 /* Smallest flash programmable unit in bytes */
 #define TFM_HAL_PS_PROGRAM_UNIT         (1)
 
+#define NR_OF_FW_BANKS                  (2)
+
 #endif /* __FLASH_LAYOUT_H__ */

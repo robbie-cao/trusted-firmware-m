@@ -34,14 +34,71 @@
 #include "crypto_hw.h"
 #include "fih.h"
 #endif /* CRYPTO_HW_ACCELERATOR */
+#include "platform.h"
+#include "partition.h"
 
 extern volatile bool scp_doorbell;
 extern ARM_DRIVER_FLASH FLASH_DEV_NAME;
+extern struct flash_area flash_map[];
+extern const int flash_map_entry_num;
 
 static uint8_t *lcp_measurement;
 static struct boot_measurement_metadata *lcp_measurement_metadata;
 
+#define ARRAY_SIZE(arr) (sizeof(arr)/sizeof((arr)[0]))
 static volatile uint8_t chip_id = 0;
+static const char * const image_names [][2] = {
+    {"tfm_primary", "tfm_secondary"},
+    {"tfm_primary", "tfm_secondary"},
+    {"FIP_A", "FIP_B"},
+    {"si_cl2_primary", "si_cl2_secondary"},
+    {"si_cl1_primary", "si_cl1_secondary"},
+    {"si_cl0_primary", "si_cl0_secondary"},
+    {"lcp_primary", "lcp_secondary"},
+    {"scp_primary", "scp_secondary"},
+};
+
+#define BANK_0                  (0)
+
+static bool fill_rss_flash_map_with_data(uint8_t boot_index) {
+    partition_entry_t *entry = NULL;
+    uint8_t i = 0;
+    uint8_t id = 0;
+    uint8_t flash_id = 0;
+    uint8_t image_id = 0;
+
+    if (boot_index >= NR_OF_FW_BANKS) {
+        BOOT_LOG_ERR("%u is an invalid boot_index, 0 <= boot_index < %u",
+                boot_index, NR_OF_FW_BANKS);
+        return false;
+    }
+
+    for (i = 0; i < flash_map_entry_num; i++) {
+        id = flash_map[i].fa_id;
+        for (image_id = 0; image_id < MCUBOOT_IMAGE_NUMBER; image_id++) {
+            if (image_id == RSS_FIRMWARE_AP_BL2_ID) {
+                continue;
+            }
+
+            if (boot_index == BANK_0) {
+                flash_id = FLASH_AREA_IMAGE_PRIMARY(image_id);
+            } else {
+                flash_id = FLASH_AREA_IMAGE_SECONDARY(image_id);
+            }
+
+            if (id == flash_id) {
+                entry = get_partition_entry(image_names[image_id][boot_index]);
+                flash_map[i].fa_off = (uint32_t)entry->start;
+                flash_map[i].fa_size = (uint32_t)entry->length;
+                if (image_id == RSS_FIRMWARE_NON_SECURE_ID) {
+                    flash_map[i].fa_off += FLASH_S_PARTITION_SIZE;
+                }
+            }
+        }
+    }
+
+    return true;
+}
 
 /* Read Chip ID and store it in a global variable */
 static void read_chip_id()
@@ -393,6 +450,14 @@ int32_t boot_platform_init(void)
 
     result = FLASH_DEV_NAME.Initialize(NULL);
     if (result != ARM_DRIVER_OK) {
+        return 1;
+    }
+
+    plat_io_storage_init();
+    partition_init(PLATFORM_GPT_IMAGE);
+
+    if (!fill_rss_flash_map_with_data(0)) {
+        BOOT_LOG_ERR("Filling flash map with signed images has failed!");
         return 1;
     }
 

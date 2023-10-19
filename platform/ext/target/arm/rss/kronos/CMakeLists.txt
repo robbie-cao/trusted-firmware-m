@@ -113,6 +113,13 @@ target_sources(platform_bl2
         ni710ae_lib.c
         fainlight_gic_lib.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata/spi_strataflashj3_flash_lib.c
+        platform.c
+        io/io_block.c
+        io/io_flash.c
+        io/io_storage.c
+        soft_crc/soft_crc.c
+        partition/partition.c
+        partition/gpt.c
 )
 
 target_compile_definitions(platform_bl2
@@ -137,6 +144,9 @@ target_include_directories(platform_bl2
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/common
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata
+        io
+        soft_crc
+        partition
 )
 
 target_compile_definitions(platform_bl2
