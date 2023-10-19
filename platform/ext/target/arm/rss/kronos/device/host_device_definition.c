@@ -28,41 +28,96 @@
 #include "host_base_address.h"
 
 #ifdef ATU_SCP
+
+#define CHIP_ADDRESS(addr, idx) (addr + HOST_REMOTE_CHIP_PERIPH_OFFSET(idx))
+#define IOVB_NCI_GVP_START_ADDRESS(idx) (CHIP_ADDRESS(0x280000000, idx))
+#define IOVB_NCI_GVP_END_ADDRESS(idx) (CHIP_ADDRESS(0x2DFFFFFFF, idx))
+#define ECAM_START_ADDRESS(idx) (CHIP_ADDRESS(0x4000000000, idx))
+#define ECAM_END_ADDRESS(idx) (CHIP_ADDRESS(0x403FFFFFFF, idx))
+
 static const struct atu_dev_cfg_t ATU_DEV_SCP_CFG = {
     .base = HOST_SCP_ATU_BASE_S};
 struct atu_dev_t ATU_DEV_SCP = {&ATU_DEV_SCP_CFG};
 
 /* List of ATU regions allowed to be mapped in the SCP ATU */
 static const struct atu_region scp_regions[] = {
-    [CMN_CONFIG_SCP_ATU_REGION] = {
+    [CMN_CONFIG_SCP_ATU_PERM_REGION] = {
         /* CMN Config region */
         .start_addr = (uint64_t)0x100000000,
         .end_addr = (uint64_t)0x13FFFFFFF,
-        .allowed_pas = ATU_REGION_PAS_ROOT,
+        .allowed_pas = ATU_REGION_PAS_SECURE,
     },
-    [CLUSTER_UTIL_SCP_ATU_REGION] = {
+    [CLUSTER_UTIL_SCP_ATU_PERM_REGION] = {
         /* Cluster Utility region */
         .start_addr = (uint64_t)0x200000000,
         .end_addr = (uint64_t)0x20FFFFFFF,
         .allowed_pas = ATU_REGION_PAS_SECURE,
     },
-    [AP_SHARED_SRAM_SCP_ATU_REGION] = {
+    [AP_SHARED_SRAM_SCP_ATU_PERM_REGION] = {
         /* AP shared RAM region */
         .start_addr = (uint64_t)0x00000000,
         .end_addr = (uint64_t)0x07FFFFFF,
         .allowed_pas = ATU_REGION_PAS_SECURE,
     },
-    [RSM_SCP_ATU_REGION] = {
+    [RSM_SCP_ATU_PERM_REGION] = {
         /* RSM region */
         .start_addr = (uint64_t)0x2F000000,
         .end_addr = (uint64_t)0x2F3FFFFF,
         .allowed_pas = ATU_REGION_PAS_SECURE,
     },
-    [AP_PERIPH_SCP_ATU_REGION] = {
+    [AP_PERIPH_SCP_ATU_PERM_REGION] = {
         /* AP Peripherals region */
         .start_addr = (uint64_t)0x20000000,
         .end_addr = (uint64_t)0x2FFFFFFF,
         .allowed_pas = ATU_REGION_PAS_SECURE,
+    },
+    [NCI_GVP_ATU_PERM_REGION] = {
+        /* GVP registers region */
+        .start_addr = (uint64_t)IOVB_NCI_GVP_START_ADDRESS(0),
+        .end_addr = (uint64_t)IOVB_NCI_GVP_END_ADDRESS(0),
+        .allowed_pas = ATU_REGION_PAS_SECURE,
+    },
+    [ECAM_ATU_PERM_REGION] = {
+        /* ECAM region */
+        .start_addr = (uint64_t)ECAM_START_ADDRESS(0),
+        .end_addr = (uint64_t)ECAM_END_ADDRESS(0),
+        .allowed_pas = ATU_REGION_PAS_NON_SECURE,
+    },
+    [NCI_GVP_ATU_PERM_REGION_1] = {
+        /* GVP registers region */
+        .start_addr = (uint64_t)IOVB_NCI_GVP_START_ADDRESS(1),
+        .end_addr = (uint64_t)IOVB_NCI_GVP_END_ADDRESS(1),
+        .allowed_pas = ATU_REGION_PAS_SECURE,
+    },
+    [ECAM_ATU_PERM_REGION_1] = {
+        /* ECAM region */
+        .start_addr = (uint64_t)ECAM_START_ADDRESS(1),
+        .end_addr = (uint64_t)ECAM_END_ADDRESS(1),
+        .allowed_pas = ATU_REGION_PAS_NON_SECURE,
+    },
+    [NCI_GVP_ATU_PERM_REGION_2] = {
+        /* GVP registers region */
+        .start_addr = (uint64_t)IOVB_NCI_GVP_START_ADDRESS(2),
+        .end_addr = (uint64_t)IOVB_NCI_GVP_END_ADDRESS(2),
+        .allowed_pas = ATU_REGION_PAS_SECURE,
+    },
+    [ECAM_ATU_PERM_REGION_2] = {
+        /* ECAM region */
+        .start_addr = (uint64_t)ECAM_START_ADDRESS(2),
+        .end_addr = (uint64_t)ECAM_END_ADDRESS(2),
+        .allowed_pas = ATU_REGION_PAS_NON_SECURE,
+    },
+    [NCI_GVP_ATU_PERM_REGION_3] = {
+        /* GVP registers region */
+        .start_addr = (uint64_t)IOVB_NCI_GVP_START_ADDRESS(3),
+        .end_addr = (uint64_t)IOVB_NCI_GVP_END_ADDRESS(3),
+        .allowed_pas = ATU_REGION_PAS_SECURE,
+    },
+    [ECAM_ATU_PERM_REGION_3] = {
+        /* ECAM region */
+        .start_addr = (uint64_t)ECAM_START_ADDRESS(3),
+        .end_addr = (uint64_t)ECAM_END_ADDRESS(3),
+        .allowed_pas = ATU_REGION_PAS_NON_SECURE,
     },
 };
 
@@ -90,6 +145,7 @@ struct atu_map scp_atu_regions[] = {
         .phy_addr = 0x00000000,
         /* 128 MB */
         .size = 0x08000000,
+        .access_type = ATU_ACCESS_ROOT,
     },
     [RSM_SCP_ATU_REGION] = {
         .log_addr = 0x78000000,
@@ -119,7 +175,7 @@ struct mailbox_info scp2rss_mbx_info = {
 struct atu_dev_info SCP_ATU_INFO = {
     .atu_dev = &ATU_DEV_SCP,
     .allowed_regions_list = &scp_regions,
-    .allowed_regions_count = SCP_ATU_REGION_COUNT,
+    .allowed_regions_count = SCP_ATU_PERM_REGION_COUNT,
     .mailbox_info = &scp2rss_mbx_info,
 };
 #endif
