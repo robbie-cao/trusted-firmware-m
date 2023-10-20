@@ -35,11 +35,13 @@ target_sources(cm_provisioning_bundle
     PRIVATE
         ./cm_provisioning_code.c
         $<$<BOOL:${TFM_DUMMY_PROVISIONING}>:./cm_dummy_provisioning_data.c>
+        $<$<BOOL:${TFM_FWU_AGENT}>:${TARGET_PLATFORM_PATH}/fw_update_agent/fwu_agent.c>
 )
 
 target_include_directories(cm_provisioning_bundle
     PRIVATE
         ../bundle_common
+        $<$<BOOL:${TFM_FWU_AGENT}>:${TARGET_PLATFORM_PATH}/fw_update_agent/fwu_agent.h>
 )
 
 target_link_libraries(cm_provisioning_bundle

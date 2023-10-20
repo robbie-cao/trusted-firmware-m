@@ -252,6 +252,26 @@
 /* Smallest flash programmable unit in bytes */
 #define TFM_HAL_PS_PROGRAM_UNIT         (1)
 
+/* FWU Configurations */
 #define NR_OF_FW_BANKS                  (2)
+#define NR_OF_IMAGES_IN_FW_BANK         (7)
+
+/* Space in flash to store metadata and uefi variables */
+#define FWU_METADATA_FLASH_DEV          (FLASH_DEV_NAME)
+#define FWU_METADATA_FLASH_SECTOR_SIZE  ((0x00001000))
+
+#define FWU_METADATA_REPLICA_1_OFFSET   (0x5000)  /* 40th LBA */
+#define FWU_METADATA_REPLICA_2_OFFSET   (FWU_METADATA_REPLICA_1_OFFSET + \
+                                         FWU_METADATA_FLASH_SECTOR_SIZE)
+
+#define FWU_PRIVATE_METADATA_REPLICA_1_OFFSET   (FWU_METADATA_REPLICA_2_OFFSET + \
+                                                 FWU_METADATA_FLASH_SECTOR_SIZE)
+#define FWU_PRIVATE_METADATA_REPLICA_2_OFFSET   (FWU_PRIVATE_METADATA_REPLICA_1_OFFSET + \
+                                                 FWU_METADATA_FLASH_SECTOR_SIZE)
+
+/* Static Configurations of the Flash */
+#define BL2_PARTITION_SIZE              FLASH_BL2_PARTITION_SIZE   /* 128 KB */
+#define BL2_BANK_0_OFFSET               (0x9000)                   /* 72nd LBA */
+#define BL2_BANK_1_OFFSET               (0x1002000)                /* 32784th LBA */
 
 #endif /* __FLASH_LAYOUT_H__ */

@@ -26,4 +26,10 @@ target_sources(bl1_1_lib
 target_include_directories(bl1_1_lib
     INTERFACE
         ./bundle_common
+        $<$<BOOL:${TFM_FWU_AGENT}>:${TARGET_PLATFORM_PATH}/fw_update_agent/fwu_agent.h>
+)
+
+target_compile_definitions(bl1_1_lib
+    INTERFACE
+        $<$<BOOL:${TFM_FWU_AGENT}>:TFM_FWU_AGENT>
 )

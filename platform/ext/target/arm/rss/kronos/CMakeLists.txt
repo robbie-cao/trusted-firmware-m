@@ -40,6 +40,8 @@ target_include_directories(platform_s
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/common
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata
+        fw_update_agent
+        soft_crc
 )
 
 target_sources(platform_s
@@ -55,6 +57,8 @@ target_sources(platform_s
         rss_expansion_peripherals_def.c
         rss_comms/rss_comms_permissions_hal.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata/spi_strataflashj3_flash_lib.c
+        fw_update_agent/fwu_agent.c
+        soft_crc/soft_crc.c
 )
 
 target_sources(tfm_s
@@ -120,6 +124,7 @@ target_sources(platform_bl2
         soft_crc/soft_crc.c
         partition/partition.c
         partition/gpt.c
+        fw_update_agent/fwu_agent.c
 )
 
 target_compile_definitions(platform_bl2
@@ -147,6 +152,7 @@ target_include_directories(platform_bl2
         io
         soft_crc
         partition
+        fw_update_agent
 )
 
 target_compile_definitions(platform_bl2
@@ -165,6 +171,8 @@ target_sources(platform_bl1_1
         device/rss_expansion_device_definition.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011/uart_pl011_drv.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata/spi_strataflashj3_flash_lib.c
+        ./fw_update_agent/fwu_agent.c
+        ./soft_crc/soft_crc.c
 )
 
 target_include_directories(platform_bl1_1_interface
@@ -175,6 +183,8 @@ target_include_directories(platform_bl1_1_interface
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/common
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata
+        ./fw_update_agent
+        ./soft_crc
 )
 
 #=========================== MHUv3 Dependent Code ===============================#

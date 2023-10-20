@@ -371,6 +371,7 @@ target_sources(platform_bl1_2
     PRIVATE
         ./bl1/boot_hal_bl1_2.c
         ./rss_key_derivation.c
+        $<$<BOOL:${TFM_FWU_AGENT}>:${TARGET_PLATFORM_PATH}/fw_update_agent/fwu_agent.c>
 )
 
 target_include_directories(platform_bl1_2
@@ -380,6 +381,7 @@ target_include_directories(platform_bl1_2
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata
         $<$<NOT:$<BOOL:${RSS_DEBUG_UART}>>:${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011>
     PRIVATE
+        ../fw_update_agent
         .
 )
 
@@ -387,6 +389,7 @@ target_compile_definitions(platform_bl1_2
     PUBLIC
         $<$<AND:$<BOOL:${CONFIG_TFM_BOOT_STORE_MEASUREMENTS}>,$<BOOL:${TFM_PARTITION_MEASURED_BOOT}>>:MEASURED_BOOT_API>
         $<$<BOOL:${RSS_AMOUNT}>:RSS_AMOUNT=${RSS_AMOUNT}>
+        $<$<BOOL:${TFM_FWU_AGENT}>:TFM_FWU_AGENT>
 )
 
 if(RSS_USE_HOST_FLASH)

@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: BSD-3-Clause
  *
  */
-
 #include "boot_hal.h"
 #include "region.h"
 #include "device_definition.h"
@@ -31,6 +30,9 @@
 #endif
 #include "tfm_plat_nv_counters.h"
 #include "rss_key_derivation.h"
+#ifdef TFM_FWU_AGENT
+#include "fwu_agent.h"
+#endif /* TFM_FWU_AGENT */
 
 uint32_t image_offsets[2];
 
@@ -52,6 +54,17 @@ uint32_t bl1_image_get_flash_offset(uint32_t image_id)
     }
 }
 #endif
+
+#ifdef TFM_FWU_AGENT
+uint32_t bl1_image_get_flash_offset(uint32_t image_id)
+{
+    uint32_t bl2_offset = 0;
+    (void) image_id;
+
+    bl1_get_active_bl2_image(&bl2_offset);
+    return bl2_offset;
+}
+#endif /* TFM_FWU_AGENT */
 
 static int32_t init_atu_regions(void)
 {

@@ -14,6 +14,9 @@
 #include "tfm_hal_platform.h"
 #include <string.h>
 #include "platform_regs.h"
+#ifdef TFM_FWU_AGENT
+#include "fwu_agent.h"
+#endif /* TFM_FWU_AGENT */
 
 enum rss_gpio_val_t {
     RSS_GPIO_STATE_VIRGIN_IDLE = 0x1,
@@ -111,6 +114,13 @@ static enum tfm_plat_err_t provision_assembly_and_test(void)
     memcpy((void*)PROVISIONING_BUNDLE_VALUES_START,
            (void *)&cm_encrypted_bundle->values,
            PROVISIONING_BUNDLE_VALUES_SIZE + PROVISIONING_BUNDLE_DATA_SIZE);
+
+#ifdef TFM_FWU_AGENT
+    err = fwu_metadata_provision();
+    if (err != FWU_AGENT_SUCCESS) {
+        return 1;
+    }
+#endif /* TFM_FWU_AGENT */
 
     BL1_LOG("[INF] Running CM provisioning bundle\r\n");
     err = ((enum tfm_plat_err_t (*)(void))(PROVISIONING_BUNDLE_CODE_START | 0b1))();
