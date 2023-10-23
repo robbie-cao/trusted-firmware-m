@@ -138,18 +138,29 @@ extern ARM_DRIVER_FLASH FWU_METADATA_FLASH_DEV;
 
 #define HOST_ACK_TIMEOUT_SEC    (6 * 60) /* About 360 seconds, not exact */
 
-void bl1_get_active_bl2_image(uint32_t *offset)
+static enum fwu_agent_state_t get_fwu_agent_state(
+        struct fwu_metadata *metadata_ptr,
+        struct fwu_private_metadata *priv_metadata_ptr)
 {
+    uint32_t boot_index;
+
     FWU_LOG_MSG("%s: enter\n\r", __func__);
 
-    if (fwu_metadata_init()) {
-        FWU_ASSERT(0);
+    boot_index = priv_metadata_ptr->boot_index;
+
+    if (boot_index != metadata_ptr->active_index) {
+        return FWU_AGENT_STATE_TRIAL;
     }
 
-    /* This is the hardcode for debugging temporarily. */
-    *offset = BL2_BANK_0_OFFSET;
+    for (uint8_t i = 0; i < NR_OF_IMAGES_IN_FW_BANK; i++) {
+        if ((metadata_ptr->img_entry[i].img_props[boot_index].accepted)
+                == (IMAGE_NOT_ACCEPTED)) {
+            return FWU_AGENT_STATE_TRIAL;
+        }
+    }
 
-    return;
+    FWU_LOG_MSG("%s: exit: FWU_AGENT_STATE_REGULAR\n\r", __func__);
+    return FWU_AGENT_STATE_REGULAR;
 }
 
 static enum fwu_agent_error_t private_metadata_read(
@@ -346,6 +357,72 @@ enum fwu_agent_error_t fwu_metadata_init(void)
     FWU_LOG_MSG("%s: is_initialized = %d\n\r", __func__, is_initialized);
 
     return FWU_AGENT_SUCCESS;
+}
+
+void bl1_get_active_bl2_image(uint32_t *offset)
+{
+    struct fwu_private_metadata priv_metadata;
+    enum fwu_agent_state_t current_state;
+    uint32_t boot_attempted;
+    uint32_t boot_index;
+
+    FWU_LOG_MSG("%s: enter\n\r", __func__);
+
+    if (fwu_metadata_init()) {
+        FWU_ASSERT(0);
+    }
+
+    if (private_metadata_read(&priv_metadata)) {
+        FWU_ASSERT(0);
+    }
+
+    if (metadata_read(&_metadata)) {
+        FWU_ASSERT(0);
+    }
+
+    current_state = get_fwu_agent_state(&_metadata, &priv_metadata);
+
+    if (current_state == FWU_AGENT_STATE_REGULAR) {
+        boot_index = _metadata.active_index;
+        FWU_ASSERT(boot_index == priv_metadata.boot_index);
+        boot_attempted = 0;
+    } else if (current_state == FWU_AGENT_STATE_TRIAL) {
+        boot_attempted = (++priv_metadata.boot_attempted);
+        FWU_LOG_MSG("%s: attempting boot number = %u\n\r",
+                                        __func__, boot_attempted);
+        if (boot_attempted <= MAX_BOOT_ATTEMPTS_PER_BANK) {
+            boot_index = _metadata.active_index;
+            FWU_LOG_MSG("%s: booting from trial bank: %u\n\r",
+                                        __func__, boot_index);
+        } else if (boot_attempted <= (2 * MAX_BOOT_ATTEMPTS_PER_BANK)) {
+            boot_index = _metadata.previous_active_index;
+            FWU_LOG_MSG("%s: gave up booting from trial bank\n\r", __func__);
+            FWU_LOG_MSG("%s: booting from previous active bank: %u\n\r",
+                                        __func__, boot_index);
+        } else {
+            FWU_LOG_MSG("%s: cannot boot system from any bank, halting...\n\r", __func__);
+            FWU_ASSERT(0);
+        }
+    } else {
+        FWU_ASSERT(0);
+    }
+
+    priv_metadata.boot_index = boot_index;
+    if (private_metadata_write(&priv_metadata) < 0) {
+        FWU_ASSERT(0);
+    }
+
+    if (boot_index == BANK_0) {
+        *offset = BL2_BANK_0_OFFSET;
+    } else if (boot_index == BANK_1) {
+        *offset = BL2_BANK_1_OFFSET;
+    } else {
+        FWU_ASSERT(0);
+    }
+
+    FWU_LOG_MSG("%s: exit: booting from bank = %u, offset = 0x%x\n\r", __func__,
+                        boot_index, *offset);
+    return;
 }
 
 enum fwu_agent_error_t fwu_metadata_provision(void)

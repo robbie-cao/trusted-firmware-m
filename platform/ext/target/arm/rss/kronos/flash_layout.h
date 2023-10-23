@@ -272,6 +272,6 @@
 /* Static Configurations of the Flash */
 #define BL2_PARTITION_SIZE              FLASH_BL2_PARTITION_SIZE   /* 128 KB */
 #define BL2_BANK_0_OFFSET               (0x9000)                   /* 72nd LBA */
-#define BL2_BANK_1_OFFSET               (0x1002000)                /* 32784th LBA */
+#define BL2_BANK_1_OFFSET               (0xFF9000)                 /* 32712th LBA */
 
 #endif /* __FLASH_LAYOUT_H__ */
