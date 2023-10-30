@@ -35,6 +35,7 @@ set(TFM_PARTITION_PROTECTED_STORAGE           ON   CACHE BOOL   "Enable Protecte
 set(TFM_PARTITION_INTERNAL_TRUSTED_STORAGE    ON   CACHE BOOL   "Enable Internal Trusted Storage partition")
 set(TFM_PARTITION_CRYPTO                      ON   CACHE BOOL   "Enable Crypto partition")
 set(TFM_MBEDCRYPTO_PLATFORM_EXTRA_CONFIG_PATH  ""  CACHE PATH   "Config to append to standard Mbed Crypto config, used by platforms to cnfigure feature support")
+set(RSS_COMMS_MAX_CONCURRENT_REQ               4   CACHE STRING "Maximum number of concurrent connection requests to RSS")
 
 # Once all options are set, set common options as fallback
 include(${CMAKE_CURRENT_LIST_DIR}/../common/config.cmake)

@@ -22,6 +22,7 @@ elseif(TFM_PLATFORM_VARIANT STREQUAL "2")
 else()
     set(RSS_LCP_COUNT                          16       CACHE STRING   "Number of LCPs to load")
 endif()
+set(RSS_COMMS_MAX_CONCURRENT_REQ               2        CACHE STRING   "Maximum number of concurrent connection requests to RSS")
 
 # Maximum number of MCUBoot images supported by TF-M NV counters and ROTPKs
 if(MCUBOOT_IMAGE_NUMBER GREATER 9)

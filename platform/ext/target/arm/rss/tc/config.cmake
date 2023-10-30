@@ -7,3 +7,5 @@
 
 # Once all options are set, set common options as fallback
 include(${CMAKE_CURRENT_LIST_DIR}/../common/config.cmake)
+
+set(RSS_COMMS_MAX_CONCURRENT_REQ   2   CACHE STRING "Maximum number of concurrent connection requests to RSS")
