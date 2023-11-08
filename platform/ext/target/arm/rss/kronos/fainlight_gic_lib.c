@@ -110,6 +110,8 @@ static struct gic_mv_i2v_map view_spi_map[] = {
     { 116, 2 }, /* MHU CL1 To CL0 Sender */
     { 118, 2 }, /* MHU CL1 To CL2 Sender */
     { 123, 2 }, /* MHU CL2 To CL1 Receiver */
+    { 124, 2 }, /* MHU to RSS Cluster 1 S */
+    { 125, 2 }, /* MHU from RSS Cluster 1 S */
     { 128, 2 }, /* FMU */
     { 129, 2 }, /* SSU */
     { 134, 2 }, /* FMU Non-Critical */
