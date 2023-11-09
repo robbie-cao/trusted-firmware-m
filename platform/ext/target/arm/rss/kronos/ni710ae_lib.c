@@ -246,7 +246,7 @@ program_si_apu_runtime(struct ni710ae_discovery_tree_t* dis_tree,
         /* ethernet_ctrl_1 */
         { 0x8200000, 0x82FFFFF, NCI_FOREGROUND, NCI_SEC_RW, 8, },
         /* pc_shrd */
-        { 0x200000000, 0x2000FFFFF, NCI_FOREGROUND, NCI_SEC_RW, 9, },
+        { 0x200000000, 0x207FFFFFF, NCI_FOREGROUND, NCI_ALL_PERM, 9, },
         /* base_periphs */
         /* sysctrl */
         { 0x2A6A0000, 0x2A6CFFFF, NCI_FOREGROUND, NCI_SEC_RW, 10, },
@@ -314,7 +314,7 @@ program_si_apu_runtime(struct ni710ae_discovery_tree_t* dis_tree,
         /* SRAM1 */
         { 0x48000000, 0x4FFFFFFF, NCI_FOREGROUND, NCI_SEC_RW, 6, },
         /* pc_shrd */
-        { 0x200000000, 0x2000FFFFF, NCI_FOREGROUND, NCI_SEC_RW, 7, },
+        { 0x200000000, 0x207FFFFFF, NCI_FOREGROUND, NCI_ALL_PERM, 7, },
         /* base_periphs */
         /* sysctrl */
         { 0x2A6A0000, 0x2A6CFFFF, NCI_FOREGROUND, NCI_SEC_RW, 8, },
@@ -382,7 +382,7 @@ program_si_apu_runtime(struct ni710ae_discovery_tree_t* dis_tree,
         /* SRAM1 */
         { 0x48000000, 0x4FFFFFFF, NCI_FOREGROUND, NCI_SEC_RW, 6, },
         /* pc_shrd */
-        { 0x200000000, 0x2000FFFFF, NCI_FOREGROUND, NCI_SEC_RW, 7, },
+        { 0x200000000, 0x207FFFFFF, NCI_FOREGROUND, NCI_ALL_PERM, 7, },
         /* base_periphs */
         /* sysctrl */
         { 0x2A6A0000, 0x2A6CFFFF, NCI_FOREGROUND, NCI_SEC_RW, 8, },
@@ -461,7 +461,7 @@ program_si_apu_runtime(struct ni710ae_discovery_tree_t* dis_tree,
     };
 
     struct apu_region_cfgs asni_pc_shrd[] = {
-        { 0x200000000, 0x2000FFFFF, NCI_FOREGROUND, NCI_SEC_RW, 0, },
+        { 0x200000000, 0x207FFFFFF, NCI_FOREGROUND, NCI_ALL_PERM, 0, },
     };
 
     struct apu_region_cfgs asni_rss_mm[] = {
@@ -537,7 +537,7 @@ program_si_apu_runtime(struct ni710ae_discovery_tree_t* dis_tree,
     };
 
     struct apu_region_cfgs amni_sram_shrd[] = {
-        { 0x200000000, 0x2000FFFFF, NCI_FOREGROUND, NCI_SEC_RW, 0, },
+        { 0x200000000, 0x207FFFFFF, NCI_FOREGROUND, NCI_ALL_PERM, 0, },
     };
 
     struct apu_cfgs apu_table[] = {
