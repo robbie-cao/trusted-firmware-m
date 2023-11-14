@@ -139,29 +139,29 @@ program_si_apu_boot_time(struct ni710ae_discovery_tree_t* dis_tree,
         { 0x60000000, 0x7FFFFFFF, NCI_FOREGROUND, NCI_SEC_RW, 8, },
         /* base_periphs */
         /* sysctrl */
-        { 0x2A6A0000, 0x2A6CFFFF, NCI_FOREGROUND, NCI_SEC_RW, 11, },
+        { 0x2A6A0000, 0x2A6CFFFF, NCI_FOREGROUND, NCI_SEC_RW, 9, },
         /* gcounter_ctrl */
-        { 0x2A6D0000, 0x2A6DFFFF, NCI_FOREGROUND, NCI_SEC_RW, 12, },
+        { 0x2A6D0000, 0x2A6DFFFF, NCI_FOREGROUND, NCI_SEC_RW, 10, },
         /* gcounter_read */
-        { 0x2A6E0000, 0x2A6EFFFF, NCI_FOREGROUND, NCI_SEC_RW, 13, },
+        { 0x2A6E0000, 0x2A6EFFFF, NCI_FOREGROUND, NCI_SEC_RW, 11, },
         /* timer_ctrl */
-        { 0x2A6F0000, 0x2A6FFFFF, NCI_FOREGROUND, NCI_SEC_RW, 14, },
+        { 0x2A6F0000, 0x2A6FFFFF, NCI_FOREGROUND, NCI_SEC_RW, 12, },
         /* si_fmu */
-        { 0x2A510000, 0x2A51FFFF, NCI_FOREGROUND, NCI_SEC_RW, 15, },
+        { 0x2A510000, 0x2A51FFFF, NCI_FOREGROUND, NCI_SEC_RW, 13, },
         /* nci_fmu */
-        { 0x2A520000, 0x2A52FFFF, NCI_FOREGROUND, NCI_SEC_RW, 16, },
+        { 0x2A520000, 0x2A52FFFF, NCI_FOREGROUND, NCI_SEC_RW, 14, },
         /* gic_fmu */
-        { 0x2A530000, 0x2A53FFFF, NCI_FOREGROUND, NCI_SEC_RW, 17, },
+        { 0x2A530000, 0x2A53FFFF, NCI_FOREGROUND, NCI_SEC_RW, 15, },
         /* pc_gic_fmu */
-        { 0x2A570000, 0x2A57FFFF, NCI_FOREGROUND, NCI_SEC_RW, 18, },
+        { 0x2A570000, 0x2A57FFFF, NCI_FOREGROUND, NCI_SEC_RW, 16, },
         /* ssu */
-        { 0x2A500000, 0x2A50FFFF, NCI_FOREGROUND, NCI_SEC_RW, 19, },
+        { 0x2A500000, 0x2A50FFFF, NCI_FOREGROUND, NCI_SEC_RW, 17, },
         /* pc_bist0 */
-        { 0x2B200000, 0x2B20FFFF, NCI_FOREGROUND, NCI_SEC_RW, 20, },
+        { 0x2B200000, 0x2B20FFFF, NCI_FOREGROUND, NCI_SEC_RW, 18, },
         /* pc_bist1 */
-        { 0x2B210000, 0x2B21FFFF, NCI_FOREGROUND, NCI_SEC_RW, 21, },
+        { 0x2B210000, 0x2B21FFFF, NCI_FOREGROUND, NCI_SEC_RW, 19, },
         /* pc_pik */
-        { 0x2A640000, 0x2A64FFFF, NCI_FOREGROUND, NCI_SEC_RW, 22, },
+        { 0x2A640000, 0x2A64FFFF, NCI_FOREGROUND, NCI_SEC_RW, 20, },
     };
 
     struct apu_region_cfgs asni_rss_pp[] = {
@@ -465,7 +465,7 @@ program_si_apu_runtime(struct ni710ae_discovery_tree_t* dis_tree,
     };
 
     struct apu_region_cfgs asni_rss_mm[] = {
-        { 0x000000000000, 0xFFFFFFFFFFFF, NCI_FOREGROUND, NCI_SEC_RW, 0, },
+        { 0x000000000000, 0xFFFFFFFFFFFF, NCI_BACKGROUND, NCI_SEC_RW, 0, },
     };
 
     struct apu_region_cfgs asni_rss_pp[] = {
