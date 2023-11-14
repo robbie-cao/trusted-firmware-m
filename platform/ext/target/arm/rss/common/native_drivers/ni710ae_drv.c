@@ -151,7 +151,7 @@ ni710ae_apu_set_id_valid(struct ni710ae_apu_dev_t *dev, uint32_t region,
         return NI710AE_ERR_INVALID_ARG;
     }
 
-    reg->region[region].prlar_l |= (0xF | valid);
+    reg->region[region].prlar_l |= (0xF & valid);
 
     return NI710AE_SUCCESS;
 }
