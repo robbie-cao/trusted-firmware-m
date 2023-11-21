@@ -21,6 +21,7 @@
 #include "Driver_USART.h"
 #include "target_cfg.h"
 #include "device_cfg.h"
+#include "cmsis.h"
 
 #define ASSERT_HIGH(X)  assert(X == ARM_DRIVER_OK)
 
@@ -37,6 +38,8 @@ int stdio_output_string(const unsigned char *str, uint32_t len)
 {
     int32_t ret;
 
+    __disable_irq();
+
     ret = STDIO_DRIVER.Send(str, len);
     if (ret != ARM_DRIVER_OK) {
         return 0;
@@ -44,7 +47,11 @@ int stdio_output_string(const unsigned char *str, uint32_t len)
     /* Add a busy wait after sending. */
     while (STDIO_DRIVER.GetStatus().tx_busy);
 
-    return STDIO_DRIVER.GetTxCount();
+    ret = STDIO_DRIVER.GetTxCount();
+
+    __enable_irq();
+
+    return ret;
 }
 
 /* Redirects printf to STDIO_DRIVER in case of ARMCLANG*/
