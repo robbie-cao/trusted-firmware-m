@@ -33,6 +33,15 @@
 
 #define MHU_V3_RSS_SI_CL2    2U
 
+/* AP to RSS Secure MHU receiver interrupt */
+#define MAILBOX_IRQ_AP CMU_MHU2_Receiver_IRQn
+/* SI CL0 to RSS MHU receiver interrupt */
+#define MAILBOX_IRQ_SI_CL0 CMU_MHU6_Receiver_IRQn
+/* SI CL1 to RSS MHU receiver interrupt */
+#define MAILBOX_IRQ_SI_CL1 CMU_MHU7_Receiver_IRQn
+/* SI CL2 to RSS MHU receiver interrupt */
+#define MAILBOX_IRQ_SI_CL2 CMU_MHU8_Receiver_IRQn
+
 /*External Intel Strata Flash Device*/
 #define SPI_STRATAFLASHJ3_S
 

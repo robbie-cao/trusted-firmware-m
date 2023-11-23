@@ -10,7 +10,9 @@
 #include "rss_comms.h"
 #include "rss_comms_queue.h"
 #include "mhu.h"
+#include "cmsis.h"
 #include "device_definition.h"
+#include "tfm_peripherals_def.h"
 #include "tfm_spm_log.h"
 #include "tfm_pools.h"
 #include "tfm_hal_interrupt.h"
@@ -176,29 +178,51 @@ enum tfm_plat_err_t tfm_multi_core_hal_reply(struct client_request_t *req)
     enum mhu_error_t mhu_err;
     size_t reply_size;
 
-    if (!is_valid_chunk_data_in_pool(req_pool, (uint8_t *)req)) {
-        return TFM_PLAT_ERR_SYSTEM_ERR;
-    }
+    NVIC_DisableIRQ(MAILBOX_IRQ_AP);
+#ifdef MHU_V3_RSS_SI_CL0
+    NVIC_DisableIRQ(MAILBOX_IRQ_SI_CL0);
+#endif
+#ifdef MHU_V3_RSS_SI_CL1
+    NVIC_DisableIRQ(MAILBOX_IRQ_SI_CL1);
+#endif
+#ifdef MHU_V3_RSS_SI_CL2
+    NVIC_DisableIRQ(MAILBOX_IRQ_SI_CL2);
+#endif
 
+    if (!is_valid_chunk_data_in_pool(req_pool, (uint8_t *)req)) {
+        err = TFM_PLAT_ERR_SYSTEM_ERR;
+        goto out;
+    }
     /* FIXME: Queue replies to avoid blocking execution */
 
     err = rss_protocol_serialize_reply(req, &reply, &reply_size);
     if (err != TFM_PLAT_ERR_SUCCESS) {
         SPMLOG_DBGMSGVAL("[COMMS] Serialize reply failed: ", err);
-        goto out;
+        goto out_free_req;
     }
 
     mhu_err = mhu_send_data(req->mhu_sender_dev, (uint8_t *)&reply, reply_size);
     if (mhu_err != MHU_ERR_NONE) {
         SPMLOG_DBGMSGVAL("[COMMS] MHU send failed: ", mhu_err);
         err = TFM_PLAT_ERR_SYSTEM_ERR;
-        goto out;
+        goto out_free_req;
     }
 
     SPMLOG_DBGMSG("[COMMS] Sent reply\r\n");
 
-out:
+out_free_req:
     tfm_pool_free(req_pool, req);
+out:
+    NVIC_EnableIRQ(MAILBOX_IRQ_AP);
+#ifdef MHU_V3_RSS_SI_CL0
+    NVIC_EnableIRQ(MAILBOX_IRQ_SI_CL0);
+#endif
+#ifdef MHU_V3_RSS_SI_CL1
+    NVIC_EnableIRQ(MAILBOX_IRQ_SI_CL1);
+#endif
+#ifdef MHU_V3_RSS_SI_CL2
+    NVIC_EnableIRQ(MAILBOX_IRQ_SI_CL2);
+#endif
     return err;
 }
 
