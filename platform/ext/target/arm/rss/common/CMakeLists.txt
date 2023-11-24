@@ -371,7 +371,7 @@ target_sources(platform_bl1_2
     PRIVATE
         ./bl1/boot_hal_bl1_2.c
         ./rss_key_derivation.c
-        $<$<BOOL:${TFM_FWU_AGENT}>:${TARGET_PLATFORM_PATH}/fw_update_agent/fwu_agent.c>
+        $<$<BOOL:${TFM_FWU_AGENT}>:${TARGET_PLATFORM_PATH}/fw_update_agent/fwu_agent_rss.c>
         $<$<BOOL:${TFM_FWU_AGENT}>:${TARGET_PLATFORM_PATH}/soft_crc/soft_crc.c>
 )
 

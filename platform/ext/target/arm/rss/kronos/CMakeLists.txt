@@ -58,6 +58,7 @@ target_sources(platform_s
         rss_comms/rss_comms_permissions_hal.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata/spi_strataflashj3_flash_lib.c
         fw_update_agent/fwu_agent.c
+        fw_update_agent/fwu_agent_rss.c
         soft_crc/soft_crc.c
 )
 
@@ -125,6 +126,7 @@ target_sources(platform_bl2
         partition/partition.c
         partition/gpt.c
         fw_update_agent/fwu_agent.c
+        fw_update_agent/fwu_agent_rss.c
 )
 
 target_compile_definitions(platform_bl2
@@ -172,6 +174,7 @@ target_sources(platform_bl1_1
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011/uart_pl011_drv.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata/spi_strataflashj3_flash_lib.c
         ./fw_update_agent/fwu_agent.c
+        ./fw_update_agent/fwu_agent_rss.c
         ./soft_crc/soft_crc.c
 )
 

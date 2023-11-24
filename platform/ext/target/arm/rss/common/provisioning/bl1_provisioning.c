@@ -116,7 +116,7 @@ static enum tfm_plat_err_t provision_assembly_and_test(void)
            PROVISIONING_BUNDLE_VALUES_SIZE + PROVISIONING_BUNDLE_DATA_SIZE);
 
 #ifdef TFM_FWU_AGENT
-    err = fwu_metadata_provision();
+    err = fwu_metadata_provision_rss();
     if (err != FWU_AGENT_SUCCESS) {
         return 1;
     }

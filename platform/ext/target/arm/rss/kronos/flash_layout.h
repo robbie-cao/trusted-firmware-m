@@ -264,9 +264,10 @@
 /* FWU Configurations */
 #define NR_OF_FW_BANKS                  (2)
 #define NR_OF_IMAGES_IN_FW_BANK         (7)
+#define NR_OF_IMAGES_IN_RSS_FW_BANK     (7)
 
 /* Space in flash to store metadata and uefi variables */
-#define FWU_METADATA_FLASH_DEV          (FLASH_DEV_NAME)
+#define FWU_METADATA_RSS_FLASH_DEV      (FLASH_DEV_NAME)
 #define FWU_METADATA_FLASH_SECTOR_SIZE  ((0x00001000))
 
 #define FWU_METADATA_REPLICA_1_OFFSET   (0x5000)  /* 40th LBA */
@@ -283,4 +284,7 @@
 #define BL2_BANK_0_OFFSET               (0x9000)                   /* 72nd LBA */
 #define BL2_BANK_1_OFFSET               (0xFF9000)                 /* 32712th LBA */
 
+#define BANK_PARTITION_SIZE             (0xFF0000)                 /* ~16MB */
+#define BANK_0_PARTITION_OFFSET         (BL2_BANK_0_OFFSET)
+#define BANK_1_PARTITION_OFFSET         (BL2_BANK_1_OFFSET)
 #endif /* __FLASH_LAYOUT_H__ */
