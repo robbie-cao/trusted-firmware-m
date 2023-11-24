@@ -36,6 +36,7 @@
 #endif /* CRYPTO_HW_ACCELERATOR */
 #include "platform.h"
 #include "partition.h"
+#include "fwu_agent.h"
 
 extern volatile bool scp_doorbell;
 extern ARM_DRIVER_FLASH FLASH_DEV_NAME;
@@ -58,8 +59,6 @@ static const char * const image_names [][2] = {
     {"lcp_primary", "lcp_secondary"},
     {"scp_primary", "scp_secondary"},
 };
-
-#define BANK_0                  (0)
 
 static bool fill_rss_flash_map_with_data(uint8_t boot_index) {
     partition_entry_t *entry = NULL;
@@ -431,6 +430,7 @@ int32_t tower_nci_periph_init(void) {
 int32_t boot_platform_init(void)
 {
     int32_t result;
+    uint8_t boot_index;
 
     read_chip_id();
 
@@ -454,17 +454,21 @@ int32_t boot_platform_init(void)
         return 1;
     }
 
-    plat_io_storage_init();
-    partition_init(PLATFORM_GPT_IMAGE);
-
-    if (!fill_rss_flash_map_with_data(0)) {
-        BOOT_LOG_ERR("Filling flash map with signed images has failed!");
-        return 1;
-    }
-
     /* AP flash initial */
     result = AP_FLASH_DEV_NAME.Initialize(NULL);
     if (result != ARM_DRIVER_OK) {
+        return 1;
+    }
+
+    result = plat_io_storage_init(PLATFORM_GPT_IMAGE_RSS);
+    if (result != 0) {
+        return 1;
+    }
+
+    partition_init(PLATFORM_GPT_IMAGE_RSS);
+    boot_index = bl2_get_boot_bank();
+    if (!fill_rss_flash_map_with_data(boot_index)) {
+        BOOT_LOG_ERR("Filling flash map with signed images has failed!");
         return 1;
     }
 
@@ -1044,6 +1048,7 @@ static int boot_platform_post_load_lcp(void)
 static int boot_platform_pre_load_ap_bl2(void)
 {
     enum atu_error_t atu_err;
+    int32_t result;
 
     BOOT_LOG_INF("BL2: AP BL2 pre load start");
 
@@ -1077,6 +1082,11 @@ static int boot_platform_pre_load_ap_bl2(void)
         return 1;
     }
 
+    result = plat_io_storage_init(PLATFORM_GPT_IMAGE_AP);
+    if (result != 0) {
+        return 1;
+    }
+    partition_init(PLATFORM_GPT_IMAGE_AP);
     BOOT_LOG_INF("BL2: AP BL2 pre load complete");
 
     return 0;

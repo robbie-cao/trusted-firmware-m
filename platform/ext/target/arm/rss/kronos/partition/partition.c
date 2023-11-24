@@ -19,6 +19,8 @@
 #include "io_storage.h"
 #include "platform.h"
 #include "soft_crc.h"
+#include "host_base_address.h"
+#include "io_driver.h"
 
 static uint8_t mbr_sector[PLAT_PARTITION_BLOCK_SIZE];
 static partition_entry_list_t list;

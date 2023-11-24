@@ -9,7 +9,8 @@
 #define __PLATFORM_H__
 
 typedef enum {
-    PLATFORM_GPT_IMAGE = 0,
+    PLATFORM_GPT_IMAGE_RSS = 0,
+    PLATFORM_GPT_IMAGE_AP,
     PLATFORM_IMAGE_COUNT,
 }platform_image_id_t;
 
@@ -19,7 +20,7 @@ typedef enum {
      ((uuid_t){{0xc3, 0x5d, 0xb5, 0xec}, {0xb7, 0x8a}, {0x84, 0x4a}, 0xab,  0x56, {0xeb, 0x0a, 0x99, 0x74, 0xdb, 0x42}})
 
 /* Initialize io storage of the platform */
-int32_t plat_io_storage_init(void);
+int32_t plat_io_storage_init(uint8_t gpt_img_id);
 
 /* Return an IO device handle and specification which can be used to access
  * an image. This has to be implemented for the GPT parser. */
