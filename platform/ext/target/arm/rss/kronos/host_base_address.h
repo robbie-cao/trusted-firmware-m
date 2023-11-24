@@ -58,6 +58,7 @@
 #define RSS_ATU_FAINLIGHT_GIC_ID        10
 #define RSS_ATU_NI710AE_ID              11
 #define RSS_ATU_TOWER_NCI_ID            12
+#define RSS_ATU_CAPSULE_ID              13  /* ID to use for region mapping to SI NVM flash */
 
 /* The ATU has a minimum size and all regions are restricted to align with it */
 #define RSS_ATU_PAGE_SIZE           0x2000U /* 8KB */
@@ -401,4 +402,7 @@
 /* AP Secure flash physical base address */
 #define AP_FLASH_PHY_BASE           (0x0000000000000ULL + 0x08000000ULL)
 
+#define HOST_CAPSULE_DRAM_LOG_BASE      (AP_FLASH_LOG_BASE + AP_FLASH_SIZE)
+#define HOST_CAPSULE_DRAM_SIZE          (0x1400000)  /*20MB*/
+#define HOST_CAPSULE_DRAM_PHY_BASE      (0x81000000)
 #endif  /* __HOST_BASE_ADDRESS_H__ */

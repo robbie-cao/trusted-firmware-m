@@ -25,6 +25,12 @@ typedef struct capsule_image_info {
     uint32_t version[NR_OF_IMAGES_IN_FW_BANK];
 } capsule_image_info_t;
 
+typedef struct {
+    uint32_t                signature;
+    uint32_t                header_size;
+    uint32_t                fw_version;
+    uint32_t                lowest_supported_version;
+} fmp_payload_header_t;
 enum uefi_capsule_error_t uefi_capsule_retrieve_images(void* capsule_ptr,
         capsule_image_info_t* images_info);
 

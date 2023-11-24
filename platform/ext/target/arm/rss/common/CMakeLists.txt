@@ -122,6 +122,7 @@ target_include_directories(platform_s
         libraries
         partition
         services/src
+        $<$<BOOL:${TFM_FWU_AGENT}>:${CMAKE_CURRENT_SOURCE_DIR}/services/include>
         ${PLATFORM_DIR}/..
         ${PLATFORM_DIR}/ext/target/arm/drivers/counter/armv8m
         ${PLATFORM_DIR}/ext/target/arm/drivers/mpc_sie
@@ -184,6 +185,7 @@ target_compile_definitions(platform_s
         # Needed for DMA-350 library
         CMSIS_device_header="rss.h"
         $<$<BOOL:${PLATFORM_SVC_HANDLERS}>:PLATFORM_SVC_HANDLERS>
+        $<$<BOOL:${TFM_FWU_AGENT}>:TFM_FWU_AGENT>
 )
 
 target_compile_options(platform_s
@@ -440,6 +442,11 @@ target_sources(tfm_spm
         tfm_hal_platform.c
         tfm_interrupts.c
         faults.c
+)
+
+target_compile_definitions(tfm_spm
+    PRIVATE
+        $<$<BOOL:${TFM_FWU_AGENT}>:TFM_FWU_AGENT>
 )
 
 #=========================== CPAK generator tool ===============================

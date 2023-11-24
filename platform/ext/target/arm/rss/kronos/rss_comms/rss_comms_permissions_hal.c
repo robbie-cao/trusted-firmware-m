@@ -156,6 +156,7 @@ enum tfm_plat_err_t comms_permissions_service_check(psa_handle_t handle,
         switch(type) {
         case TFM_PLATFORM_API_ID_NV_READ:
         case TFM_PLATFORM_API_ID_NV_INCREMENT:
+        case TFM_PLATFORM_API_ID_IOCTL:
             return TFM_PLAT_ERR_SUCCESS;
         default:
             goto out_err;

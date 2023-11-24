@@ -124,6 +124,41 @@ static void init_fmp_info(void)
     return;
 }
 
+enum fwu_agent_error_t fmp_set_image_info(struct efi_guid *guid,
+                     uint32_t current_version, uint32_t attempt_version,
+                     uint32_t last_attempt_status)
+{
+    enum fwu_agent_error_t status = FWU_AGENT_ERROR;
+
+    FWU_LOG_MSG("%s:%d Enter\n\r", __func__, __LINE__);
+
+    if (is_fmp_info_initialized == false) {
+        init_fmp_info();
+    }
+
+    for (int i = 0; i < NUMBER_OF_FMP_IMAGES; i++) {
+        if ((memcmp(guid, &fmp_info[i].ImageDescriptor.ImageTypeId,
+                        sizeof(struct efi_guid))) == 0)
+        {
+            FWU_LOG_MSG("FMP image update: image id = %u\n\r",
+                                    fmp_info[i].ImageDescriptor.ImageId);
+            fmp_info[i].ImageDescriptor.Version = current_version;
+            fmp_info[i].ImageDescriptor.LastAttemptVersion = attempt_version;
+            fmp_info[i].ImageDescriptor.LastAttemptStatus = last_attempt_status;
+            FWU_LOG_MSG("FMP image update: status = %u"
+                            "version=%u last_attempt_version=%u.\n\r",
+                            last_attempt_status, current_version,
+                            attempt_version);
+            status = FWU_AGENT_SUCCESS;
+            break;
+        }
+    }
+
+    FWU_LOG_MSG("%s:%d Exit.\n\r", __func__, __LINE__);
+    return status;
+}
+
+
 #define NO_OF_FMP_VARIABLES    (NUMBER_OF_FMP_IMAGES * NO_OF_FMP_VARIABLES_PER_IMAGE)
 
 static enum fwu_agent_error_t pack_image_info(void *buffer, uint32_t size)

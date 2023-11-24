@@ -57,8 +57,10 @@ target_sources(platform_s
         rss_expansion_peripherals_def.c
         rss_comms/rss_comms_permissions_hal.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata/spi_strataflashj3_flash_lib.c
+        fw_update_agent/uefi_capsule_parser.c
         fw_update_agent/fwu_agent.c
         fw_update_agent/fwu_agent_rss.c
+        fw_update_agent/uefi_fmp.c
         soft_crc/soft_crc.c
 )
 
@@ -128,6 +130,8 @@ target_sources(platform_bl2
         partition/gpt.c
         fw_update_agent/fwu_agent.c
         fw_update_agent/fwu_agent_rss.c
+        fw_update_agent/uefi_capsule_parser.c
+        fw_update_agent/uefi_fmp.c
 )
 
 target_compile_definitions(platform_bl2

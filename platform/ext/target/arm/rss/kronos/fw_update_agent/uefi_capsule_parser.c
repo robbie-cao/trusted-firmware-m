@@ -54,13 +54,6 @@ typedef struct {
     uint64_t                image_capsule_support; //introduced in v3
 } efi_firmware_management_capsule_image_header_t;
 
-typedef struct {
-    uint32_t                signature;
-    uint32_t                header_size;
-    uint32_t                fw_version;
-    uint32_t                lowest_supported_version;
-} fmp_payload_header_t;
-
 #define ANYSIZE_ARRAY 0
 
 typedef struct {
