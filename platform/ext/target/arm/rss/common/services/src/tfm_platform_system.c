@@ -44,9 +44,21 @@ enum tfm_platform_err_t tfm_platform_hal_ioctl(tfm_platform_ioctl_req_t request,
         break;
 
     case IOCTL_FWU_HOST_ACK:
+        result = fwu_host_ack();
+        if (result != FWU_AGENT_SUCCESS) {
+            ret = TFM_PLATFORM_ERR_SYSTEM_ERROR;
+        }
         break;
 
     case IOCTL_FMP_GET_IMAGE_INFO:
+        if (out_vec == NULL) {
+            ret = TFM_PLATFORM_ERR_INVALID_PARAM;
+            break;
+        }
+        result = fmp_get_image_info(out_vec[0].base, out_vec[0].len);
+        if (result != FWU_AGENT_SUCCESS) {
+            ret = TFM_PLATFORM_ERR_SYSTEM_ERROR;
+        }
         break;
 
     default:

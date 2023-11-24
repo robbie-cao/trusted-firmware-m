@@ -235,6 +235,10 @@ enum tfm_plat_err_t nvic_interrupt_target_state_cfg(void)
     NVIC_ClearTargetState(CMU_MHU8_Receiver_IRQn);
 #endif
 
+#ifdef TFM_FWU_AGENT
+    NVIC_ClearTargetState(SysTick_IRQn);
+#endif /* TFM_FWU_AGENT */
+
     return TFM_PLAT_ERR_SUCCESS;
 }
 
@@ -307,6 +311,11 @@ enum tfm_plat_err_t nvic_interrupt_enable(void)
     NVIC_ClearPendingIRQ(CMU_MHU8_Receiver_IRQn);
     NVIC_EnableIRQ(CMU_MHU8_Receiver_IRQn);
 #endif
+
+#ifdef TFM_FWU_AGENT
+    NVIC_ClearPendingIRQ(SysTick_IRQn);
+    NVIC_EnableIRQ(SysTick_IRQn);
+#endif /* TFM_FWU_AGENT */
 
     return TFM_PLAT_ERR_SUCCESS;
 }

@@ -431,6 +431,12 @@ if(TFM_MULTI_CORE_TOPOLOGY)
         PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/tfm_hal_multi_core.c
     )
+
+    target_compile_definitions(tfm_psa_rot_partition_ns_agent_mailbox
+        PRIVATE
+            $<$<BOOL:${TFM_FWU_AGENT}>:TFM_FWU_AGENT>
+    )
+
 endif()
 
 #========================= tfm_spm ============================================#

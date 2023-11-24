@@ -107,6 +107,7 @@ target_sources(platform_ns
 target_sources(platform_bl2
     PRIVATE
         bl2/flash_map_bl2.c
+        bl2/security_cnt_bl2.c
         cmsis_drivers/Driver_Flash.c
         cmsis_drivers/Driver_USART.c
         device/host_device_definition.c
