@@ -117,39 +117,38 @@
 #define FLASH_AREA_9_ID            (FLASH_AREA_8_ID + 1)
 #define FLASH_AREA_9_OFFSET        (FLASH_AREA_8_OFFSET + FLASH_AREA_8_SIZE)
 #define FLASH_AREA_9_SIZE          (FLASH_LCP_PARTITION_SIZE)
-/* AP BL2 image primary slot */
+/* SI0 image primary slot */
 #define FLASH_AREA_10_ID            (FLASH_AREA_9_ID + 1)
 #define FLASH_AREA_10_OFFSET        (FLASH_AREA_9_OFFSET + FLASH_AREA_9_SIZE)
-#define FLASH_AREA_10_SIZE          (FLASH_AP_BL2_PARTITION_SIZE)
-/* AP BL2 image secondary slot */
+#define FLASH_AREA_10_SIZE          (FLASH_SI_CL0_PARTITION_SIZE)
+/* SI0 image secondary slot */
 #define FLASH_AREA_11_ID            (FLASH_AREA_10_ID + 1)
 #define FLASH_AREA_11_OFFSET        (FLASH_AREA_10_OFFSET + FLASH_AREA_10_SIZE)
-#define FLASH_AREA_11_SIZE          (FLASH_AP_BL2_PARTITION_SIZE)
-/* SI0 image primary slot */
+#define FLASH_AREA_11_SIZE          (FLASH_SI_CL0_PARTITION_SIZE)
+/* SI1 image primary slot */
 #define FLASH_AREA_12_ID            (FLASH_AREA_11_ID + 1)
 #define FLASH_AREA_12_OFFSET        (FLASH_AREA_11_OFFSET + FLASH_AREA_11_SIZE)
-#define FLASH_AREA_12_SIZE          (FLASH_SI_CL0_PARTITION_SIZE)
-/* SI0 image secondary slot */
+#define FLASH_AREA_12_SIZE          (FLASH_SI_CL1_PARTITION_SIZE)
+/* SI1 image secondary slot */
 #define FLASH_AREA_13_ID            (FLASH_AREA_12_ID + 1)
 #define FLASH_AREA_13_OFFSET        (FLASH_AREA_12_OFFSET + FLASH_AREA_12_SIZE)
-#define FLASH_AREA_13_SIZE          (FLASH_SI_CL0_PARTITION_SIZE)
-/* SI1 image primary slot */
+#define FLASH_AREA_13_SIZE          (FLASH_SI_CL1_PARTITION_SIZE)
+/* SI2 image primary slot */
 #define FLASH_AREA_14_ID            (FLASH_AREA_13_ID + 1)
 #define FLASH_AREA_14_OFFSET        (FLASH_AREA_13_OFFSET + FLASH_AREA_13_SIZE)
-#define FLASH_AREA_14_SIZE          (FLASH_SI_CL1_PARTITION_SIZE)
-/* SI1 image secondary slot */
+#define FLASH_AREA_14_SIZE          (FLASH_SI_CL2_PARTITION_SIZE)
+/* SI2 image secondary slot */
 #define FLASH_AREA_15_ID            (FLASH_AREA_14_ID + 1)
 #define FLASH_AREA_15_OFFSET        (FLASH_AREA_14_OFFSET + FLASH_AREA_14_SIZE)
-#define FLASH_AREA_15_SIZE          (FLASH_SI_CL1_PARTITION_SIZE)
-/* SI2 image primary slot */
-#define FLASH_AREA_16_ID            (FLASH_AREA_15_ID + 1)
-#define FLASH_AREA_16_OFFSET        (FLASH_AREA_15_OFFSET + FLASH_AREA_15_SIZE)
-#define FLASH_AREA_16_SIZE          (FLASH_SI_CL2_PARTITION_SIZE)
-/* SI2 image secondary slot */
-#define FLASH_AREA_17_ID            (FLASH_AREA_16_ID + 1)
-#define FLASH_AREA_17_OFFSET        (FLASH_AREA_16_OFFSET + FLASH_AREA_16_SIZE)
-#define FLASH_AREA_17_SIZE          (FLASH_SI_CL2_PARTITION_SIZE)
-
+#define FLASH_AREA_15_SIZE          (FLASH_SI_CL2_PARTITION_SIZE)
+/* FIP image primary slot, in AP secure flash */
+#define AP_FLASH_AREA_0_ID          (FLASH_AREA_15_ID + 1)
+#define AP_FLASH_AREA_0_OFFSET      (0)
+#define AP_FLASH_AREA_0_SIZE        (FLASH_AP_BL2_PARTITION_SIZE)
+/* FIP image secondary slot, in AP secure flash */
+#define AP_FLASH_AREA_1_ID          (AP_FLASH_AREA_0_ID + 1)
+#define AP_FLASH_AREA_1_OFFSET      (AP_FLASH_AREA_0_OFFSET + AP_FLASH_AREA_0_SIZE)
+#define AP_FLASH_AREA_1_SIZE        (FLASH_AP_BL2_PARTITION_SIZE)
 
 /* Maximum number of image sectors supported by the bootloader. */
 #define MCUBOOT_MAX_IMG_SECTORS    (FLASH_MAX_PARTITION_SIZE / \
@@ -165,20 +164,20 @@
          ((x) == RSS_FIRMWARE_NON_SECURE_ID) ? FLASH_AREA_3_ID : \
          ((x) == RSS_FIRMWARE_SCP_ID)        ? FLASH_AREA_6_ID : \
          ((x) == RSS_FIRMWARE_LCP_ID)        ? FLASH_AREA_8_ID : \
-         ((x) == RSS_FIRMWARE_AP_BL2_ID)     ? FLASH_AREA_10_ID : \
-         ((x) == RSS_FIRMWARE_SI_CL0_ID)     ? FLASH_AREA_12_ID : \
-         ((x) == RSS_FIRMWARE_SI_CL1_ID)     ? FLASH_AREA_14_ID : \
-         ((x) == RSS_FIRMWARE_SI_CL2_ID)     ? FLASH_AREA_16_ID : \
+         ((x) == RSS_FIRMWARE_SI_CL0_ID)     ? FLASH_AREA_10_ID : \
+         ((x) == RSS_FIRMWARE_SI_CL1_ID)     ? FLASH_AREA_12_ID : \
+         ((x) == RSS_FIRMWARE_SI_CL2_ID)     ? FLASH_AREA_14_ID : \
+         ((x) == RSS_FIRMWARE_AP_BL2_ID)     ? AP_FLASH_AREA_0_ID : \
                                               255)
 #define FLASH_AREA_IMAGE_SECONDARY(x) \
         (((x) == RSS_FIRMWARE_SECURE_ID)     ? FLASH_AREA_4_ID : \
          ((x) == RSS_FIRMWARE_NON_SECURE_ID) ? FLASH_AREA_5_ID : \
          ((x) == RSS_FIRMWARE_SCP_ID)        ? FLASH_AREA_7_ID : \
          ((x) == RSS_FIRMWARE_LCP_ID)        ? FLASH_AREA_9_ID : \
-         ((x) == RSS_FIRMWARE_AP_BL2_ID)     ? FLASH_AREA_11_ID : \
-         ((x) == RSS_FIRMWARE_SI_CL0_ID)     ? FLASH_AREA_13_ID : \
-         ((x) == RSS_FIRMWARE_SI_CL1_ID)     ? FLASH_AREA_15_ID : \
-         ((x) == RSS_FIRMWARE_SI_CL2_ID)     ? FLASH_AREA_17_ID : \
+         ((x) == RSS_FIRMWARE_SI_CL0_ID)     ? FLASH_AREA_11_ID : \
+         ((x) == RSS_FIRMWARE_SI_CL1_ID)     ? FLASH_AREA_13_ID : \
+         ((x) == RSS_FIRMWARE_SI_CL2_ID)     ? FLASH_AREA_15_ID : \
+         ((x) == RSS_FIRMWARE_AP_BL2_ID)     ? AP_FLASH_AREA_1_ID : \
                                               255)
 
 /* Scratch area is not used with RAM loading firmware upgrade */
@@ -218,7 +217,7 @@
 /* Smallest flash programmable unit in bytes */
 #define AP_TFM_HAL_FLASH_PROGRAM_UNIT      (0x1)
 
-
+#define FIP_SIGNATURE_AREA_SIZE            (0x400)
 /*******************************/
 /* ITS */
 /*******************************/
@@ -263,13 +262,16 @@
 
 /* FWU Configurations */
 #define NR_OF_FW_BANKS                  (2)
-#define NR_OF_IMAGES_IN_FW_BANK         (7)
+#define NR_OF_IMAGES_IN_FW_BANK         (NR_OF_IMAGES_IN_RSS_FW_BANK + \
+                                         NR_OF_IMAGES_IN_AP_FW_BANK)
 #define NR_OF_IMAGES_IN_RSS_FW_BANK     (7)
+#define NR_OF_IMAGES_IN_AP_FW_BANK      (1)
 
 /* Space in flash to store metadata and uefi variables */
 #define FWU_METADATA_RSS_FLASH_DEV      (FLASH_DEV_NAME)
 #define FWU_METADATA_FLASH_SECTOR_SIZE  ((0x00001000))
 
+#define FWU_METADATA_AP_FLASH_DEV       (AP_FLASH_DEV_NAME)
 #define FWU_METADATA_REPLICA_1_OFFSET   (0x5000)  /* 40th LBA */
 #define FWU_METADATA_REPLICA_2_OFFSET   (FWU_METADATA_REPLICA_1_OFFSET + \
                                          FWU_METADATA_FLASH_SECTOR_SIZE)
@@ -287,4 +289,8 @@
 #define BANK_PARTITION_SIZE             (0xFF0000)                 /* ~16MB */
 #define BANK_0_PARTITION_OFFSET         (BL2_BANK_0_OFFSET)
 #define BANK_1_PARTITION_OFFSET         (BL2_BANK_1_OFFSET)
+
+#define FIP_BANK_0_PARTITION_OFFSET     0x7000
+#define FIP_BANK_PARTITION_SIZE         SIZE_DEF_FIP_IMAGE
+#define FIP_BANK_1_PARTITION_OFFSET     (FIP_BANK_0_PARTITION_OFFSET + FIP_BANK_PARTITION_SIZE)
 #endif /* __FLASH_LAYOUT_H__ */

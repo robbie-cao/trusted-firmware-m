@@ -112,6 +112,7 @@ target_sources(platform_bl2
         host_drivers/cfi_drv.c
         ${CMAKE_CURRENT_LIST_DIR}/../common/mscp_atu_request_handler.c
         ${CMAKE_CURRENT_LIST_DIR}/../common/mscp_mailbox.c
+        ${CMAKE_CURRENT_LIST_DIR}/../common/fip_parser/fip_parser.c
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011/uart_pl011_drv.c
         tfm_interrupts.c
         tower_nci_lib.c
@@ -133,6 +134,7 @@ target_compile_definitions(platform_bl2
     PRIVATE
         $<$<BOOL:${ENABLE_SCP_ATU_CTRL}>:ENABLE_SCP_ATU_CTRL>
         MEASURED_BOOT_HASH_ALG=${MEASURED_BOOT_HASH_ALG}
+        $<$<BOOL:${TFM_FWU_AGENT}>:TFM_FWU_AGENT>
 )
 
 target_sources(bl2
@@ -151,6 +153,7 @@ target_include_directories(platform_bl2
         ${PLATFORM_DIR}/ext/target/arm/drivers/usart/pl011
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/common
         ${PLATFORM_DIR}/ext/target/arm/drivers/flash/strata
+        ${PLATFORM_DIR}/ext/target/arm/rss/common/fip_parser
         io
         soft_crc
         partition

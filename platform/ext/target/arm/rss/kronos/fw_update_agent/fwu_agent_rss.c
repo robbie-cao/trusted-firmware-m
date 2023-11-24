@@ -32,6 +32,7 @@
 
 /* Import the CMSIS flash device driver */
 extern ARM_DRIVER_FLASH FWU_METADATA_RSS_FLASH_DEV;
+extern ARM_DRIVER_FLASH FWU_METADATA_AP_FLASH_DEV;
 
 struct fwu_metadata_rss fwu_md_rss;
 int is_initialized_rss = 0;
@@ -45,6 +46,10 @@ enum fwu_agent_error_t get_fwu_flash_and_img_num(enum FWU_METADATA_FLASH_DEV dev
     case FWU_RSS_FLASH_DEV:
         *FLASH_DEV = &FWU_METADATA_RSS_FLASH_DEV;
         *img_num = NR_OF_IMAGES_IN_RSS_FW_BANK;
+        break;
+    case FWU_AP_FLASH_DEV:
+        *FLASH_DEV = &FWU_METADATA_AP_FLASH_DEV;
+        *img_num = NR_OF_IMAGES_IN_AP_FW_BANK;
         break;
     default:
         FWU_LOG_MSG("%s: This device is not supported!\n\r", __func__);

@@ -11,6 +11,9 @@
 #include "Driver_Flash.h"
 
 #include <string.h>
+#ifdef TFM_FWU_AGENT
+#include "bootutil/bootutil_log.h"
+#endif /* TFM_FWU_AGENT */
 
 extern ARM_DRIVER_FLASH FLASH_DEV_NAME;
 
@@ -84,3 +87,45 @@ int fip_get_entry_by_uuid(uint32_t fip_base, uint32_t atu_slot_size, uuid_t uuid
     /* UUID not found, return error. */
     return 3;
 }
+
+#ifdef TFM_FWU_AGENT
+int parse_fip_and_extract_tfa_info(uint32_t address, uint32_t fip_size,
+        uint32_t *tfa_offset, uint32_t *tfa_size)
+{
+    FIP_TOC_HEADER *toc_header = NULL;
+    FIP_TOC_ENTRY *toc_entry = NULL;
+    uuid_t uuid_null = {0};
+    uuid_t tfa_uuid = UUID_TRUSTED_BOOT_FIRMWARE_BL2;
+    uint8_t *iter;
+
+    toc_header = (FIP_TOC_HEADER *) address;
+
+    volatile uint32_t *tmp = address;
+
+    if (toc_header->name != TOC_HEADER_NAME) {
+        return FIP_PARSER_ERROR;
+    }
+
+    toc_entry = (FIP_TOC_ENTRY *)(toc_header + 1);
+
+    for (iter = (char *)toc_entry;
+        iter <= (char *)toc_header + fip_size;
+        iter = iter + sizeof(FIP_TOC_ENTRY), toc_entry++) {
+
+        if (!memcmp(iter, &uuid_null, sizeof(uuid_t))) {
+            return FIP_PARSER_ERROR;
+        }
+
+        if (!memcmp(iter, &tfa_uuid, sizeof(uuid_t))) {
+            BOOT_LOG_INF("TF-A FIP at : address = 0x%x : size = 0x%x \n\r",
+                                toc_entry->address,
+                                toc_entry->size);
+            *tfa_offset = toc_entry->address;
+            *tfa_size = toc_entry->size;
+            return FIP_PARSER_SUCCESS;
+        }
+    }
+
+    return FIP_PARSER_ERROR;
+}
+#endif /* TFM_FWU_AGENT */

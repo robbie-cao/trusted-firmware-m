@@ -1,5 +1,6 @@
 ATU_DEV_S
 Driver_FLASH0
+Driver_FLASH1
 KMU_DEV_S
 SystemInit
 atu_initialize_region

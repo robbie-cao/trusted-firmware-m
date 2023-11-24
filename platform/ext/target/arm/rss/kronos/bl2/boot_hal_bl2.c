@@ -37,6 +37,7 @@
 #include "platform.h"
 #include "partition.h"
 #include "fwu_agent.h"
+#include "fip_parser.h"
 
 extern volatile bool scp_doorbell;
 extern ARM_DRIVER_FLASH FLASH_DEV_NAME;
@@ -94,6 +95,59 @@ static bool fill_rss_flash_map_with_data(uint8_t boot_index) {
                     flash_map[i].fa_off += FLASH_S_PARTITION_SIZE;
                 }
             }
+        }
+    }
+
+    return true;
+}
+
+static bool fill_secure_flash_map_with_data(uint8_t boot_index) {
+    uint32_t tfa_offset = 0;
+    size_t tfa_size = 0;
+    uint32_t fip_offset = 0;
+    size_t fip_size = 0;
+    int result;
+    uint8_t i = 0;
+    uint8_t id = 0;
+    uint8_t flash_id = 0;
+    partition_entry_t *entry = NULL;
+
+    if (boot_index >= NR_OF_FW_BANKS) {
+        BOOT_LOG_ERR("%d is an invalid boot_index, 0 <= boot_index < %d",
+                     boot_index, NR_OF_FW_BANKS);
+        return false;
+    }
+
+    partition_entry_t *fip_entry =
+        get_partition_entry(image_names[RSS_FIRMWARE_AP_BL2_ID][boot_index]);
+    if (fip_entry == NULL) {
+        BOOT_LOG_ERR("Could not find partition %s", image_names[RSS_FIRMWARE_AP_BL2_ID][boot_index]);
+        return false;
+    }
+
+    fip_offset = fip_entry->start;
+    fip_size = fip_entry->length;
+
+    result = parse_fip_and_extract_tfa_info (
+                     AP_FLASH_LOG_BASE + fip_offset + FIP_SIGNATURE_AREA_SIZE,
+                     fip_size, &tfa_offset, &tfa_size);
+    if (result != FIP_PARSER_SUCCESS) {
+        BOOT_LOG_ERR("parse_fip_and_extract_tfa_info failed");
+        return false;
+    }
+
+    for (i = 0; i < flash_map_entry_num; i++) {
+        id = flash_map[i].fa_id;
+
+        if(boot_index == BANK_0) {
+            flash_id = FLASH_AREA_IMAGE_PRIMARY(RSS_FIRMWARE_AP_BL2_ID);
+        } else {
+            flash_id = FLASH_AREA_IMAGE_SECONDARY(RSS_FIRMWARE_AP_BL2_ID);
+        }
+
+        if(id == flash_id) {
+            flash_map[i].fa_off = (uint32_t)fip_entry->start + FIP_SIGNATURE_AREA_SIZE + tfa_offset;
+            flash_map[i].fa_size = (uint32_t)fip_entry->length;
         }
     }
 
@@ -1049,6 +1103,8 @@ static int boot_platform_pre_load_ap_bl2(void)
 {
     enum atu_error_t atu_err;
     int32_t result;
+    uint8_t boot_index = 0;
+    enum fwu_agent_error_t fwu_ret;
 
     BOOT_LOG_INF("BL2: AP BL2 pre load start");
 
@@ -1087,6 +1143,16 @@ static int boot_platform_pre_load_ap_bl2(void)
         return 1;
     }
     partition_init(PLATFORM_GPT_IMAGE_AP);
+    fwu_ret = fwu_metadata_provision_ap();
+    if (fwu_ret != FWU_AGENT_SUCCESS) {
+        return 1;
+    }
+
+    boot_index = bl2_get_boot_bank();
+    if (!fill_secure_flash_map_with_data(boot_index)) {
+        BOOT_LOG_ERR("Filling flash map with signed images has failed!");
+        return 1;
+    }
     BOOT_LOG_INF("BL2: AP BL2 pre load complete");
 
     return 0;

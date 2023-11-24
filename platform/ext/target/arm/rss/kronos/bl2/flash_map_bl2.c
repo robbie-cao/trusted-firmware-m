@@ -16,10 +16,12 @@
 
 /* Flash device names must be specified by target */
 extern ARM_DRIVER_FLASH FLASH_DEV_NAME;
+extern ARM_DRIVER_FLASH AP_FLASH_DEV_NAME;
 
 /* Default Drivers list */
 const ARM_DRIVER_FLASH *flash_driver[] = {
     &FLASH_DEV_NAME,
+    &AP_FLASH_DEV_NAME,
 };
 const int flash_driver_entry_num = ARRAY_SIZE(flash_driver);
 
@@ -123,18 +125,18 @@ struct flash_area flash_map[] = {
         .fa_size = FLASH_AREA_15_SIZE,
     },
     {
-        .fa_id = FLASH_AREA_16_ID,
+        .fa_id = AP_FLASH_AREA_0_ID,
         .fa_device_id = FLASH_DEVICE_ID,
-        .fa_driver = &FLASH_DEV_NAME,
-        .fa_off = FLASH_AREA_16_OFFSET,
-        .fa_size = FLASH_AREA_16_SIZE,
+        .fa_driver = &AP_FLASH_DEV_NAME,
+        .fa_off = AP_FLASH_AREA_0_OFFSET,
+        .fa_size = AP_FLASH_AREA_0_SIZE,
     },
     {
-        .fa_id = FLASH_AREA_17_ID,
+        .fa_id = AP_FLASH_AREA_1_ID,
         .fa_device_id = FLASH_DEVICE_ID,
-        .fa_driver = &FLASH_DEV_NAME,
-        .fa_off = FLASH_AREA_17_OFFSET,
-        .fa_size = FLASH_AREA_17_SIZE,
+        .fa_driver = &AP_FLASH_DEV_NAME,
+        .fa_off = AP_FLASH_AREA_1_OFFSET,
+        .fa_size = AP_FLASH_AREA_1_SIZE,
     },
 };
 

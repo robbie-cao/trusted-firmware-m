@@ -123,6 +123,14 @@ struct fwu_metadata_rss {
 
 } __packed;
 
+struct fwu_metadata_ap {
+
+        struct metadata md;
+
+        /* Image entry information */
+        struct fwu_image_entry img_entry[NR_OF_IMAGES_IN_AP_FW_BANK];
+
+} __packed;
 enum fwu_agent_error_t {
         FWU_AGENT_SUCCESS = 0,
         FWU_AGENT_ERROR = (-1)
@@ -130,6 +138,7 @@ enum fwu_agent_error_t {
 
 enum FWU_METADATA_FLASH_DEV {
         FWU_RSS_FLASH_DEV = 0,
+        FWU_AP_FLASH_DEV
 };
 
 enum fwu_agent_state_t {

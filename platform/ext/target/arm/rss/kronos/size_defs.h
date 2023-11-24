@@ -29,3 +29,4 @@
 #define SIZE_DEF_SI_CL0_IMAGE       (0x200000) /* 2MB */
 #define SIZE_DEF_SI_CL1_IMAGE       (0x400000) /* 4MB */
 #define SIZE_DEF_SI_CL2_IMAGE       (0x800000) /* 8MB */
+#define SIZE_DEF_FIP_IMAGE          (0x200000) /* 2MB */
