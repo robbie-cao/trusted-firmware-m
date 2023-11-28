@@ -29,4 +29,10 @@
 #define ATTEST_TOKEN_PROFILE_ARM_CCA           1
 #endif
 
+#undef PS_NUM_ASSETS
+#define PS_NUM_ASSETS                          20
+
+#undef PLATFORM_SERVICE_OUTPUT_BUFFER_SIZE
+#define PLATFORM_SERVICE_OUTPUT_BUFFER_SIZE    256
+
 #endif /* __CONFIG_TFM_TARGET_H__ */
