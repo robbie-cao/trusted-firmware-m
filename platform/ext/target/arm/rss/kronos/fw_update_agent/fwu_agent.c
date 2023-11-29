@@ -31,10 +31,10 @@ extern struct fwu_metadata_rss fwu_md_rss;
 
 capsule_image_info_t capsule_info;
 struct efi_guid full_capsule_image_guid = {
-    .time_low = 0xe2bb9c06,
-    .time_mid = 0x70e9,
-    .time_hi_and_version = 0x4b14,
-    .clock_seq_and_node = {0x97, 0xa3, 0x5a, 0x79, 0x13, 0x17, 0x6e, 0x3f}
+    .time_low = 0xbcac8ebe,
+    .time_mid = 0x1128,
+    .time_hi_and_version = 0x40b3,
+    .clock_seq_and_node = {0xa4, 0x65, 0x9e, 0x35, 0xf2, 0x30, 0x32, 0x4b}
 };
 #ifndef FWU_METADATA_AP_FLASH_DEV
     #ifndef FLASH_DEV_NAME
