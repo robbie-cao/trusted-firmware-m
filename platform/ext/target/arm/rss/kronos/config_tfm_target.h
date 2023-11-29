@@ -29,9 +29,15 @@
 #define ATTEST_TOKEN_PROFILE_ARM_CCA           1
 #endif
 
+/* The maximum number of assets to be stored in the Internal Trusted Storage area. */
+#undef ITS_NUM_ASSETS
+#define ITS_NUM_ASSETS                         20
+
+/* The maximum number of assets to be stored in the Protected Storage area. */
 #undef PS_NUM_ASSETS
 #define PS_NUM_ASSETS                          20
 
+/* Size of output buffer in platform service. */
 #undef PLATFORM_SERVICE_OUTPUT_BUFFER_SIZE
 #define PLATFORM_SERVICE_OUTPUT_BUFFER_SIZE    256
 
