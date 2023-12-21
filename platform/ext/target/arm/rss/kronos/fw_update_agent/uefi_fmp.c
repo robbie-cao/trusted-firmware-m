@@ -130,7 +130,7 @@ enum fwu_agent_error_t fmp_set_image_info(struct efi_guid *guid,
 {
     enum fwu_agent_error_t status = FWU_AGENT_ERROR;
 
-    FWU_LOG_MSG("%s:%d Enter\n\r", __func__, __LINE__);
+    DEBUG("%s:%d Enter", __func__, __LINE__);
 
     if (is_fmp_info_initialized == false) {
         init_fmp_info();
@@ -140,13 +140,13 @@ enum fwu_agent_error_t fmp_set_image_info(struct efi_guid *guid,
         if ((memcmp(guid, &fmp_info[i].ImageDescriptor.ImageTypeId,
                         sizeof(struct efi_guid))) == 0)
         {
-            FWU_LOG_MSG("FMP image update: image id = %u\n\r",
+            INFO("FMP image update: image id = %u",
                                     fmp_info[i].ImageDescriptor.ImageId);
             fmp_info[i].ImageDescriptor.Version = current_version;
             fmp_info[i].ImageDescriptor.LastAttemptVersion = attempt_version;
             fmp_info[i].ImageDescriptor.LastAttemptStatus = last_attempt_status;
-            FWU_LOG_MSG("FMP image update: status = %u"
-                            "version=%u last_attempt_version=%u.\n\r",
+            INFO("FMP image update: status = %u, "
+                            "version=%u, last_attempt_version=%u.",
                             last_attempt_status, current_version,
                             attempt_version);
             status = FWU_AGENT_SUCCESS;
@@ -154,7 +154,7 @@ enum fwu_agent_error_t fmp_set_image_info(struct efi_guid *guid,
         }
     }
 
-    FWU_LOG_MSG("%s:%d Exit.\n\r", __func__, __LINE__);
+    DEBUG("%s:%d Exit.", __func__, __LINE__);
     return status;
 }
 
@@ -177,7 +177,7 @@ static enum fwu_agent_error_t pack_image_info(void *buffer, uint32_t size)
     int size_requirement_2 = 0;
 
     if (size < current_size) {
-        FWU_LOG_MSG("%s:%d Buffer too small.\n\r", __func__, __LINE__);
+        ERROR("%s:%d Buffer too small.", __func__, __LINE__);
         return FWU_AGENT_ERROR;
     }
 
@@ -200,12 +200,12 @@ static enum fwu_agent_error_t pack_image_info(void *buffer, uint32_t size)
        current_size += size_requirement_1 + size_requirement_2;
 
        if (size < current_size) {
-           FWU_LOG_MSG("%s:%d Buffer too small.\n\r", __func__, __LINE__);
+           ERROR("%s:%d Buffer too small.", __func__, __LINE__);
            return FWU_AGENT_ERROR;
        }
 
-       FWU_LOG_MSG("%s:%d ImageInfo size = %u, ImageName size = %u, "
-               "ImageVersionName size = %u\n\r", __func__, __LINE__,
+       INFO("%s:%d ImageInfo size = %u, ImageName size = %u, "
+               "ImageVersionName size = %u", __func__, __LINE__,
                sizeof(EFI_FIRMWARE_IMAGE_DESCRIPTOR), fmp_info[i].ImageNameSize,
                fmp_info[i].ImageVersionNameSize);
 
@@ -229,11 +229,11 @@ enum fwu_agent_error_t fmp_get_image_info(void *buffer, uint32_t size)
 {
     enum fwu_agent_error_t status;
 
-    FWU_LOG_MSG("%s:%d Enter\n\r", __func__, __LINE__);
+    DEBUG("%s:%d Enter", __func__, __LINE__);
 
     status = pack_image_info(buffer, size);
 
-    FWU_LOG_MSG("%s:%d Exit\n\r", __func__, __LINE__);
+    DEBUG("%s:%d Exit", __func__, __LINE__);
 
     return status;
 }

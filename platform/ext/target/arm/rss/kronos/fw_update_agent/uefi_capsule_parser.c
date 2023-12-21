@@ -87,7 +87,7 @@ enum uefi_capsule_error_t uefi_capsule_retrieve_images(void* capsule_ptr,
     uint32_t image_count;
     uint32_t auth_size;
 
-    FWU_LOG_MSG("%s: enter, capsule ptr = 0x%p\n\r", __func__, capsule_ptr);
+    INFO("%s: enter, capsule ptr = 0x%p", __func__, capsule_ptr);
 
     if (!capsule_ptr) {
         return UEFI_CAPSULE_PARSER_ERROR;
@@ -103,7 +103,7 @@ enum uefi_capsule_error_t uefi_capsule_retrieve_images(void* capsule_ptr,
     image_count = fmp_capsule_header->payload_item_count;
     images_info->nr_image = image_count;
 
-    FWU_LOG_MSG("%s: capsule size = %u, image count = %u\n\r", __func__,
+    INFO("%s: capsule size = %u, image count = %u", __func__,
                         total_size, image_count);
 
     if ((image_count == 0) || (image_count > NR_OF_IMAGES_IN_FW_BANK)) {
@@ -117,7 +117,7 @@ enum uefi_capsule_error_t uefi_capsule_retrieve_images(void* capsule_ptr,
 
         images_info->size[i] = image_header->update_image_size;
         images_info->version[i] = fmp_payload_header->fw_version;
-        FWU_LOG_MSG("%s: image %i version = %u\n\r", __func__, i,
+        INFO("%s: image %i, version = %u", __func__, i,
                                 images_info->version[i]);
 #ifdef AUTHENTICATED_CAPSULE
         image_auth = (efi_firmware_image_authentication_t*)(
@@ -128,7 +128,7 @@ enum uefi_capsule_error_t uefi_capsule_retrieve_images(void* capsule_ptr,
                     image_auth->auth_info.hdr.dwLength /* WIN_CERTIFICATE + cert_data */ +
                     sizeof(struct efi_guid) /* cert_type */;
 
-        FWU_LOG_MSG("%s: auth size = %u\n\r", __func__, auth_size);
+        INFO("%s: auth size = %u", __func__, auth_size);
 
         images_info->size[i] -= auth_size;
 
@@ -145,7 +145,7 @@ enum uefi_capsule_error_t uefi_capsule_retrieve_images(void* capsule_ptr,
         memcpy(&images_info->guid[i], &(image_header->update_image_type_id),
                                                         sizeof(struct efi_guid));
 
-        FWU_LOG_MSG("%s: image %d at %p, size=%u\n\r", __func__, i,
+        INFO("%s: image %d at %p, size=%u", __func__, i,
                         images_info->image[i], images_info->size[i]);
 
         if ((fmp_capsule_header->item_offset_list[i] +
@@ -157,6 +157,6 @@ enum uefi_capsule_error_t uefi_capsule_retrieve_images(void* capsule_ptr,
 
     }
 
-    FWU_LOG_MSG("%s: exit\n\r", __func__);
+    DEBUG("%s: exit", __func__);
     return UEFI_CAPSULE_PARSER_SUCCESS;
 }

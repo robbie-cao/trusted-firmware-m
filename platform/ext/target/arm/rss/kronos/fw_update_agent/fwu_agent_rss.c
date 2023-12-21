@@ -52,7 +52,7 @@ enum fwu_agent_error_t get_fwu_flash_and_img_num(enum FWU_METADATA_FLASH_DEV dev
         *img_num = NR_OF_IMAGES_IN_AP_FW_BANK;
         break;
     default:
-        FWU_LOG_MSG("%s: This device is not supported!\n\r", __func__);
+        ERROR("%s: This device is not supported!", __func__);
         ret = FWU_AGENT_ERROR;
         break;
     }
@@ -68,7 +68,7 @@ enum fwu_agent_state_t get_fwu_agent_state(
 
     boot_index = priv_metadata_ptr->boot_index;
 
-    FWU_LOG_MSG("%s: enter, boot_index=%d\n\r", __func__, boot_index);
+    INFO("%s: enter, boot_index = %d", __func__, boot_index);
 
     if (boot_index != fwu_md_rss_ptr->md.active_index) {
         return FWU_AGENT_STATE_TRIAL;
@@ -81,7 +81,7 @@ enum fwu_agent_state_t get_fwu_agent_state(
         }
     }
 
-    FWU_LOG_MSG("%s: exit: FWU_AGENT_STATE_REGULAR\n\r", __func__);
+    DEBUG("%s: exit: FWU_AGENT_STATE_REGULAR", __func__);
     return FWU_AGENT_STATE_REGULAR;
 }
 
@@ -89,7 +89,7 @@ enum fwu_agent_error_t private_metadata_write(struct fwu_private_metadata* p_met
 {
     int32_t ret;
 
-    FWU_LOG_MSG("%s: enter: boot_index = %u\n\r", __func__,
+    INFO("%s: enter: boot_index = %u", __func__,
                         p_metadata->boot_index);
 
     if (!p_metadata) {
@@ -107,7 +107,7 @@ enum fwu_agent_error_t private_metadata_write(struct fwu_private_metadata* p_met
         return FWU_AGENT_ERROR;
     }
 
-    FWU_LOG_MSG("%s: success\n\r", __func__);
+    DEBUG("%s: success", __func__);
     return FWU_AGENT_SUCCESS;
 }
 
@@ -115,7 +115,7 @@ enum fwu_agent_error_t private_metadata_read(struct fwu_private_metadata* p_meta
 {
     int32_t ret;
 
-    FWU_LOG_MSG("%s: enter\n\r", __func__);
+    DEBUG("%s: enter", __func__);
 
     if (!p_metadata) {
         return FWU_AGENT_ERROR;
@@ -127,7 +127,7 @@ enum fwu_agent_error_t private_metadata_read(struct fwu_private_metadata* p_meta
         return FWU_AGENT_ERROR;
     }
 
-    FWU_LOG_MSG("%s: success: boot_index = %u\n\r", __func__,
+    DEBUG("%s: success: boot_index = %u", __func__,
                         p_metadata->boot_index);
 
     return FWU_AGENT_SUCCESS;
@@ -138,7 +138,7 @@ static enum fwu_agent_error_t metadata_validate(struct metadata *p_metadata, uin
     uint32_t fwu_md_size;
     uint32_t calculated_crc32;
 
-    FWU_LOG_MSG("%s: enter:\n\r", __func__);
+    DEBUG("%s: enter:", __func__);
 
     if (!p_metadata) {
         return FWU_AGENT_ERROR;
@@ -150,12 +150,12 @@ static enum fwu_agent_error_t metadata_validate(struct metadata *p_metadata, uin
                                       fwu_md_size - sizeof(uint32_t));
 
     if (p_metadata->crc_32 != calculated_crc32) {
-        FWU_LOG_MSG("%s: failed: crc32 calculated: 0x%x, given: 0x%x\n\r", __func__,
+        WARN("%s: failed: crc32 calculated: 0x%x, given: 0x%x", __func__,
                     calculated_crc32, p_metadata->crc_32);
         return FWU_AGENT_ERROR;
     }
 
-    FWU_LOG_MSG("%s: success\n\r", __func__);
+    DEBUG("%s: success", __func__);
 
     return FWU_AGENT_SUCCESS;
 }
@@ -169,7 +169,7 @@ enum fwu_agent_error_t metadata_read(enum FWU_METADATA_FLASH_DEV DEV_TYPE,
     ARM_DRIVER_FLASH *FLASH_DEV;
     enum fwu_agent_error_t agent_ret;
 
-    FWU_LOG_MSG("%s: enter: flash addr = %u, size = %d\n\r", __func__,
+    DEBUG("%s: enter: flash addr = %u, size = %d", __func__,
                   FWU_METADATA_REPLICA_1_OFFSET, sizeof(struct metadata));
 
     if (!p_metadata) {
@@ -178,6 +178,7 @@ enum fwu_agent_error_t metadata_read(enum FWU_METADATA_FLASH_DEV DEV_TYPE,
 
     agent_ret = get_fwu_flash_and_img_num(DEV_TYPE, &FLASH_DEV, &img_num);
     if (agent_ret != FWU_AGENT_SUCCESS) {
+        ERROR("%s: Getting FWU flash and image number failed", __func__);
         return FWU_AGENT_ERROR;
     }
 
@@ -193,7 +194,7 @@ enum fwu_agent_error_t metadata_read(enum FWU_METADATA_FLASH_DEV DEV_TYPE,
         return FWU_AGENT_ERROR;
     }
 
-    FWU_LOG_MSG("%s: success: active = %u, previous = %d\n\r", __func__,
+    DEBUG("%s: success: active = %u, previous = %d", __func__,
                   p_metadata->active_index, p_metadata->previous_active_index);
 
     return FWU_AGENT_SUCCESS;
@@ -209,25 +210,28 @@ enum fwu_agent_error_t fwu_metadata_init(enum FWU_METADATA_FLASH_DEV DEV_TYPE,
     uint8_t img_num;
     int32_t ret;
 
-    FWU_LOG_MSG("%s: enter\n\r", __func__);
+    DEBUG("%s: enter", __func__);
 
     if (*is_initialized) {
-        FWU_LOG_MSG("%s: flash had been initialized, return\n\r", __func__);
+        DEBUG("%s: flash had been initialized, return", __func__);
         return FWU_AGENT_SUCCESS;
     }
 
     agent_ret = get_fwu_flash_and_img_num(DEV_TYPE, &FLASH_DEV, &img_num);
     if (agent_ret != FWU_AGENT_SUCCESS) {
+        ERROR("%s: Getting FWU flash and image number failed", __func__);
         return FWU_AGENT_ERROR;
     }
 
     fwu_md_size = sizeof(struct metadata) + img_num * sizeof(struct fwu_image_entry);
     if (fwu_md_size > FWU_METADATA_FLASH_SECTOR_SIZE) {
+        ERROR("%s: FWU metadata size is bigger than FWU metadata flash sector size", __func__);
         return FWU_AGENT_ERROR;
     }
 
     if (DEV_TYPE == FWU_RSS_FLASH_DEV) {
         if (sizeof(struct fwu_private_metadata) > FWU_METADATA_FLASH_SECTOR_SIZE) {
+            ERROR("%s: FWU private metadata structure size is bigger than FWU metadata flash sector size", __func__);
             return FWU_AGENT_ERROR;
         }
     }
@@ -240,12 +244,13 @@ enum fwu_agent_error_t fwu_metadata_init(enum FWU_METADATA_FLASH_DEV DEV_TYPE,
     flash_info = FLASH_DEV->GetInfo();
     if (flash_info->program_unit != 1) {
         FLASH_DEV->Uninitialize();
+        ERROR("%s: Smallest programmable unit is not one byte", __func__);
         return FWU_AGENT_ERROR;
     }
 
     *is_initialized = 1;
 
-    FWU_LOG_MSG("%s: is_initialized = %d\n\r", __func__, *is_initialized);
+    DEBUG("%s: is_initialized = %d", __func__, *is_initialized);
 
     return FWU_AGENT_SUCCESS;
 }
@@ -259,7 +264,7 @@ enum fwu_agent_error_t metadata_write(enum FWU_METADATA_FLASH_DEV DEV_TYPE,
     uint8_t img_num;
     enum fwu_agent_error_t agent_ret;
 
-    FWU_LOG_MSG("%s: enter: flash addr = %u, size = %d\n\r", __func__,
+    DEBUG("%s: enter: flash addr = %u, size = %d", __func__,
                   FWU_METADATA_REPLICA_1_OFFSET, fwu_md_size);
 
     if (!p_metadata) {
@@ -268,6 +273,7 @@ enum fwu_agent_error_t metadata_write(enum FWU_METADATA_FLASH_DEV DEV_TYPE,
 
     agent_ret = get_fwu_flash_and_img_num(DEV_TYPE, &FLASH_DEV, &img_num);
     if (agent_ret != FWU_AGENT_SUCCESS) {
+        ERROR("%s: Getting FWU flash and image number failed", __func__);
         return FWU_AGENT_ERROR;
     }
 
@@ -284,7 +290,7 @@ enum fwu_agent_error_t metadata_write(enum FWU_METADATA_FLASH_DEV DEV_TYPE,
         return FWU_AGENT_ERROR;
     }
 
-    FWU_LOG_MSG("%s: enter: flash addr = %u, size = %d\n\r", __func__,
+    DEBUG("%s: enter: flash addr = %u, size = %d", __func__,
                   FWU_METADATA_REPLICA_2_OFFSET, fwu_md_size);
 
     ret = FLASH_DEV->EraseSector(FWU_METADATA_REPLICA_2_OFFSET);
@@ -298,10 +304,10 @@ enum fwu_agent_error_t metadata_write(enum FWU_METADATA_FLASH_DEV DEV_TYPE,
         return FWU_AGENT_ERROR;
     }
 
-    FWU_LOG_MSG("%s: enter: flash addr = %u, size = %d\n\r", __func__,
+    DEBUG("%s: enter: flash addr = %u, size = %d", __func__,
                   FWU_METADATA_REPLICA_2_OFFSET, fwu_md_size);
 
-    FWU_LOG_MSG("%s: success: active = %u, previous = %d\n\r", __func__,
+    DEBUG("%s: success: active = %u, previous = %d", __func__,
                   p_metadata->active_index, p_metadata->previous_active_index);
     return FWU_AGENT_SUCCESS;
 }
@@ -313,7 +319,7 @@ void bl1_get_active_bl2_image(uint32_t *offset)
     uint32_t boot_attempted;
     uint32_t boot_index;
 
-    FWU_LOG_MSG("%s: enter\n\r", __func__);
+    DEBUG("%s: enter", __func__);
 
     if(fwu_metadata_init(FWU_RSS_FLASH_DEV, &is_initialized_rss)) {
         FWU_ASSERT(0);
@@ -335,19 +341,19 @@ void bl1_get_active_bl2_image(uint32_t *offset)
         boot_attempted = 0;
     } else if (current_state == FWU_AGENT_STATE_TRIAL) {
         boot_attempted = (++priv_metadata.boot_attempted);
-        FWU_LOG_MSG("%s: attempting boot number = %u\n\r",
+        INFO("%s: attempting boot number = %u",
                                         __func__, boot_attempted);
         if (boot_attempted <= MAX_BOOT_ATTEMPTS_PER_BANK) {
             boot_index = fwu_md_rss.md.active_index;
-            FWU_LOG_MSG("%s: booting from trial bank: %u\n\r",
+            INFO("%s: booting from trial bank: %u",
                                         __func__, boot_index);
         } else if (boot_attempted <= (2 * MAX_BOOT_ATTEMPTS_PER_BANK)) {
             boot_index = fwu_md_rss.md.previous_active_index;
-            FWU_LOG_MSG("%s: gave up booting from trial bank\n\r", __func__);
-            FWU_LOG_MSG("%s: booting from previous active bank: %u\n\r",
+            WARN("%s: gave up booting from trial bank", __func__);
+            WARN("%s: booting from previous active bank: %u",
                                         __func__, boot_index);
         } else {
-            FWU_LOG_MSG("FWU: cannot boot system from any bank, halting...\n\r");
+            ERROR("FWU: cannot boot system from any bank, halting...");
             FWU_ASSERT(0);
         }
     } else {
@@ -367,7 +373,7 @@ void bl1_get_active_bl2_image(uint32_t *offset)
         FWU_ASSERT(0);
     }
 
-    FWU_LOG_MSG("%s: exit: booting from bank = %u, offset = 0x%x\n\r", __func__,
+    INFO("%s: exit: booting from bank = %u, offset = 0x%x", __func__,
                         boot_index, *offset);
     return;
 }
@@ -426,7 +432,7 @@ enum fwu_agent_error_t fwu_metadata_provision_rss(void)
     if (ret) {
         return ret;
     }
-    FWU_LOG_MSG("%s: provisioned values: active = %u, previous = %d\n\r",
+    INFO("%s: provisioned values: active = %u, previous = %d",
              __func__, fwu_md_rss.md.active_index, fwu_md_rss.md.previous_active_index);
 
     /* Provision Private metadata for update agent which is shared
@@ -450,9 +456,9 @@ enum fwu_agent_error_t fwu_metadata_provision_rss(void)
     if (ret) {
         return ret;
     }
-    FWU_LOG_MSG("%s: provisioned values: boot_index = %u\n\r", __func__,
+    DEBUG("%s: provisioned values: boot_index = %u", __func__,
                         priv_metadata.boot_index);
 
-    FWU_LOG_MSG("%s: FWU METADATA PROVISIONED.\n\r", __func__);
+    DEBUG("%s: FWU METADATA PROVISIONED.", __func__);
     return FWU_AGENT_SUCCESS;
 }

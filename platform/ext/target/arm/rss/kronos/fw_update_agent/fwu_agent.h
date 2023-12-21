@@ -8,22 +8,17 @@
 #ifndef FWU_AGENT_H
 #define FWU_AGENT_H
 
+#define PLAT_LOG_MODULE_NAME "FWU"
+#include "platform_log.h"
+
 #include "Driver_Flash.h"
 #include "uefi_capsule_parser.h"
 
-#define ENABLE_FWU_AGENT_DEBUG_LOGS
-#ifdef ENABLE_FWU_AGENT_DEBUG_LOGS
-    #include <stdio.h>
-    #define FWU_LOG_MSG(f_, ...) printf((f_), ##__VA_ARGS__)
-#else
-    #define FWU_LOG_MSG(f_, ...)
-#endif
-
-#define FWU_ASSERT(_c_)                                                        \
-                if (!(_c_)) {                                                  \
-                    FWU_LOG_MSG("%s:%d assert hit\n\r", __func__, __LINE__);   \
-                    while(1) {};                                               \
-                }                                                              \
+#define FWU_ASSERT(_c_)                                       \
+    if (!(_c_)) {                                             \
+        ERROR("%s:%d Assert Hit", __func__, __LINE__);    \
+        while(1) {};                                          \
+    }                                                         \
 
 /* Version used for the very first image of the device. */
 #define FWU_IMAGE_INITIAL_VERSION 0

@@ -8,6 +8,7 @@
 #include "tfm_platform_system.h"
 #include "cmsis.h"
 #ifdef TFM_FWU_AGENT
+#include "platform_log.h"
 #include "ioctl_requests.h"
 #include "fwu_agent.h"
 #include "uefi_fmp.h"
@@ -37,8 +38,11 @@ enum tfm_platform_err_t tfm_platform_hal_ioctl(tfm_platform_ioctl_req_t request,
     case IOCTL_FWU_FLASH_IMAGES:
         result = fwu_flash_image();
         if (result == FWU_AGENT_SUCCESS) {
+            INFO("[FWU]: Flashing the image succeeded.");
+            INFO("[FWU]: Performing system reset...");
             tfm_platform_hal_system_reset();
         } else {
+            ERROR("[FWU]: Flashing the image Failed.");
             ret = TFM_PLATFORM_ERR_SYSTEM_ERROR;
         }
         break;
@@ -46,7 +50,10 @@ enum tfm_platform_err_t tfm_platform_hal_ioctl(tfm_platform_ioctl_req_t request,
     case IOCTL_FWU_HOST_ACK:
         result = fwu_host_ack();
         if (result != FWU_AGENT_SUCCESS) {
+            ERROR("[FWU]: Host acknowledging failed.");
             ret = TFM_PLATFORM_ERR_SYSTEM_ERROR;
+        } else {
+            INFO("[FWU]: Host acknowledged.");
         }
         break;
 
@@ -57,7 +64,10 @@ enum tfm_platform_err_t tfm_platform_hal_ioctl(tfm_platform_ioctl_req_t request,
         }
         result = fmp_get_image_info(out_vec[0].base, out_vec[0].len);
         if (result != FWU_AGENT_SUCCESS) {
+            ERROR("[FWU]: Getting image info failed.");
             ret = TFM_PLATFORM_ERR_SYSTEM_ERROR;
+        } else {
+            INFO("[FWU]: Getting image info succeeded.");
         }
         break;
 
