@@ -38,6 +38,11 @@ target_sources(cm_provisioning_bundle
         $<$<BOOL:${TFM_FWU_AGENT}>:${TARGET_PLATFORM_PATH}/fw_update_agent/fwu_agent.c>
 )
 
+target_compile_definitions(cm_provisioning_bundle
+    PRIVATE
+        PLAT_LOG_LEVEL=${PLAT_LOG_LEVEL}
+)
+
 target_include_directories(cm_provisioning_bundle
     PRIVATE
         ../bundle_common

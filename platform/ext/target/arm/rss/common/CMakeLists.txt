@@ -182,6 +182,7 @@ target_compile_definitions(platform_s
         ATTEST_KEY_BITS=${ATTEST_KEY_BITS}
         spm_memcpy=spm_dma_memcpy
     PRIVATE
+        PLAT_LOG_LEVEL=${PLAT_LOG_LEVEL}
         # Needed for DMA-350 library
         CMSIS_device_header="rss.h"
         $<$<BOOL:${PLATFORM_SVC_HANDLERS}>:PLATFORM_SVC_HANDLERS>
@@ -291,6 +292,7 @@ target_include_directories(platform_bl2
 
 target_compile_definitions(platform_bl2
     PRIVATE
+        PLAT_LOG_LEVEL=${PLAT_LOG_LEVEL}
         # Needed for DMA-350 library
         $<$<BOOL:${PLATFORM_HAS_BOOT_DMA}>:PLATFORM_HAS_BOOT_DMA>
         $<$<BOOL:${PLATFORM_BOOT_DMA_MIN_SIZE_REQ}>:BOOT_DMA_MIN_SIZE_REQ=${PLATFORM_BOOT_DMA_MIN_SIZE_REQ}>
@@ -367,6 +369,11 @@ target_link_libraries(cc312_rom
         platform_bl1_1
 )
 
+target_compile_definitions(platform_bl1_1
+    PRIVATE
+        PLAT_LOG_LEVEL=${PLAT_LOG_LEVEL}
+)
+
 #========================= Platform BL1_2 =====================================#
 
 target_sources(platform_bl1_2
@@ -393,6 +400,7 @@ target_compile_definitions(platform_bl1_2
         $<$<AND:$<BOOL:${CONFIG_TFM_BOOT_STORE_MEASUREMENTS}>,$<BOOL:${TFM_PARTITION_MEASURED_BOOT}>>:MEASURED_BOOT_API>
         $<$<BOOL:${RSS_AMOUNT}>:RSS_AMOUNT=${RSS_AMOUNT}>
         $<$<BOOL:${TFM_FWU_AGENT}>:TFM_FWU_AGENT>
+        PLAT_LOG_LEVEL=${PLAT_LOG_LEVEL}
 )
 
 if(RSS_USE_HOST_FLASH)
@@ -435,6 +443,7 @@ if(TFM_MULTI_CORE_TOPOLOGY)
     target_compile_definitions(tfm_psa_rot_partition_ns_agent_mailbox
         PRIVATE
             $<$<BOOL:${TFM_FWU_AGENT}>:TFM_FWU_AGENT>
+            PLAT_LOG_LEVEL=${PLAT_LOG_LEVEL}
     )
 
 endif()
@@ -453,6 +462,7 @@ target_sources(tfm_spm
 target_compile_definitions(tfm_spm
     PRIVATE
         $<$<BOOL:${TFM_FWU_AGENT}>:TFM_FWU_AGENT>
+        PLAT_LOG_LEVEL=${PLAT_LOG_LEVEL}
 )
 
 #=========================== CPAK generator tool ===============================

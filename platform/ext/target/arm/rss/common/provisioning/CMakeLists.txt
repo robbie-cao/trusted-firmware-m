@@ -32,4 +32,5 @@ target_include_directories(bl1_1_lib
 target_compile_definitions(bl1_1_lib
     INTERFACE
         $<$<BOOL:${TFM_FWU_AGENT}>:TFM_FWU_AGENT>
+        PLAT_LOG_LEVEL=${PLAT_LOG_LEVEL}
 )
