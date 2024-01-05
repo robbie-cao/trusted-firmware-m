@@ -293,6 +293,8 @@ target_include_directories(platform_bl2
 target_compile_definitions(platform_bl2
     PRIVATE
         PLAT_LOG_LEVEL=${PLAT_LOG_LEVEL}
+        $<$<BOOL:${PRINT_TOWER_NCI_TREE}>:PRINT_TOWER_NCI_TREE>
+        $<$<BOOL:${PRINT_NI710AE_TREE}>:PRINT_NI710AE_TREE>
         # Needed for DMA-350 library
         $<$<BOOL:${PLATFORM_HAS_BOOT_DMA}>:PLATFORM_HAS_BOOT_DMA>
         $<$<BOOL:${PLATFORM_BOOT_DMA_MIN_SIZE_REQ}>:BOOT_DMA_MIN_SIZE_REQ=${PLATFORM_BOOT_DMA_MIN_SIZE_REQ}>

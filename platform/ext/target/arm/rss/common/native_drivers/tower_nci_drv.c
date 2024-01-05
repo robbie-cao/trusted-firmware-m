@@ -346,8 +346,6 @@ enum tower_nci_err_t tower_nci_apu_initialize_region(
     return TOWER_NCI_SUCCESS;
 }
 
-// TODO: Remove print
-#define PRINT_TOWER_NCI_TREE
 #ifdef PRINT_TOWER_NCI_TREE
 void print(struct tower_nci_discovery_tree_t *node, int tab) {
     if(node == NULL)

@@ -92,3 +92,6 @@ if (${CMAKE_BUILD_TYPE} STREQUAL Debug OR ${CMAKE_BUILD_TYPE} STREQUAL RelWithDe
 else()
   set(PLAT_LOG_LEVEL                     0        CACHE STRING    "Set platform log level.")
 endif()
+
+set(PRINT_TOWER_NCI_TREE                 OFF      CACHE BOOL      "Enable Tower NCI Tree printing")
+set(PRINT_NI710AE_TREE                   OFF      CACHE BOOL      "Enable NI710AE Tree printing")

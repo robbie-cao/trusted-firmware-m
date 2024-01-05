@@ -284,7 +284,6 @@ enum ni710ae_err_t ni710ae_apu_initialize_region(
     return NI710AE_SUCCESS;
 }
 
-#define PRINT_NI710AE_TREE
 #ifdef PRINT_NI710AE_TREE
 void print_ni710ae(struct ni710ae_discovery_tree_t *node, int tab) {
     if(node == NULL)
