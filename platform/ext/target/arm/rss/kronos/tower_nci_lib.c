@@ -45,7 +45,7 @@ enum sysctrl_xMNI_ids {
     SYSCTRL_LCP_AMNI_ID,
     SYSCTRL_LCP_SCP_AMNI_ID,
     SYSCTRL_RSM_AMNI_ID,
-    SYSCTRL_RSS_MCP_AMNI_ID,
+    SYSCTRL_RSS_SI_AMNI_ID,
     SYSCTRL_RSS_SCP_AMNI_ID,
     SYSCTRL_CMN_PMNI_ID,
     SYSCTRL_RSM_PMNI_ID,
@@ -264,7 +264,7 @@ uint32_t program_sysctrl_psam(struct tower_nci_discovery_tree_t* dis_tree,
         { mhu_send_frame_rss.base_2,          mhu_send_frame_rss.end_2,           SYSCTRL_APP_AMNI_ID    , 14 },
         { 0x0004000000000,                    0x0FFFFFFFFFFFF,                    SYSCTRL_APP_AMNI_ID    , 15 },
         { 0x1000000000000,                    0x10000FFFFFFFF,                    SYSCTRL_RSS_SCP_AMNI_ID, 16 },
-        { 0x2000000000000,                    0x2000FFFFFFFFF,                    SYSCTRL_RSS_MCP_AMNI_ID, 17 }
+        { 0x8000000000000,                    0x800FFFFFFFFFF,                    SYSCTRL_RSS_SI_AMNI_ID,  17 },
     };
 
     struct psam_region_cfgs scp_axis[] = {
@@ -398,8 +398,8 @@ uint32_t program_sysctrl_apu(struct tower_nci_discovery_tree_t* dis_tree,
         { 0x1000000000000, 0x10000FFFFFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM, 0, },
     };
 
-    struct apu_region_cfgs rss_mcp_axim[] = {
-        { 0x2000000000000, 0x2000FFFFFFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM, 0, },
+    struct apu_region_cfgs rss_si_axim[] = {
+        { 0x8000000000000, 0x800FFFFFFFFFF, T_NCI_FOREGROUND, T_NCI_ALL_PERM, 0, },
     };
 
     struct apu_cfgs apu_table[] = {
@@ -410,7 +410,7 @@ uint32_t program_sysctrl_apu(struct tower_nci_discovery_tree_t* dis_tree,
         APU_TUPLE(lcp_axim,     TOWER_NCI_AMNI, SYSCTRL_LCP_AMNI_ID),
         APU_TUPLE(lcp_axis,     TOWER_NCI_ASNI, SYSCTRL_LCP_ASNI_ID),
         APU_TUPLE(rss_scp_axim, TOWER_NCI_AMNI, SYSCTRL_RSS_SCP_AMNI_ID),
-        APU_TUPLE(rss_mcp_axim, TOWER_NCI_AMNI, SYSCTRL_RSS_MCP_AMNI_ID),
+        APU_TUPLE(rss_si_axim,  TOWER_NCI_AMNI, SYSCTRL_RSS_SI_AMNI_ID),
     };
 
     if (program_apu_table(apu_table, sizeof(apu_table) /

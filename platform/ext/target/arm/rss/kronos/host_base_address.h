@@ -180,7 +180,7 @@
 /*  SI CL0 Image address start, offset so end of HEADER is at end of ATU HEADER */
 #define HOST_SI_CL0_IMG_BASE_S         (HOST_SI_CL0_CODE_BASE_S - BL2_HEADER_SIZE)
 /*  SI physical address start */
-#define HOST_SI_PHYS_BASE              0x2000000000000ULL
+#define HOST_SI_PHYS_BASE              0x8000000000000ULL
 /*  SI CL0 ATU CODE size (aligned size of SI image) */
 #define HOST_SI_CL0_ATU_SIZE           ALIGN_UP(SIZE_DEF_SI_CL0_IMAGE, RSS_ATU_PAGE_SIZE)
 /*  SI CL0 ID for SI CL0 ATU HEADER region */
