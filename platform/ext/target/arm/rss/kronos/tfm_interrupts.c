@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, Arm Limited. All rights reserved.
+ * Copyright (c) 2023-2024, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -16,6 +16,9 @@
 #include <inttypes.h>
 #include <tfm_hal_platform.h>
 #include <tfm_hal_interrupt.h>
+#include "tfm_hal_spm_logdev.h"
+
+#define SPMLOG(x) tfm_hal_output_spm_log((x), sizeof(x))
 
 volatile bool scp_doorbell = false;
 
@@ -65,11 +68,28 @@ static int mhu_scp_rss_sys_reset_doorbell_handler(uint32_t value) {
 	return -1;
 }
 
+static int mhu_scp_rss_sys_shutdown_doorbell_handler(uint32_t value) {
+
+	SPMLOG("System shutdown complete\r\n");
+
+	/* 
+	 * Not expected to reach here in case of FVP,
+	 * but this is required for FPGA as we are unable to shutdown.
+	 */
+	while(1) {
+		__WFI();
+	}
+
+	/* Not expected to return from this function call */
+	return -1;
+}
+
 /* Array of function pointers to call if a message is received on a channel */
 static int (*mhu_scp_rss_doorbell_vector[MHU_SCP_RSS_CHANNEL_COUNT]) (uint32_t) = {
-    [MHU_SCP_RSS_ATU_REQUEST_CHANNEL_ID] = mhu_scp_rss_atu_request_doorbell_handler,
-    [MHU_SCP_RSS_SYSTOP_ON_CHANNEL_ID]   = mhu_scp_rss_systop_on_doorbell_handler,
-    [MHU_SCP_RSS_SYS_RESET_CHANNEL_ID]   = mhu_scp_rss_sys_reset_doorbell_handler,
+    [MHU_SCP_RSS_ATU_REQUEST_CHANNEL_ID]  = mhu_scp_rss_atu_request_doorbell_handler,
+    [MHU_SCP_RSS_SYSTOP_ON_CHANNEL_ID]    = mhu_scp_rss_systop_on_doorbell_handler,
+    [MHU_SCP_RSS_SYS_RESET_CHANNEL_ID]    = mhu_scp_rss_sys_reset_doorbell_handler,
+    [MHU_SCP_RSS_SYS_SHUTDOWN_CHANNEL_ID] = mhu_scp_rss_sys_shutdown_doorbell_handler,
 };
 
 /* Function to handle the SCP-->RSS MHUv3 combined MBX interrupt */

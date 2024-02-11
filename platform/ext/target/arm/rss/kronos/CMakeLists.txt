@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# Copyright (c) 2023, Arm Limited. All rights reserved.
+# Copyright (c) 2023-2024, Arm Limited. All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
 #
@@ -133,6 +133,7 @@ target_sources(platform_bl2
         fw_update_agent/fwu_agent_rss.c
         fw_update_agent/uefi_capsule_parser.c
         fw_update_agent/uefi_fmp.c
+        ${PLATFORM_DIR}/ext/common/tfm_hal_spm_logdev_peripheral.c
 )
 
 target_compile_definitions(platform_bl2

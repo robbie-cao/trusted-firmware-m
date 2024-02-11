@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021, Arm Limited. All rights reserved.
+ * Copyright (c) 2020-2021,2024 Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -19,6 +19,7 @@ enum mhu_scp_rss_doorbell_channel {
     MHU_SCP_RSS_SI_CL0_CHANNEL_ID,
     MHU_SCP_RSS_SI_CL1_CHANNEL_ID,
     MHU_SCP_RSS_SI_CL2_CHANNEL_ID,
+    MHU_SCP_RSS_SYS_SHUTDOWN_CHANNEL_ID,
     MHU_SCP_RSS_CHANNEL_COUNT,
 };
 #endif
