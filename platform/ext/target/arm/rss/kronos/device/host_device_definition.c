@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Arm Limited. All rights reserved.
+ * Copyright (c) 2023-2024 Arm Limited. All rights reserved.
  *
  * Licensed under the Apache License Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,42 +81,6 @@ static const struct atu_region scp_regions[] = {
         /* ECAM region */
         .start_addr = (uint64_t)ECAM_START_ADDRESS(0),
         .end_addr = (uint64_t)ECAM_END_ADDRESS(0),
-        .allowed_pas = ATU_REGION_PAS_NON_SECURE,
-    },
-    [NCI_GVP_ATU_PERM_REGION_1] = {
-        /* GVP registers region */
-        .start_addr = (uint64_t)IOVB_NCI_GVP_START_ADDRESS(1),
-        .end_addr = (uint64_t)IOVB_NCI_GVP_END_ADDRESS(1),
-        .allowed_pas = ATU_REGION_PAS_SECURE,
-    },
-    [ECAM_ATU_PERM_REGION_1] = {
-        /* ECAM region */
-        .start_addr = (uint64_t)ECAM_START_ADDRESS(1),
-        .end_addr = (uint64_t)ECAM_END_ADDRESS(1),
-        .allowed_pas = ATU_REGION_PAS_NON_SECURE,
-    },
-    [NCI_GVP_ATU_PERM_REGION_2] = {
-        /* GVP registers region */
-        .start_addr = (uint64_t)IOVB_NCI_GVP_START_ADDRESS(2),
-        .end_addr = (uint64_t)IOVB_NCI_GVP_END_ADDRESS(2),
-        .allowed_pas = ATU_REGION_PAS_SECURE,
-    },
-    [ECAM_ATU_PERM_REGION_2] = {
-        /* ECAM region */
-        .start_addr = (uint64_t)ECAM_START_ADDRESS(2),
-        .end_addr = (uint64_t)ECAM_END_ADDRESS(2),
-        .allowed_pas = ATU_REGION_PAS_NON_SECURE,
-    },
-    [NCI_GVP_ATU_PERM_REGION_3] = {
-        /* GVP registers region */
-        .start_addr = (uint64_t)IOVB_NCI_GVP_START_ADDRESS(3),
-        .end_addr = (uint64_t)IOVB_NCI_GVP_END_ADDRESS(3),
-        .allowed_pas = ATU_REGION_PAS_SECURE,
-    },
-    [ECAM_ATU_PERM_REGION_3] = {
-        /* ECAM region */
-        .start_addr = (uint64_t)ECAM_START_ADDRESS(3),
-        .end_addr = (uint64_t)ECAM_END_ADDRESS(3),
         .allowed_pas = ATU_REGION_PAS_NON_SECURE,
     },
 };

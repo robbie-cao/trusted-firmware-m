@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Arm Limited. All rights reserved.
+ * Copyright (c) 2023-2024 Arm Limited. All rights reserved.
  *
  * Licensed under the Apache License Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,12 +66,6 @@ enum SCP_ATU_PERM_REGIONS {
 	AP_PERIPH_SCP_ATU_PERM_REGION,
     NCI_GVP_ATU_PERM_REGION,
     ECAM_ATU_PERM_REGION,
-    NCI_GVP_ATU_PERM_REGION_1,
-    ECAM_ATU_PERM_REGION_1,
-    NCI_GVP_ATU_PERM_REGION_2,
-    ECAM_ATU_PERM_REGION_2,
-    NCI_GVP_ATU_PERM_REGION_3,
-    ECAM_ATU_PERM_REGION_3,
     SCP_ATU_PERM_REGION_COUNT,
 };
 
